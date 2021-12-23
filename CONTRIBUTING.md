@@ -5,7 +5,7 @@ issues you submit!
 
 # Sending code
 
-Please save your work on a separate branch, typically branched from `master`.
+Please save your work on a separate branch, typically branched from `main`.
 
 If you do not have commit rights to this repo, please work on a fork. For your
 own convenience, we recommend still working on a separate branch.
