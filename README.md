@@ -14,6 +14,9 @@
 **Notes**
 In the front-end file ``nuxt.config.js`` and in the ``knt.py`` file, the two urls that are used are based on my machine. Usually, React/Vue.js/Nuxt.js uses port 3000 and flask uses port 5000, but if this isn't the case for you, just change the ports in the urls but _don't commit the changes_. 
 
+There are still some things that need to be figured out on this fork if we decide to go through with Flask, those things being:
+- How to use Swagger and SQLAlchemy to create the REST API
+
 **Relevant documentation**
 - The (best tutorial for Flask ever)[https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world]
 - (Official Flask Documentation)[https://flask.palletsprojects.com/en/2.0.x/quickstart/]
