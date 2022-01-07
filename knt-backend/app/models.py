@@ -7,5 +7,13 @@ class User(db.Model):
     nickname = db.Column(db.String(120))
     password = db.Column(db.String(120))
 
-def __repr__(self):
-    return '<User {}>'.format(self.first_name)
+    def __repr__(self):
+        return '<User {}>'.format(self.first_name)
+    
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.Text)
+    price = db.Column(db.Numeric)
+    
+    def __repr__(self):
+        return '<Product {}>'.format(self.product_name)
