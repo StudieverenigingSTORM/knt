@@ -14,6 +14,11 @@
 **Notes**
 In the front-end file ``nuxt.config.js`` and in the ``knt.py`` file, the two urls that are used are based on my machine. Usually, javascript uses port 3000 and flask uses port 5000, but if this isn't the case for you, just change the ports in the urls but _don't commit the changes_. 
 
+**Relevant documentation**
+- The (best tutorial for Flask ever)[https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world]
+- (Official Flask Documentation)[https://flask.palletsprojects.com/en/2.0.x/quickstart/]
+- (Nuxt documentation)[https://nuxtjs.org/]
+
 ## Why replace it?
 
 The old one is very insecure and pretty much impossible to maintain.
