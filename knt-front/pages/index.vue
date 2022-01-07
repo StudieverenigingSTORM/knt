@@ -1,5 +1,9 @@
 <template>
-    <h1>{{res.greeting}} {{res.greeting2}}</h1>
+    <div>
+        <b-card v-for="product in products" :key="product.id" :title="product.name">
+            Price: {{product.price}}
+        </b-card>
+    </div>
 </template>
 
 <script lang="ts">
@@ -9,19 +13,18 @@ export default Vue.extend({
     name: 'IndexPage',
     data() {
         return {
-        res: null
+            products: null
         }
     },
     methods: {
-        getGreetings() {
-        this.$axios.get('/hello').then((response) => {
-            this.res = response.data;
-            console.log(this.res);
-        });
+        getProducts() {
+            this.$axios.get('/products').then((response) => {
+                this.products = response.data
+            });
         }
     },
     mounted() {
-        this.getGreetings();
+        this.getProducts()
     }
 })
 </script>
