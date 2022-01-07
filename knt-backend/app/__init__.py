@@ -14,7 +14,7 @@ ma = Marshmallow(app)
 api = Api(app)
 cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-from app import routes, models
+from app import models
 
 api.add_resource(models.ProductListResource, '/products')
 api.add_resource(models.ProductResource, '/product/<int:id>')
