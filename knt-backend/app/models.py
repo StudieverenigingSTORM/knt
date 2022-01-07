@@ -4,10 +4,10 @@ from flask import request
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String)
-    last_name = db.Column(db.String)
-    nickname = db.Column(db.String)
-    password = db.Column(db.String)
+    first_name = db.Column(db.Text)
+    last_name = db.Column(db.Text)
+    nickname = db.Column(db.Text)
+    password = db.Column(db.String(64))
     balance = db.Column(db.Numeric)
 
     def __repr__(self):
@@ -18,13 +18,14 @@ class User(db.Model):
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
-    price = db.Column(db.Numeric)
+    price = db.Column(db.String)
     
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
 
 class ProductSchema(ma.Schema):
     class Meta:
+        fields = ("id", "name", "price")
         model = Product
         
 product_schema = ProductSchema()
@@ -33,7 +34,9 @@ products_schema = ProductSchema(many=True)
 class ProductListResource(Resource):
     def get(self):
         p = Product.query.all()
-        return products_schema.dump(p)
+        response = products_schema.dump(p)
+        return response
+
     
     def post(self):
         p = Product(
@@ -42,7 +45,7 @@ class ProductListResource(Resource):
         )
         db.session.add(p)
         db.session.commit()
-        return product_schema.dump(p)
+        return 'Product created', 204
 
 class ProductResource(Resource):
     def patch(self, id):
@@ -54,7 +57,7 @@ class ProductResource(Resource):
             p.price = request.json['price']
         
         db.session.commit()
-        return product_schema.dump(p)
+        return 'Patched', 200
     
     def delete(self, id):
         p = Product.query.get_or_404(id)
