@@ -18,9 +18,9 @@ There are still some things that need to be figured out on this fork if we decid
 - How to use Swagger and SQLAlchemy to create the REST API
 
 **Relevant documentation**
-- The (best tutorial for Flask ever)[https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world]
-- (Official Flask Documentation)[https://flask.palletsprojects.com/en/2.0.x/quickstart/]
-- (Nuxt documentation)[https://nuxtjs.org/]
+- The [best tutorial for Flask ever](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
+- [Official Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/quickstart/)
+- [Nuxt documentation](https://nuxtjs.org/)
 
 ## Why replace it?
 
