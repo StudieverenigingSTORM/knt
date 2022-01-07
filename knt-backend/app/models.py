@@ -6,6 +6,7 @@ class User(db.Model):
     last_name = db.Column(db.String(120))
     nickname = db.Column(db.String(120))
     password = db.Column(db.String(120))
+    balance = db.Column(db.Numeric)
 
     def __repr__(self):
         return '<User {}>'.format(self.first_name)
