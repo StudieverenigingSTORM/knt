@@ -1,5 +1,31 @@
 # The New and Improved K&T System
 
+**Setup**
+1. Make sure you have Python3, ``pip`` and ``npm`` installed.
+2. Run ``pip install pipenv``. This is a python package manager and works (and looks) similar to what we are used to with ``npm``.
+3. Navigate to ``/knt-backend`` and run ``pipenv --three``.
+4. Run ``pipenv sync`` to install all dependencies. These are specified in the Pipfile.lock, so make sure that this file does not end up in the gitignore! 
+5. Run ``pipenv shell`` to start up the virtual environment. This starts up the virtual environment. It allows us to install python packages for this project that won't interfere with your global python packages and configs.
+6. Once all the packages are installed, run ``flask run`` to have the Flask app start up and run! You should see the url of the app, as well as some debugging input.
+7. Once your app is all up and running, open another command line and navigate ``/knt-font``. 
+8. Run ``npm install`` to install all the packages in the ``package.json``
+9. Run ``npm run dev``. The front-end app should be up and running now.
+
+**Notes**
+
+In the front-end file ``nuxt.config.js`` and in the ``knt.py`` file, the two urls that are used are based on my machine. Usually, React/Vue.js/Nuxt.js uses port 3000 and flask uses port 5000, but if this isn't the case for you, just change the ports in the urls but _don't commit the changes_. 
+
+There are still some things that need to be figured out on this fork if we decide to go through with Flask, those things being:
+- How to use Swagger and SQLAlchemy to create the REST API
+
+**Relevant documentation**
+- [The best tutorial for Flask ever](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
+- [Official Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/quickstart/)
+- [Nuxt documentation](https://nuxtjs.org/)
+- [SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+- [Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
+- [flask-restful](https://flask-restful.readthedocs.io/en/latest/)
+
 ## Why replace it?
 
 The old one is very insecure and pretty much impossible to maintain.
