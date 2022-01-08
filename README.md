@@ -22,6 +22,9 @@ There are still some things that need to be figured out on this fork if we decid
 - [The best tutorial for Flask ever](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
 - [Official Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/quickstart/)
 - [Nuxt documentation](https://nuxtjs.org/)
+- [SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+- [Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
+- [flask-restful](https://flask-restful.readthedocs.io/en/latest/)
 
 ## Why replace it?
 
