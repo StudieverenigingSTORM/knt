@@ -4,8 +4,8 @@
 1. Make sure you have Python3, ``pip`` and ``npm`` installed.
 2. Run ``pip install pipenv``. This is a python package manager and works (and looks) similar to what we are used to with ``npm``.
 3. Navigate to ``/knt-backend`` and run ``pipenv --three``.
-4. Run ``pipenv shell`` to start up the virtual environment. This starts up the virtual environment. It allows us to install python packages for this project that won't interfere with your global python packages and configs.
-5. Run ``pipenv sync`` to install all dependencies. These are specified in the Pipfile.lock, so make sure that this file does not end up in the gitignore! 
+4. Run ``pipenv sync`` to install all dependencies. These are specified in the Pipfile.lock, so make sure that this file does not end up in the gitignore! 
+5. Run ``pipenv shell`` to start up the virtual environment. This starts up the virtual environment. It allows us to install python packages for this project that won't interfere with your global python packages and configs.
 6. Once all the packages are installed, run ``flask run`` to have the Flask app start up and run! You should see the url of the app, as well as some debugging input.
 7. Once your app is all up and running, open another command line and navigate ``/knt-font``. 
 8. Run ``npm install`` to install all the packages in the ``package.json``
