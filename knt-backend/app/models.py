@@ -11,7 +11,7 @@ class User(db.Model):
     last_name = db.Column(db.Text)
     nickname = db.Column(db.Text)
     password = db.Column(db.String(64))
-    balance = db.Column(db.Numeric)
+    balance = db.Column(db.Text)
 
     def __repr__(self):
         return '<User {}>'.format(self.first_name)
