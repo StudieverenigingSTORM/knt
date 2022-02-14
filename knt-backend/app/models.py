@@ -11,6 +11,7 @@ class User(db.Model):
     last_name = db.Column(db.Text)
     nickname = db.Column(db.Text)
     password = db.Column(db.String(64))
+    vunet_id = db.COlumn(db.String(6))
     balance = db.Column(db.Text)
 
     def __repr__(self):
@@ -35,7 +36,7 @@ class UsersListResource(Resource):
 
     def post(self):
         u = User(first_name=request.json['first_name'], last_name=request.json['last_name'],
-                 nickname=request.json['nickname'], password=request.json['password'], balance=request.json['balance'])
+                 nickname=request.json['nickname'], password=request.json['password'], balance=request.json['balance'], vunet_id=request.json['vunet_id'])
         db.session.add(u)
         db.session.commit()
         return 'User Created', 204
@@ -55,6 +56,8 @@ class UserResource(Resource):
             u.password = request.json['password']
         if 'balance' in request.json:
             u.balance = request.json['balance']
+        if 'vunet_id' in request.json:
+            u.vunet_id = request.json['vunet_id']
         
         db.session.commit()
         return 'User patched', 200
