@@ -108,13 +108,13 @@ def event_loop(window, data): #!todo functionize these events instead of bunch o
             window['-USR_INFO_PANEL-'].update(visible=True)
 
         if event == '-APPLY_CHANGES-':
-            data = {}
-            data['firstname'] = window['-FIRSTNAME-'].get()
-            data['lastname'] = window['-LASTNAME-'].get()
-            data['vunetid'] = window['-VUNETID-'].get()
+            dataOut = {}
+            dataOut['firstname'] = window['-FIRSTNAME-'].get()
+            dataOut['lastname'] = window['-LASTNAME-'].get()
+            dataOut['vunetid'] = window['-VUNETID-'].get()
             #data['balance'] = window['-BALANCE-'].get() #if keep, do int check, prolly should not be editable directly though
 
-            print('updating: ' + json.dumps(data))
+            print('updating: ' + json.dumps(dataOut))
 
         if event == '-TRANSACTION-':
             None #todo start using api calls first
