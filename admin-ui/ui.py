@@ -48,7 +48,7 @@ def usr_window(userList):
       [sg.Text('Transaction')],
       [sg.Text('Change balance by '), sg.Input(size=(8, 1), key='-BALANCE_OPERAND-')],
       [sg.Text('Comment:'), sg.Multiline(size=(25, 1), key='-TRANSACTION_COMMENT-')],
-      [sg.Submit('Apply Changes', key='-TRANSACTION-')]
+      [sg.Submit('Commit Transaction', key='-TRANSACTION-')]
     ])
 
     rightUsrCol = sg.Column([[personalInfo], [updateBtn], [adminInfo], [transactionPanel]], key='-USR_INFO_PANEL-', visible=False)
