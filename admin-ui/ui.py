@@ -98,6 +98,9 @@ def event_loop(window, data): #!todo functionize these events instead of bunch o
 
             userInfo = find_user(Stormer.vunetId, data)
 
+            if userInfo == None:
+                continue
+
             window['-FIRSTNAME-'].update(userInfo['firstname'])
             window['-LASTNAME-'].update(userInfo['lastname'])
             window['-VUNETID-'].update(userInfo['_id'])
