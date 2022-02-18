@@ -1,1 +1,3 @@
 .vscode/launch.json
+admin-ui/examples/*
+admin-ui/__pycache__/*
