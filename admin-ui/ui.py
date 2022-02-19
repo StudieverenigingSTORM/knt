@@ -141,7 +141,10 @@ def event_loop(window, data): #!todo functionize these events instead of bunch o
 		if event == '-TRANSACTION-':
 			None #!todo start using api calls first
 
-		if event == 'DEL_USR': #!todo
+		if event == '-CHANGE_PIN-':
+			None #!todo add pop up, I believe input has some kind of password option, this might be nice with a check box to show or hide entered pin!
+
+		if event == '-DEL_USR-': #!todo
 			None
 
 		if event == '-FILTER-':

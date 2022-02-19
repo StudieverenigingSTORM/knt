@@ -25,7 +25,7 @@ def usr_window(userList):
 	  [sg.Text('vunetID:', size=8), sg.Input(default_text = '', size=(25, 1), key='-VUNETID-')],
 	])
 
-	buttonRow = [sg.Push(), sg.Submit('Apply Changes', key='-APPLY_CHANGES-'), sg.Submit('Delete user', key='-DEL_USR-'), sg.Push()]
+	buttonRow = [sg.Push(), sg.Submit('Apply Changes', key='-APPLY_CHANGES-', size=(11, 1)), sg.Submit('Change Pin', key='-CHANGE_PIN-', size=(11, 1)), sg.Submit('Delete user', key='-DEL_USR-', size=(11, 1)), sg.Push()]
 
 	adminInfo = [sg.Text('Balance:', size=8), sg.Text('', size=(25, 1), key='-BALANCE-')]
 
