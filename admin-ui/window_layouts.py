@@ -1,18 +1,32 @@
 import PySimpleGUI as sg
 
+mline_right_click_menu = ['', ['Copy', 'Paste', 'Select All', 'Cut']]
+
+"""Main window that ties it all together"""
+def main_window():
+	sg.theme('SystemDefaultForReal')
+	userLayout = usr_window()
+	productLayout = [[sg.Text('products')]] #!todo products...
+
+	mainLayout = [[
+		sg.TabGroup([
+				[sg.Tab('Stormers', userLayout, key='-USERTAB-'), sg.Tab('Products', productLayout, key='-PRODTAB-')]
+			], expand_x=True, expand_y=True)
+	]]
+
+	return mainLayout
+
 """
 Window for the user tab, includes a list of people and an info panel with details
 Expects to be passed a list of users and will fill list based on __str__() method of objects in the list
 """
-mline_right_click_menu = ['', ['Copy', 'Paste', 'Select All', 'Cut']]
-
-def usr_window(userList):
+def usr_window():
 	#!todo add refresh btn to reload, perhaps
 
 	filter_tooltip = "Enter a (partial) name or vunetID to filter the list!"
 
 	leftUsrCol = sg.Frame('Stormer people', font='Any 16', layout=[
-	  [sg.Listbox(values=userList, select_mode=sg.SELECT_MODE_SINGLE, enable_events=True,
+	  [sg.Listbox(values=[], select_mode=sg.SELECT_MODE_SINGLE, enable_events=True,
 	    size=(40, 20), key='-USERLIST-', expand_y=True)],
 	  [sg.Text('Search:', tooltip=filter_tooltip), sg.Input(size=(25, 1), focus=True, enable_events=True, key='-FILTER-', tooltip=filter_tooltip),
 		sg.Button('Add', size=5, enable_events=True, key='-ADD_USER-')]
@@ -44,6 +58,7 @@ def usr_window(userList):
 
 	return userLayout
 
+
 """
 Specefic window used for adding a new user.
 """
@@ -70,6 +85,7 @@ def add_usr_window(): #!todo add cancel button!
 
 	return [[rightUsrCol]]
 
+
 """Window for changing pin"""
 def change_pin_window():
 	element = sg.Frame("", [
@@ -79,8 +95,7 @@ def change_pin_window():
 
 	return [[element]]
 
+
 """Window for confirmation of deleting user"""
-def change_pin_window():
-	
+def delete_usr_window():
 	return [[sg.Push(), sg.Submit('Noo!!!', key='-NO_DEL-'), sg.Submit("Confirm", key='-CONFIRM_DELETE-'), sg.Push()]]
-	
