@@ -22,11 +22,12 @@ Might start using it to just store all data though in future, this would mean th
 '''
 
 class Stormer():
-    def __init__(self, firstName, lastName, vunetId, balance):
-        self.firstName = firstName
-        self.lastName = lastName
-        self.vunetId = vunetId
-        self.balance = balance
+	def __init__(self, firstName, lastName, vunetId, nickName = '', balance = 0):
+		self.firstName = firstName
+		self.lastName = lastName
+		self.vunetId = vunetId
+		self.nickName = nickName
+		self.balance = balance
 
-    def __str__(self):
-        return self.firstName + ' ' + self.lastName
+	def __str__(self):
+		return self.firstName + ' ' + self.lastName
