@@ -25,9 +25,9 @@ def usr_window(userList):
     #!todo add refresh btn to reload
 
     leftUsrCol = sg.Column([
-      [sg.Listbox(values=userList, select_mode=sg.SELECT_MODE_SINGLE, enable_events=True, size=(50, 20), key='-USERLIST-')],
+      [sg.Listbox(values=userList, select_mode=sg.SELECT_MODE_SINGLE, enable_events=True, size=(50, 20), key='-USERLIST-', expand_y=True)],
       [sg.Text('Search:'), sg.Input(size=(25, 1), focus=True, enable_events=True, key='-FILTER-')]
-      ], element_justification='l', expand_x=True, expand_y=True)
+    ], element_justification='l', expand_y=True)
 
     #explicitly no middle part for name here for all non dutchies, if data base has names in first, middle, last merge middle and last.
     personalInfo = sg.Col([
@@ -51,10 +51,10 @@ def usr_window(userList):
       [sg.Submit('Commit Transaction', key='-TRANSACTION-')]
     ])
 
-    rightUsrCol = sg.Column([[personalInfo], [updateBtn], [adminInfo], [transactionPanel]], key='-USR_INFO_PANEL-', visible=False)
+    rightUsrCol = sg.Column([[personalInfo], [updateBtn], [adminInfo], [transactionPanel]], key='-USR_INFO_PANEL-', visible=False, element_justification='c', expand_x=True, expand_y=True)
 
     userLayout = [[sg.Text('Stormer people', font='Any 16')],
-              sg.vtop([leftUsrCol, rightUsrCol])
+              sg.vtop([leftUsrCol, rightUsrCol], expand_y=True)
               ]
 
     return userLayout
@@ -67,7 +67,7 @@ def main_window(names):
     tabs = [[
         sg.TabGroup([[
             sg.Tab('Stormers', userLayout, key='-USERTAB-'), sg.Tab('Products', productLayout, key='-PRODTAB-')
-            ]])
+            ]], expand_x=True, expand_y=True)
     ]]
 
     #Define Window
