@@ -69,3 +69,13 @@ def add_usr_window(): #!todo add cancel button!
 	rightUsrCol = sg.Frame('', layout=[[personalInfo], [adminInfo], [transactionPanel], buttonRow])
 
 	return [[rightUsrCol]]
+
+"""Window for changing pin"""
+def change_pin_window():
+	element = sg.Frame("", [
+		[sg.Text('New Pin:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PIN-', enable_events=True, password_char='*')],
+		[sg.Checkbox('Show pin', enable_events=True, key='-SHOW_PIN-'), sg.Push(), sg.Submit("Apply", key='-APPLY_PIN-'), sg.Submit('Cancel', key='-CANCEL-')]
+	])
+
+	return [[element]]
+	

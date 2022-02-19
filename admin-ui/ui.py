@@ -33,7 +33,7 @@ def main_window(usrDataList):
 			], expand_x=True, expand_y=True)
 	]]
 
-	return sg.Window("Tabs", tabs, resizable=True)
+	return sg.Window("KnT", tabs, resizable=True) #!todo, replace python logo with cute tiny storm logo?
 
 def find_user(id, data): #temp function for dummy data, will have to be refactored based on how data is pulled on init and refreshed/loaded on user selection from remote db api
 	for user in data:
@@ -96,6 +96,33 @@ def add_user_popup():
 		if event in mlist_right_click_options:
 			do_clipboard_operation(event, window, mline)
 
+	window.close()
+
+def change_pin_popup():
+	layout = change_pin_window()
+	window = sg.Window("Change Pin", layout, modal=True)
+
+	while True:
+		event, values = window.read()
+
+		if event == "Exit" or event == sg.WIN_CLOSED or event == 'none':
+			break
+
+		if event == '-SHOW_PIN-':
+			if window['-SHOW_PIN-'].get():
+				window['-PIN-'].update(password_char='')
+			else:
+				window['-PIN-'].update(password_char='*')
+		
+		if event == '-PIN-': #!todo This triggers on every char added so perfect place to check for restrictions on pin/pass
+			print(window['-PIN-'].get())
+
+		if event == '-APPLY_PIN-':
+			print('Setting new pin to: ' + window['-PIN-'].get())
+			break
+
+		if event == '-CANCEL-': #!todo could go with exit but for now here in case I decide to do something extra with it.
+			break
 
 	window.close()
 
@@ -142,9 +169,9 @@ def event_loop(window, data): #!todo functionize these events instead of bunch o
 			None #!todo start using api calls first
 
 		if event == '-CHANGE_PIN-':
-			None #!todo add pop up, I believe input has some kind of password option, this might be nice with a check box to show or hide entered pin!
+			change_pin_popup()
 
-		if event == '-DEL_USR-': #!todo
+		if event == '-DEL_USR-': #!todo confirmation pop up
 			None
 
 		if event == '-FILTER-':
