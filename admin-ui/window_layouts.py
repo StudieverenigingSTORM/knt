@@ -3,9 +3,9 @@ import PySimpleGUI as sg
 mline_right_click_menu = ['', ['Copy', 'Paste', 'Select All', 'Cut']]
 
 """Main window that ties it all together"""
-def main_window():
+def main_window_layout():
 	sg.theme('SystemDefaultForReal')
-	userLayout = usr_window()
+	userLayout = usr_window_layout()
 	productLayout = [[sg.Text('products')]] #!todo products...
 
 	mainLayout = [[
@@ -20,7 +20,7 @@ def main_window():
 Window for the user tab, includes a list of people and an info panel with details
 Expects to be passed a list of users and will fill list based on __str__() method of objects in the list
 """
-def usr_window():
+def usr_window_layout(): #todo split up in few more functions!
 	#!todo add refresh btn to reload, perhaps
 
 	filter_tooltip = "Enter a (partial) name or vunetID to filter the list!"
@@ -62,7 +62,7 @@ def usr_window():
 """
 Specefic window used for adding a new user.
 """
-def add_usr_window(): #!todo add cancel button!
+def add_usr_window_layout(): #!todo add cancel button!
 	personalInfo = sg.Col([
 	  [sg.Text('Name:', size=8), sg.Input(default_text = '', size=(25, 1), key='-FIRSTNAME-')],
 	  [sg.Text('Last Name:', size=8), sg.Input(default_text = '', size=(25, 1), key='-LASTNAME-')],
@@ -87,7 +87,7 @@ def add_usr_window(): #!todo add cancel button!
 
 
 """Window for changing pin"""
-def change_pin_window():
+def change_pin_window_layout():
 	element = sg.Frame("", [
 		[sg.Text('New Pin:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PIN-', enable_events=True, password_char='*')],
 		[sg.Checkbox('Show pin', enable_events=True, key='-SHOW_PIN-'), sg.Push(), sg.Submit("Apply", key='-APPLY_PIN-'), sg.Submit('Cancel', key='-CANCEL-')]
@@ -97,5 +97,9 @@ def change_pin_window():
 
 
 """Window for confirmation of deleting user"""
-def delete_usr_window():
-	return [[sg.Push(), sg.Submit('Noo!!!', key='-NO_DEL-'), sg.Submit("Confirm", key='-CONFIRM_DELETE-'), sg.Push()]]
+def delete_usr_window_layout():
+	layout = [
+		[sg.Text('', key='-TEXT-')],
+		[sg.Push(), sg.Submit('Noo!!!', key='-NO_DEL-'), sg.Submit("Confirm", key='-CONFIRM_DELETE-'), sg.Push()]
+	]
+	return layout

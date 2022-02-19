@@ -4,6 +4,11 @@ from stormer import Stormer
 
 #for now all mock calls on the dummy data, intention is to later abstract or atleast wrap all api calls through here
 
+# !todo decide who ensures correctness, 
+# does api caller pass whatever and possibly get an error back from here,
+# is api caller solely repsonsible for making good calls
+# or double work (both sides do their own checks), prolly this.
+
 def load_dummy_dat():
 	filePath = pathlib.Path(pathlib.Path(__file__).parent, 'names.json').resolve()
 	with open(filePath, 'r') as dummyboidatafile:
@@ -28,3 +33,30 @@ def find_user(id, data): #temp function for dummy data, will have to be refactor
 			return user
 
 	return None
+
+def add_user(firstName, lastName, vunetId, deposit, comment):
+	dataOut = {}
+	dataOut['firstname'] = firstName
+	dataOut['lastname'] = lastName
+	dataOut['vunetid'] = vunetId
+	if deposit != '':  #naughty digits only! tooltip?! Also always enforce a initial deposit even if 0?
+		dataOut['transaction amount'] = deposit # wait on db design, check int/float (depening on db design) and what about sign, do we ever take money :(
+		dataOut['transaction comment'] = comment #this is all intentionally very crude, not gonna invest time until I have some insight in how we store money (float or int) and how comments/logs are gonna be handled!
+
+	print('updating: ' + json.dumps(dataOut))
+
+def update_user(oldVunetId, firstName = None, lastName = None, newVunetId = None): #todo I hope the api will support dynamic/incomplete calls, if not refactor
+	dataOut = {}	# old and new vunetId very depend on api design!
+	print('updating user not rdy :(' + json.dumps(dataOut))
+
+def del_user(vunetId):
+	dataOut = {'vunetId' : vunetId}
+	print('deleting  id: ' + json.dumps(dataOut))
+
+def update_pin(vunetId, pin):
+	dataOut = {'vunetId' : vunetId, 'pin' : pin}
+	print('Setting new pin: ' + json.dumps(dataOut))
+
+def transaction(vunetId, amount, comment):
+	dataOut = {'vunetId' : vunetId, 'amount' : amount, 'comment' : comment}
+	print('Performing transaction: ' + json.dumps(dataOut))
