@@ -78,4 +78,9 @@ def change_pin_window():
 	])
 
 	return [[element]]
+
+"""Window for confirmation of deleting user"""
+def change_pin_window():
+	
+	return [[sg.Push(), sg.Submit('Noo!!!', key='-NO_DEL-'), sg.Submit("Confirm", key='-CONFIRM_DELETE-'), sg.Push()]]
 	

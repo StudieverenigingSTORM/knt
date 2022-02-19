@@ -126,6 +126,34 @@ def change_pin_popup():
 
 	window.close()
 
+def delete_usr_popup():
+	layout = delete_usr_popup()
+	window = sg.Window("Are you sure?", layout, modal=True)
+
+	while True:
+		event, values = window.read()
+
+		if event == "Exit" or event == sg.WIN_CLOSED or event == 'none':
+			break
+
+		if event == '-SHOW_PIN-':
+			if window['-SHOW_PIN-'].get():
+				window['-PIN-'].update(password_char='')
+			else:
+				window['-PIN-'].update(password_char='*')
+		
+		if event == '-PIN-': #!todo This triggers on every char added so perfect place to check for restrictions on pin/pass
+			print(window['-PIN-'].get())
+
+		if event == '-APPLY_PIN-':
+			print('Setting new pin to: ' + window['-PIN-'].get())
+			break
+
+		if event == '-CANCEL-': #!todo could go with exit but for now here in case I decide to do something extra with it.
+			break
+
+	window.close()
+
 def event_loop(window, data): #!todo functionize these events instead of bunch of stray code, for now hardcoded until using actual api calls
 	completeNameList = get_usr_data(data) #!todo, the ui lib adds a threading abstraction for slow/long operations (window.perform_long_operation) which could potentionally be used for async refresh, need to look better into async with the ui in general for this purpose.
 	mlist_right_click_options = ['Copy', 'Paste', 'Select All', 'Cut']
@@ -172,7 +200,7 @@ def event_loop(window, data): #!todo functionize these events instead of bunch o
 			change_pin_popup()
 
 		if event == '-DEL_USR-': #!todo confirmation pop up
-			None
+			delete_usr_popup()
 
 		if event == '-FILTER-':
 			new_list = [i for i in completeNameList if (values['-FILTER-'].lower() in i.__str__().lower() or values['-FILTER-'].lower() in i.vunetId.lower())]
