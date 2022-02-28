@@ -2,83 +2,51 @@ import PySimpleGUI as sg
 from window_layouts import *
 import api_layer as api
 
+windowStartWidth:int
+windowWideWidth:int
+
 """Windows"""
 def main_window_event_loop(): #!todo functionize these events instead of bunch of stray code, for now hardcoded until using actual api calls
-	data = api.load_dummy_dat()
-	completeNameList = api.get_usr_data(data) #!todo, the ui lib adds a threading abstraction for slow/long operations (window.perform_long_operation) which could potentionally be used for async refresh, need to look better into async with the ui in general for this purpose.
-	
+	global windowStartWidth
+	global windowWideWidth
+
+	usrData = api.load_dummy_data('users.json')
+	nameList = api.get_usr_data(usrData) #!todo, the ui lib adds a threading abstraction for slow/long operations (window.perform_long_operation) which could potentionally be used for async refresh, need to look better into async with the ui in general for this purpose.
+	prodData = api.load_dummy_data('products.json')
+	productList = api.get_prod_data(prodData)
+
+
 	layout = main_window_layout()
 	window = sg.Window("KnT", layout, resizable=True, return_keyboard_events=True, finalize=True) #!todo, replace python logo with cute tiny storm logo?
-	window['-USERLIST-'].update(completeNameList)
-	startWidth = window.size[0]
-	wideWidth = 0
+	window['-USERLIST-'].update(nameList)
+	window['-PRODUCTLIST-'].update(productList)
+	
+	currentTab = 'USER'
+	windowStartWidth = window.size[0]
+	windowWideWidth = 0
 
 	while True:
 		event, values = window.read() #!todo think about using elif for events, can there be more than one event per loop? lets assume no
-		enable_enter_clicks(event, window)
 		print(event)
+		print(values)
 
-		if event  in ("Exit", sg.WIN_CLOSED, 'none'):
+		enable_enter_clicks(event, window)
+		if event  in ("Exit", sg.WIN_CLOSED, 'None'):
 			break
 
-		if event == '-USERLIST-' and len(values['-USERLIST-']) > 0: #!todo helper function, kinda bloats here
-			Stormer = values['-USERLIST-'][0]
+		if event == '-TAB_SWITCH-':
+			match values['-TAB_SWITCH-']:
+				case '-USERTAB-':
+					currentTab = 'USER'
+				case '-PRODTAB-':
+					currentTab = 'PRODUCT'
+			continue
 
-			userInfo = api.find_user(Stormer.vunetId, data)
-
-			if userInfo == None:
-				continue
-
-			window['-FIRSTNAME-'].update(userInfo['firstname'])
-			window['-LASTNAME-'].update(userInfo['lastname'])
-			window['-VUNETID-'].update(userInfo['_id'])
-			window['-BALANCE-'].update(userInfo['balance'])
-			window['-USR_INFO_PANEL-'].update(visible=True)
-
-		#todo, pretty disgusting, need to figure out how to automaticly make a window size fit visable content/layout if possible, rn works first time, but visable->hidden->visable doesnt!
-			if wideWidth == 0:
-				window.refresh() #sg is perfectly capable of picking a good fit and resizing on its own, perhaps follow .update(visable=True) to figure out why it works on initial call/what functions causes dynamic resize based on content, might happen in the window refresh as well!
-				wideWidth = window.size[0]
-			window.size = (wideWidth, window.size[1])
-
-		if event == '-FILTER-':
-			new_list = [i for i in completeNameList if (values['-FILTER-'].lower() in str(i).lower() or values['-FILTER-'].lower() in i.vunetId.lower())] #todo, hate the x in y or x in z, why wont x in (y or z) work properly!
-			window['-USERLIST-'].update(new_list)
-
-		if event == '-ADD_USER-':
-			add_user_popup()
-
-		if event == '-APPLY_CHANGES-':  #!todo, finish api call and refactor there and here
-			dataOut = {}				#!todo Api design choice, possible to update vunetid or have to delete and add user for this?! #very important for this function, wait for api to take more form
-			dataOut['firstname'] = window['-FIRSTNAME-'].get()
-			dataOut['lastname'] = window['-LASTNAME-'].get()
-			dataOut['vunetid'] = window['-VUNETID-'].get()
-
-			print('updating: ' + str(dataOut))
-			#api.update_user(...)
-
-		if event == '-CHANGE_PIN-':
-			#!todo super duper important, change this, should not read this from input since admin might just write in there by accident without clicking 'apply changes'
-			change_pin_popup(window['-VUNETID-'].get()) 
-
-		if event == '-DEL_USR-':
-			fullName = window['-FIRSTNAME-'].get() + ' ' + window['-LASTNAME-'].get() #!todo same thing here, need to actually properly retrieve ID, just being lazy
-			if delete_usr_popup(fullName, window['-VUNETID-'].get()):
-				window['-USR_INFO_PANEL-'].update(visible=False)
-				window['-FILTER-'].SetFocus()
-				window.size = (startWidth, window.size[1]) #respect a users vertical resizes but force x size down their throat
-
-		if event == '-TRANSACTION-':
-			api.transaction(window['-VUNETID-'].get(), #!todo .
-			window['-BALANCE_OPERAND-'].get(),
-			window['-TRANSACTION_COMMENT-'].get()
-			)
-
-
-		if event in mlist_right_click_options:
-			do_clipboard_operation(event, window, window['-TRANSACTION_COMMENT-'])
-		
-		completeNameList = api.get_usr_data(data) #!todo async or something prolly
+		match currentTab:
+			case 'USER':
+				user_tab_ehandler(window, event, values, usrData, nameList)
+			case 'PRODUCT':
+				product_tab_ehandler(window, event, values, prodData, productList)
 
 	window.close()
 
@@ -90,7 +58,7 @@ def change_pin_popup(vunetId):
 		event, values = window.read()
 		enable_enter_clicks(event, window)
 
-		if event  in ("Exit", sg.WIN_CLOSED, 'none'):
+		if event  in ("Exit", sg.WIN_CLOSED, 'None'):
 			break
 
 		if event == '-SHOW_PIN-':
@@ -98,7 +66,7 @@ def change_pin_popup(vunetId):
 				window['-PIN-'].update(password_char='')
 			else:
 				window['-PIN-'].update(password_char='*')
-		
+
 		if event == '-PIN-': #!todo This triggers on every char added so perfect place to check for restrictions on pin/pass
 			print(window['-PIN-'].get())
 
@@ -122,7 +90,7 @@ def delete_usr_popup(name, vunetId):
 		enable_enter_clicks(event, window)
 		ret = False
 
-		if event in ("Exit", sg.WIN_CLOSED, 'none', '-NO_DEL-'):
+		if event in ("Exit", sg.WIN_CLOSED, 'None', '-NO_DEL-'):
 			break
 
 		if event == '-CONFIRM_DELETE-':
@@ -141,7 +109,7 @@ def add_user_popup():
 		event, values = window.read()
 		enable_enter_clicks(event, window)
 
-		if event  in ("Exit", sg.WIN_CLOSED, 'none', '-CANCEL-'):
+		if event in ("Exit", sg.WIN_CLOSED, 'None', '-CANCEL-'):
 			break
 
 		if event == '-ADD_USER-': #!todo add error checking when less tired and more perceptive.
@@ -159,6 +127,75 @@ def add_user_popup():
 
 	window.close()
 
+"""specefic event handlers"""
+def user_tab_ehandler(window, event, values, usrData, nameList):
+	global windowStartWidth
+	global windowWideWidth
+
+	if event == '-USERLIST-' and len(values['-USERLIST-']) > 0: #!todo helper function, kinda bloats here
+		Stormer = values['-USERLIST-'][0]
+
+		userInfo = api.find_user(Stormer.vunetId, usrData) #seems useless now but kept for later, not sure if I want to load data locally when a user is selected or if I want to request it from server
+
+		if userInfo == None: #!todo check if empty list still works
+			return
+
+		window['-FIRSTNAME-'].update(userInfo['firstname'])
+		window['-LASTNAME-'].update(userInfo['lastname'])
+		window['-VUNETID-'].update(userInfo['_id'])
+		window['-BALANCE-'].update(userInfo['balance'])
+		window['-USR_INFO_PANEL-'].update(visible=True)
+
+		#todo, pretty disgusting, need to figure out how to automaticly make a window size fit visable content/layout if possible, rn works first time, but visable->hidden->visable doesnt!
+		if windowWideWidth == 0:
+			window.refresh() #sg is perfectly capable of picking a good fit and resizing on its own, perhaps follow .update(visable=True) to figure out why it works on initial call/what functions causes dynamic resize based on content, might happen in the window refresh as well!
+			windowWideWidth = window.size[0]
+		window.size = (windowWideWidth, window.size[1])
+
+	if event == '-U_FILTER-':
+		new_list = [i for i in nameList if (values['-U_FILTER-'].lower() in str(i).lower() or values['-U_FILTER-'].lower() in i.vunetId.lower())] #todo, hate the x in y or x in z, why wont x in (y or z) work properly!
+		window['-USERLIST-'].update(new_list)
+
+	if event == '-ADD_USER-':
+		add_user_popup()
+
+	if event == '-APPLY_CHANGES-':  #!todo, finish api call and refactor there and here
+		dataOut = {}				#!todo Api design choice, possible to update vunetid or have to delete and add user for this?! #very important for this function, wait for api to take more form
+		dataOut['firstname'] = window['-FIRSTNAME-'].get()
+		dataOut['lastname'] = window['-LASTNAME-'].get()
+		dataOut['vunetid'] = window['-VUNETID-'].get()
+
+		print('updating: ' + str(dataOut))
+		#api.update_user(...)
+
+	if event == '-CHANGE_PIN-':
+		#!todo super duper important, change this, should not read this from input since admin might just write in there by accident without clicking 'apply changes'
+		change_pin_popup(window['-VUNETID-'].get())
+
+	if event == '-DEL_USR-':
+		fullName = window['-FIRSTNAME-'].get() + ' ' + window['-LASTNAME-'].get() #!todo same thing here, need to actually properly retrieve ID, just being lazy
+		if delete_usr_popup(fullName, window['-VUNETID-'].get()):
+			window['-USR_INFO_PANEL-'].update(visible=False)
+			window['-U_FILTER-'].SetFocus()
+			window.size = (windowStartWidth, window.size[1]) #respect a users vertical resizes but force x size down their throat
+
+	if event == '-TRANSACTION-':
+		api.transaction(window['-VUNETID-'].get(), #!todo .
+		  window['-BALANCE_OPERAND-'].get(),
+		  window['-TRANSACTION_COMMENT-'].get()
+		)
+
+
+	if event in mlist_right_click_options:
+		do_clipboard_operation(event, window, window['-TRANSACTION_COMMENT-'])
+
+	nameList = api.get_usr_data(usrData) #!todo async or something prolly
+
+def product_tab_ehandler(window, event, values, productData, productList):
+	
+	if event == '-P_FILTER-':
+		new_list = [i for i in productList if (values['-P_FILTER-'].lower() in str(i).lower() or values['-P_FILTER-'].lower() in i.id.lower())] #todo, hate the x in y or x in z, why wont x in (y or z) work properly!
+		window['-PRODUCTLIST-'].update(new_list)
 
 """Helpers"""
 mlist_right_click_options = ['Copy', 'Paste', 'Select All', 'Cut']

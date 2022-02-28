@@ -13,6 +13,16 @@ For personal use, didnt wanna save it somewhere else where I forget.
   }
 ]
 
+[
+  '{{repeat(15, 30)}}',
+  {
+    id: '{{objectId()}}',
+    name: '{{lorem(1, "Word")}}',
+    price: '{{integer(10, 500)}}',
+    hidden: '{{bool()}}'
+  }
+]
+
 at 
 
 https://json-generator.com/#

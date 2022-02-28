@@ -1,34 +1,32 @@
 import PySimpleGUI as sg
 
 mline_right_click_menu = ['', ['Copy', 'Paste', 'Select All', 'Cut']]
+filter_tooltip = "Enter a (partial) name or vunetID to filter the list!"
 
 """Main window that ties it all together"""
 def main_window_layout():
 	sg.theme('SystemDefaultForReal')
 	userLayout = usr_window_layout()
-	productLayout = [[sg.Text('products')]] #!todo products...
+	productLayout = product_window_layout()
 
 	mainLayout = [[
 		sg.TabGroup([
 				[sg.Tab('Stormers', userLayout, key='-USERTAB-'), sg.Tab('Products', productLayout, key='-PRODTAB-')]
-			], expand_x=True, expand_y=True)
+			], expand_x=True, expand_y=True, enable_events=True, key='-TAB_SWITCH-')
 	]]
 
 	return mainLayout
 
 """
-Window for the user tab, includes a list of people and an info panel with details
-Expects to be passed a list of users and will fill list based on __str__() method of objects in the list
+Window for the user tab, includes a list of people and an info panel with detailsW
 """
 def usr_window_layout(): #todo split up in few more functions!
 	#!todo add refresh btn to reload, perhaps
 
-	filter_tooltip = "Enter a (partial) name or vunetID to filter the list!"
-
 	leftUsrCol = sg.Frame('Stormer people', font='Any 16', layout=[
 	  [sg.Listbox(values=[], select_mode=sg.SELECT_MODE_SINGLE, enable_events=True,
 	    size=(40, 20), key='-USERLIST-', expand_y=True)],
-	  [sg.Text('Search:', tooltip=filter_tooltip), sg.Input(size=(25, 1), focus=True, enable_events=True, key='-FILTER-', tooltip=filter_tooltip),
+	  [sg.Text('Search:', tooltip=filter_tooltip), sg.Input(size=(25, 1), focus=True, enable_events=True, key='-U_FILTER-', tooltip=filter_tooltip),
 		sg.Button('Add', size=5, enable_events=True, key='-ADD_USER-')]
 	], element_justification='l', expand_y=True)
 
@@ -58,6 +56,15 @@ def usr_window_layout(): #todo split up in few more functions!
 
 	return userLayout
 
+"""Window for the products tab"""
+def product_window_layout():
+	leftCol = sg.Frame('Products', font='Any 16', layout=[
+	  [sg.Listbox(values=[], select_mode=sg.SELECT_MODE_SINGLE, enable_events=True,
+	    size=(40, 20), key='-PRODUCTLIST-', expand_y=True)],
+	  [sg.Text('Search:', tooltip=filter_tooltip), sg.Input(size=(25, 1), focus=True, enable_events=True, key='-P_FILTER-', tooltip=filter_tooltip),
+		sg.Button('Add', size=5, enable_events=True, key='-ADD_PRODUCT-')]
+	], element_justification='l', expand_y=True)
+	return [[leftCol]]
 
 """
 Specefic window used for adding a new user.

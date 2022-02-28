@@ -1,6 +1,7 @@
 import json
 import pathlib
-from stormer import Stormer
+from storageClasses import Stormer
+from storageClasses import Product
 
 #for now all mock calls on the dummy data, intention is to later abstract or atleast wrap all api calls through here
 
@@ -9,13 +10,14 @@ from stormer import Stormer
 # is api caller solely repsonsible for making good calls
 # or double work (both sides do their own checks), prolly this.
 
-def load_dummy_dat():
-	filePath = pathlib.Path(pathlib.Path(__file__).parent, 'names.json').resolve()
+def load_dummy_data(file):
+	filePath = pathlib.Path(pathlib.Path(__file__).parent, file).resolve()
 	with open(filePath, 'r') as dummyboidatafile:
 		dummyData = json.load(dummyboidatafile)
 
 	print('dummy data contains ' + str(len(dummyData)) + ' entries.')
 	return dummyData
+
 
 def get_usr_data(inData): #works on temp dummy data, not sure what api calls I get yet!
 	userList = []
@@ -23,9 +25,19 @@ def get_usr_data(inData): #works on temp dummy data, not sure what api calls I g
 	for user in inData: #!todo, if time for fun try a list comprehension instead!
 		userList.append(Stormer(user['firstname'], user['lastname'], user['_id'], user['balance']))
 
-	userList.sort(key=lambda x: x.__str__()) # performance note (in python, hilarious!) refactor to use operator instead of lambda might* be better 
+	userList.sort(key=lambda x: str(x)) # performance note (in python, hilarious!) refactor to use operator instead of lambda might* be better 
 
 	return userList
+
+def get_prod_data(inData): #works on temp dummy data, not sure what api calls I get yet!
+	productList = []
+
+	for product in inData: #!todo, if time for fun try a list comprehension instead!
+		productList.append(Product(product['name'], product['id'], product['price'], product['hidden']))
+
+	productList.sort(key=lambda x: str(x)) # performance note (in python, hilarious!) refactor to use operator instead of lambda might* be better 
+
+	return productList
 
 def find_user(id, data): #temp function for dummy data, will have to be refactored based on how data is pulled on init and refreshed/loaded on user selection from remote db api
 	for user in data:
@@ -33,6 +45,14 @@ def find_user(id, data): #temp function for dummy data, will have to be refactor
 			return user
 
 	return None
+
+def find_product(id, data): #temp function for dummy data, will have to be refactored based on how data is pulled on init and refreshed/loaded on user selection from remote db api
+	for user in data:
+		if user['_id'] == id:
+			return user
+
+	return None
+
 
 def add_user(firstName, lastName, vunetId, deposit, comment):
 	dataOut = {}

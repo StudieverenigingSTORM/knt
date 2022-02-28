@@ -31,3 +31,14 @@ class Stormer():
 
 	def __str__(self):
 		return self.firstName + ' ' + self.lastName
+
+
+class Product():
+	def __init__(self, name, id, price, hidden):
+		self.name = name
+		self.id = id
+		self.price = price
+		self.hidden = hidden
+
+	def __str__(self):
+		return self.name
