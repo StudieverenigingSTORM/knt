@@ -1,0 +1,28 @@
+For personal use, didnt wanna save it somewhere else where I forget.
+
+[
+  '{{repeat(300, 500)}}',
+  {
+    _id: '{{objectId()}}',
+    balance: '{{integer(0, 3000)}}',
+    age: '{{integer(16, 28)}}',
+    firstname: '{{firstName()}}',
+    lastname: '{{surname()}}',
+    address: '{{integer(100, 999)}} {{street()}}, {{city()}}, {{state()}}, {{integer(100, 10000)}}'
+
+  }
+]
+
+[
+  '{{repeat(15, 30)}}',
+  {
+    id: '{{objectId()}}',
+    name: '{{lorem(1, "Word")}}',
+    price: '{{integer(10, 500)}}',
+    hidden: '{{bool()}}'
+  }
+]
+
+at 
+
+https://json-generator.com/#
