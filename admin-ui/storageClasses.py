@@ -39,6 +39,7 @@ class Product():
 		self.id = id
 		self.price = price
 		self.hidden = hidden
+		#maybe added a comment string?
 
 	def __str__(self):
 		return self.name

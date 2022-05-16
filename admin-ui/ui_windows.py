@@ -2,10 +2,9 @@ import PySimpleGUI as sg
 from window_layouts import *
 import api_layer as api
 
-windowStartWidth:int
+windowStartWidth:int #these are based on user window, might need seperate ones for P window depending on layout
 windowWideWidth:int
 
-"""Windows"""
 def main_window_event_loop(): #!todo functionize these events instead of bunch of stray code, for now hardcoded until using actual api calls
 	global windowStartWidth
 	global windowWideWidth
@@ -38,8 +37,16 @@ def main_window_event_loop(): #!todo functionize these events instead of bunch o
 			match values['-TAB_SWITCH-']:
 				case '-USERTAB-':
 					currentTab = 'USER'
+					if (windowWideWidth != 0): # window size handling needs improving, a lot...
+						window['-PROD_INFO_PANEL-'].update(visible=False)
+						window['-U_FILTER-'].SetFocus()
+						window.size = (windowStartWidth, window.size[1]) #respect a users vertical resizes but force x size down their throat
 				case '-PRODTAB-':
 					currentTab = 'PRODUCT'
+					if (windowWideWidth != 0):
+						window['-USR_INFO_PANEL-'].update(visible=False)
+						window['-P_FILTER-'].SetFocus()
+						window.size = (windowStartWidth, window.size[1]) #respect a users vertical resizes but force x size down their throat
 			continue
 
 		match currentTab:
@@ -49,6 +56,8 @@ def main_window_event_loop(): #!todo functionize these events instead of bunch o
 				product_tab_ehandler(window, event, values, prodData, productList)
 
 	window.close()
+
+"""sub windows"""
 
 def change_pin_popup(vunetId):
 	layout = change_pin_window_layout()
@@ -80,7 +89,7 @@ def change_pin_popup(vunetId):
 	window.close()
 
 def delete_usr_popup(name, vunetId):
-	layout = delete_usr_window_layout()
+	layout = delete_confirm_window_layout()
 	window = sg.Window("Are you sure?", layout, modal=True, return_keyboard_events=True, finalize=True)
 	msg = "You are about to remove " + name + " from the system!"
 	window['-TEXT-'].update(msg) #window.read() will draw it in!
@@ -127,30 +136,56 @@ def add_user_popup():
 
 	window.close()
 
+def add_product_popup():
+	layout = add_product_window_layout()
+	window = sg.Window("Add product", layout, modal=True, return_keyboard_events=True)
+
+	while True:
+		event, values = window.read()
+		enable_enter_clicks(event, window)
+
+		if event in ("Exit", sg.WIN_CLOSED, 'None', '-CANCEL-'):
+			break
+
+		if event == '-ADD_PROD-': #!todo add error checking when less tired and more perceptive.
+			api.add_product(
+				name = window['-PRODUCTNAME-'].get(),
+				price = window['-PRODUCTPRICE-'].get(),
+				id =  window['-PRODUCTID-'].get(),
+			)
+			break #!todo report back to user how we went perhaps?
+
+	window.close()
+
+def delete_prod_popup(name, id):
+	layout = delete_confirm_window_layout()
+	window = sg.Window("Are you sure?", layout, modal=True, return_keyboard_events=True, finalize=True)
+	msg = "You are about to remove " + name + " from the system!"
+	window['-TEXT-'].update(msg) #window.read() will draw it in!
+
+	while True:
+		event, values = window.read()
+		enable_enter_clicks(event, window)
+		ret = False
+
+		if event in ("Exit", sg.WIN_CLOSED, 'None', '-NO_DEL-'):
+			break
+
+		if event == '-CONFIRM_DELETE-':
+			api.del_product(id)
+			ret = True
+			break #!todo send delete request!
+
+	window.close()
+	return ret
+
 """specefic event handlers"""
 def user_tab_ehandler(window, event, values, usrData, nameList):
 	global windowStartWidth
 	global windowWideWidth
 
-	if event == '-USERLIST-' and len(values['-USERLIST-']) > 0: #!todo helper function, kinda bloats here
-		Stormer = values['-USERLIST-'][0]
-
-		userInfo = api.find_user(Stormer.vunetId, usrData) #seems useless now but kept for later, not sure if I want to load data locally when a user is selected or if I want to request it from server
-
-		if userInfo == None: #!todo check if empty list still works
-			return
-
-		window['-FIRSTNAME-'].update(userInfo['firstname'])
-		window['-LASTNAME-'].update(userInfo['lastname'])
-		window['-VUNETID-'].update(userInfo['_id'])
-		window['-BALANCE-'].update(userInfo['balance'])
-		window['-USR_INFO_PANEL-'].update(visible=True)
-
-		#todo, pretty disgusting, need to figure out how to automaticly make a window size fit visable content/layout if possible, rn works first time, but visable->hidden->visable doesnt!
-		if windowWideWidth == 0:
-			window.refresh() #sg is perfectly capable of picking a good fit and resizing on its own, perhaps follow .update(visable=True) to figure out why it works on initial call/what functions causes dynamic resize based on content, might happen in the window refresh as well!
-			windowWideWidth = window.size[0]
-		window.size = (windowWideWidth, window.size[1])
+	if is_list_selection(event, values):
+		load_user(values, window, usrData)
 
 	if event == '-U_FILTER-':
 		new_list = [i for i in nameList if (values['-U_FILTER-'].lower() in str(i).lower() or values['-U_FILTER-'].lower() in i.vunetId.lower())] #todo, hate the x in y or x in z, why wont x in (y or z) work properly!
@@ -185,7 +220,6 @@ def user_tab_ehandler(window, event, values, usrData, nameList):
 		  window['-TRANSACTION_COMMENT-'].get()
 		)
 
-
 	if event in mlist_right_click_options:
 		do_clipboard_operation(event, window, window['-TRANSACTION_COMMENT-'])
 
@@ -193,9 +227,33 @@ def user_tab_ehandler(window, event, values, usrData, nameList):
 
 def product_tab_ehandler(window, event, values, productData, productList):
 	
+	if is_list_selection(event, values):
+		load_product(values, window, productData)
+
 	if event == '-P_FILTER-':
 		new_list = [i for i in productList if (values['-P_FILTER-'].lower() in str(i).lower() or values['-P_FILTER-'].lower() in i.id.lower())] #todo, hate the x in y or x in z, why wont x in (y or z) work properly!
 		window['-PRODUCTLIST-'].update(new_list)
+
+	if event == '-ADD_PRODUCT-':
+		add_product_popup()
+
+	if event == '-APPLY_CHANGES_P-':  #!todo, finish api call and refactor there and here
+		dataOut = {}				#!todo Api design choice, possible to update vunetid or have to delete and add user for this?! #very important for this function, wait for api to take more form
+		dataOut['name'] = window['-PRODUCTNAME-'].get()
+		dataOut['price'] = window['-PRODUCTPRICE-'].get()
+		dataOut['id'] = window['-PRODUCTID-'].get()
+
+		print('updating: ' + str(dataOut))
+		#api.update_product(...)
+
+	if event == '-DEL_PROD-':
+		if delete_prod_popup(window['-PRODUCTNAME-'].get(), window['-PRODUCTID-'].get()):
+			window['-PROD_INFO_PANEL-'].update(visible=False)
+			window['-P_FILTER-'].SetFocus()
+			window.size = (windowStartWidth, window.size[1]) #respect a users vertical resizes but force x size down their throat
+
+	productList = api.get_prod_data(productData) #!todo async or something prolly
+
 
 """Helpers"""
 mlist_right_click_options = ['Copy', 'Paste', 'Select All', 'Cut']
@@ -229,5 +287,54 @@ def enable_enter_clicks(event, window):
 
 	if event in ('\r', QT_ENTER_KEY1, QT_ENTER_KEY2):
 		elem = window.find_element_with_focus()
-		if elem is not None and elem.Type == sg.ELEM_TYPE_BUTTON:
+		if elem is not None and elem.Type == sg.ELEM_TYPE_BUTTON: #could be extended for other elements as well.
 			elem.Click()
+
+def is_list_selection(event, values):
+	# Basically checks whether a user or product has been clicked on.
+	return event == '-USERLIST-' and len(values['-USERLIST-']) > 0 or \
+		event == '-PRODUCTLIST-' and len(values['-PRODUCTLIST-']) > 0
+
+def load_user(values, window, usrData):
+	global windowStartWidth
+	global windowWideWidth
+
+	stormer = values['-USERLIST-'][0]
+
+	userInfo = api.find_user(stormer.vunetId, usrData) #seems useless now but kept for later, not sure if I want to load data locally when a user is selected or if I want to request it from server (caching specification)
+
+	if userInfo == None: #fail safe, shouldn't be reachable!
+		return
+
+	window['-FIRSTNAME-'].update(userInfo['firstname'])
+	window['-LASTNAME-'].update(userInfo['lastname'])
+	window['-VUNETID-'].update(userInfo['_id'])
+	window['-BALANCE-'].update(userInfo['balance'])
+	window['-USR_INFO_PANEL-'].update(visible=True)
+
+	#todo, pretty disgusting, need to figure out how to automaticly make a window size fit visable content/layout if possible, rn works first time, but visable->hidden->visable doesnt!
+	if windowWideWidth == 0:
+		window.refresh() #sg is perfectly capable of picking a good fit and resizing on its own, perhaps follow .update(visable=True) to figure out why it works on initial call/what functions causes dynamic resize based on content, might  atl. happen in the window refresh as well!
+		windowWideWidth = window.size[0]
+	window.size = (windowWideWidth, window.size[1])
+
+def load_product(values, window, productData):
+	global windowStartWidth
+	global windowWideWidth
+
+	product = values['-PRODUCTLIST-'][0]
+	productInfo = api.find_product(product.id, productData)
+
+	if productInfo == None: #fail safe, shouldn't be reachable!
+		return
+
+	window['-PRODUCTNAME-'].update(productInfo['name'])
+	window['-PRODUCTPRICE-'].update(productInfo['price'])
+	window['-PRODUCTID-'].update(productInfo['id'])
+	window['-PROD_INFO_PANEL-'].update(visible=True)
+
+	#todo, pretty disgusting, need to figure out how to automaticly make a window size fit visable content/layout if possible, rn works first time, but visable->hidden->visable doesnt!
+	if windowWideWidth == 0:
+		window.refresh() #sg is perfectly capable of picking a good fit and resizing on its own, perhaps follow .update(visable=True) to figure out why it works on initial call/what functions causes dynamic resize based on content, might  atl. happen in the window refresh as well!
+		windowWideWidth = window.size[0]
+	window.size = (windowWideWidth, window.size[1])

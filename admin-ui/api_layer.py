@@ -47,21 +47,28 @@ def find_user(id, data): #temp function for dummy data, will have to be refactor
 	return None
 
 def find_product(id, data): #temp function for dummy data, will have to be refactored based on how data is pulled on init and refreshed/loaded on user selection from remote db api
-	for user in data:
-		if user['_id'] == id:
-			return user
+	for product in data:
+		if product['id'] == id:
+			return product
 
 	return None
-
 
 def add_user(firstName, lastName, vunetId, deposit, comment):
 	dataOut = {}
 	dataOut['firstname'] = firstName
 	dataOut['lastname'] = lastName
 	dataOut['vunetid'] = vunetId
-	if deposit != '':  #naughty digits only! tooltip?! Also always enforce a initial deposit even if 0?
+	if deposit != '':  #digits only! tooltip?! Also always enforce a initial deposit even if 0?
 		dataOut['transaction amount'] = deposit # wait on db design, check int/float (depening on db design) and what about sign, do we ever take money :(
 		dataOut['transaction comment'] = comment #this is all intentionally very crude, not gonna invest time until I have some insight in how we store money (float or int) and how comments/logs are gonna be handled!
+
+	print('updating: ' + json.dumps(dataOut))
+
+def add_product(name, price, id):
+	dataOut = {}
+	dataOut['name'] = name
+	dataOut['price'] = price
+	dataOut['id'] = id
 
 	print('updating: ' + json.dumps(dataOut))
 
@@ -71,7 +78,11 @@ def update_user(oldVunetId, firstName = None, lastName = None, newVunetId = None
 
 def del_user(vunetId):
 	dataOut = {'vunetId' : vunetId}
-	print('deleting  id: ' + json.dumps(dataOut))
+	print('deleting id: ' + json.dumps(dataOut))
+
+def del_product(id):
+	dataOut = {'prodid' : id}
+	print('deleting id: ' + json.dumps(dataOut))
 
 def update_pin(vunetId, pin):
 	dataOut = {'vunetId' : vunetId, 'pin' : pin}

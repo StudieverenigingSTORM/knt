@@ -64,12 +64,29 @@ def product_window_layout():
 	  [sg.Text('Search:', tooltip=filter_tooltip), sg.Input(size=(25, 1), focus=True, enable_events=True, key='-P_FILTER-', tooltip=filter_tooltip),
 		sg.Button('Add', size=5, enable_events=True, key='-ADD_PRODUCT-')]
 	], element_justification='l', expand_y=True)
-	return [[leftCol]]
+
+	productInfo = sg.Col([
+	  [sg.Text('Name:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PRODUCTNAME-')],
+	  [sg.Text('Price:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PRODUCTPRICE-')],
+	  [sg.Text('Product id:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PRODUCTID-')],
+	])
+
+	buttonRow = [sg.Push(), sg.Submit('Apply Changes', key='-APPLY_CHANGES_P-', size=(11, 1)), \
+		sg.Submit('Delete product', key='-DEL_PROD-', size=(11, 1)), sg.Push()]
+
+	rightCol = sg.Frame('Product Info', font='Any 16',
+	  layout=[[productInfo], buttonRow],
+	  key='-PROD_INFO_PANEL-', visible=False, element_justification='l', expand_x=True, expand_y=True)
+
+	prodLayout = [sg.vtop([leftCol, rightCol], expand_y=True)]
+
+	return prodLayout
+
 
 """
 Specefic window used for adding a new user.
 """
-def add_usr_window_layout(): #!todo add cancel button!
+def add_usr_window_layout():
 	personalInfo = sg.Col([
 	  [sg.Text('Name:', size=8), sg.Input(default_text = '', size=(25, 1), key='-FIRSTNAME-')],
 	  [sg.Text('Last Name:', size=8), sg.Input(default_text = '', size=(25, 1), key='-LASTNAME-')],
@@ -103,10 +120,24 @@ def change_pin_window_layout():
 	return [[element]]
 
 
-"""Window for confirmation of deleting user"""
-def delete_usr_window_layout():
+"""Window for confirmation of deleting"""
+def delete_confirm_window_layout():
 	layout = [
 		[sg.Text('', key='-TEXT-')],
 		[sg.Push(), sg.Submit('Noo!!!', key='-NO_DEL-'), sg.Submit("Confirm", key='-CONFIRM_DELETE-'), sg.Push()]
 	]
 	return layout
+
+"""Window for adding product"""
+def add_product_window_layout():
+	productInfo = sg.Col([
+	  [sg.Text('Name:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PRODUCTNAME-')], #!todo reusing key names, double check that this work and doesnt introduce bugs in the other places where this key name is used!
+	  [sg.Text('Price:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PRODUCTPRICE-')],
+	  [sg.Text('ID:', size=8), sg.Input(default_text = '', size=(25, 1), key='-PRODUCTID-')],
+	])
+
+	buttonRow = [sg.Push(), sg.Submit('Add product', key='-ADD_PROD-'), sg.Submit('Cancel', key='-CANCEL-')]
+
+	layout = sg.Frame('', layout=[[productInfo], buttonRow])
+	return [[layout]]
+
