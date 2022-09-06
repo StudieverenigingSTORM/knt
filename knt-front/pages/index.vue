@@ -18,7 +18,7 @@ export default Vue.extend({
     },
     methods: {
         getProducts() {
-            this.$axios.get('/products').then((response) => {
+            this.$axios.get('/api/products').then((response) => {
                 this.products = response.data
             });
         }
