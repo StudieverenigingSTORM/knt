@@ -11,8 +11,7 @@ class User(db.Model):
     last_name = db.Column(db.Text)
     nickname = db.Column(db.Text)
     password = db.Column(db.String(64))
-    vunet_id = db.Column(db.String(6))
-    balance = db.Column(db.Text)
+    balance = db.Column(db.String)
 
     def __repr__(self):
         return '<User {}>'.format(self.first_name)
@@ -20,7 +19,7 @@ class User(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("first_name", "last_name", "nickname", "balance")
+        fields = ("id", "first_name", "last_name", "nickname", "password", "balance")
         model = User
 
 
@@ -28,24 +27,29 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
-class UsersListResource(Resource):
+class UserListResource(Resource):
     def get(self):
         u = User.query.all()
         response = users_schema.dump(u)
         return response
 
     def post(self):
-        u = User(first_name=request.json['first_name'], last_name=request.json['last_name'],
-                 nickname=request.json['nickname'], password=request.json['password'], balance=request.json['balance'], vunet_id=request.json['vunet_id'])
+        u = User(
+            first_name=request.json['first_name'],
+            last_name=request.json['last_name'],
+            nickname=request.json['nickname'],
+            password=request.json['password'],
+            balance=request.json['balance']
+        )
         db.session.add(u)
         db.session.commit()
-        return 'User Created', 204
+        return 'User created', 204
 
 
 class UserResource(Resource):
     def patch(self, id):
-        u = User.get_or_404(id)
-        
+        u = User.query.get_or_404(id)
+
         if 'first_name' in request.json:
             u.first_name = request.json['first_name']
         if 'last_name' in request.json:
@@ -56,17 +60,15 @@ class UserResource(Resource):
             u.password = request.json['password']
         if 'balance' in request.json:
             u.balance = request.json['balance']
-        if 'vunet_id' in request.json:
-            u.vunet_id = request.json['vunet_id']
-        
+
         db.session.commit()
-        return 'User patched', 200
-    
+        return 'Patched', 200
+
     def delete(self, id):
         u = User.query.get_or_404(id)
         db.session.delete(u)
         db.session.commit()
-        return 'User deleted', 200
+        return '', 204
 
 
 """ PRODUCTS """
