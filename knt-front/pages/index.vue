@@ -5,7 +5,7 @@
 
         <div v-for="user in searchedUsers" :key="user.id">
             <b-card v-b-modal.modal-1 :title="user.first_name + ' ' + user.last_name" class="user-card"
-                    v-on:click="updateUser(user.first_name, user.last_name); userSelected = !userSelected"></b-card>
+                    v-on:click="updateUser(user.first_name, user.last_name, user.password); userSelected = !userSelected"></b-card>
         </div>
 
         <!--     Section for th login pop-up-->
@@ -44,17 +44,22 @@
 
 <script lang="ts">
 import Vue from 'vue'
-let selectedUser = 'Test Test'
-const testPassword = '  ';
+
+interface User{
+    username: string;
+    password: string;
+}
+
 export default Vue.extend({
     name: 'IndexPage',
     data() {
         return {
             search: '',
+            selectedUser: {} as User,
             userSelected: false,
             inputPassword: '',
             passwordState: (null as any),
-            users: []
+            users: [],
         };
     },
     mounted() {
@@ -66,14 +71,20 @@ export default Vue.extend({
                 this.users = response.data
             })
         },
+
         getSelectedUser() {
-            return selectedUser;
+            return this.selectedUser.username;
         },
-        updateUser(firstName: string, lastName: string) {
-            selectedUser = firstName + ' ' + lastName;
+
+        updateUser(firstName: string, lastName: string, password: string) {
+            this.selectedUser.username = firstName + ' ' + lastName;
+            this.selectedUser.password = password;
         },
+
         handleOK(){
-            if(this.inputPassword === testPassword){
+            console.log(this.selectedUser.password);
+
+            if(this.inputPassword === this.selectedUser.password){
                 this.passwordState = true
                 console.log("Logged in successfully")
                 this.$router.push('/products')
@@ -83,11 +94,13 @@ export default Vue.extend({
                 console.log("Incorrect password")
             }
         },
+
         resetModal(){
             this.inputPassword = ''
             this.passwordState = null
         }
     },
+
     computed: {
         searchedUsers() {
             return (this as any).users.filter((user: any) => {
