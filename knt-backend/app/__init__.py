@@ -18,3 +18,6 @@ from app import models
 
 api.add_resource(models.ProductListResource, '/products')
 api.add_resource(models.ProductResource, '/product/<int:id>')
+
+api.add_resource(models.UserListResource, '/users')
+api.add_resource(models.UserResource, '/users/<int:id>')
