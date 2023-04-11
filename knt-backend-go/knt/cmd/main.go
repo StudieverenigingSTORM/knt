@@ -40,7 +40,7 @@ func main() {
 	r := chi.NewRouter()
 	kntrouter.AssignMiddlewares(r)
 	kntrouter.AssignRoutes(r, db)
-
+	//Sanity checck gets executed before the listen because listen blocks the thread.
 	go sanityCheck()
 
 	fmt.Println("Attempting to start listening on port: " + viper.GetString("port"))

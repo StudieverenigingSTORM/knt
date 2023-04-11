@@ -13,17 +13,17 @@ func ping(w http.ResponseWriter, r *http.Request) {
 }
 
 func getProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		products := kntdatabase.GetAllProducts(db)
-		jsonString, _ := json.Marshal(products)
-		fmt.Fprintf(w, string(jsonString))
-	}
+	return generateJsonResponse(kntdatabase.GetAllProducts(db))
 }
 
 func getUsers(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return generateJsonResponse(kntdatabase.GetAllUsers(db))
+
+}
+
+func generateJsonResponse[K any](data K) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		users := kntdatabase.GetAllUsers(db)
-		jsonString, _ := json.Marshal(users)
+		jsonString, _ := json.Marshal(data)
 		fmt.Fprintf(w, string(jsonString))
 	}
 }
