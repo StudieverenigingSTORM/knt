@@ -34,17 +34,8 @@ func main() {
 
 	r := mux.NewRouter()
 
-	//TODO: delete this test function
-	r.HandleFunc("/books/{title}/page/{page}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Hello!")
-		vars := mux.Vars(r)
-		title := vars["title"]
-		page := vars["page"]
-
-		fmt.Fprintf(w, "You've requested the book: %s on page %s\n", title, page)
-	})
-
 	kntrouter.AssignRoutes(r, db)
+	kntrouter.AssignMiddlewares(r)
 
 	go sanityCheck()
 

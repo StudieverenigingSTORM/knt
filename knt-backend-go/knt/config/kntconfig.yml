@@ -1,10 +1,10 @@
 port: ":5000"
 database: "./app.db"
-
+cors: "*"
 
 routes: 
   ping: "/ping"
-  getUserList: "/users"
+  getUsers: "/users"
   getUser: "/user/validate" #This call must contain an basic auth header of username and password. 
                     #This is not the most secure solution available, but for the purposes of this project it will suffice.
   spendMoney: "/user/spend/{amount}" #same as the previous call 

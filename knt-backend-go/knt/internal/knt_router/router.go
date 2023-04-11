@@ -11,4 +11,5 @@ func AssignRoutes(r *mux.Router, db *sql.DB) {
 	configRoutes := viper.Sub("routes")
 	r.HandleFunc(configRoutes.GetString("ping"), ping)
 	r.HandleFunc(configRoutes.GetString("getProducts"), getProducts(db))
+	r.HandleFunc(configRoutes.GetString("getUsers"), getUsers(db))
 }

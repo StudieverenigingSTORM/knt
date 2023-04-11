@@ -19,3 +19,11 @@ func getProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, string(jsonString))
 	}
 }
+
+func getUsers(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		users := kntdatabase.GetAllUsers(db)
+		jsonString, _ := json.Marshal(users)
+		fmt.Fprintf(w, string(jsonString))
+	}
+}
