@@ -1,4 +1,4 @@
-module knt_router
+module kntrouter
 
 go 1.18
 

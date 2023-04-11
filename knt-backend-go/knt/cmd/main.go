@@ -3,8 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	kntdatabase "knt_database"
-	"knt_router"
+	"kntrouter"
 	"log"
 	"net/http"
 	"time"
@@ -33,8 +32,6 @@ func main() {
 	}
 	defer db.Close()
 
-	fmt.Println(kntdatabase.GetAllProducts(db))
-
 	r := mux.NewRouter()
 
 	//TODO: delete this test function
@@ -47,7 +44,7 @@ func main() {
 		fmt.Fprintf(w, "You've requested the book: %s on page %s\n", title, page)
 	})
 
-	knt_router.AssignRoutes(r)
+	kntrouter.AssignRoutes(r, db)
 
 	go sanityCheck()
 
