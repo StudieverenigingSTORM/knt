@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/viper"
 )
@@ -37,10 +37,9 @@ func main() {
 	defer db.Close()
 
 	//Start the mux router, this router simplified http calls and reduces boilerplate code
-	r := mux.NewRouter()
-
-	kntrouter.AssignRoutes(r, db)
+	r := chi.NewRouter()
 	kntrouter.AssignMiddlewares(r)
+	kntrouter.AssignRoutes(r, db)
 
 	go sanityCheck()
 

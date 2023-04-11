@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
 )
 
-func AssignMiddlewares(r *mux.Router) {
+func AssignMiddlewares(r chi.Router) {
 	r.Use(setCors)
 	r.Use(loggingMiddleware)
 }
