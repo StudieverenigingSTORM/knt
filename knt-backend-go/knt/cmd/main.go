@@ -14,24 +14,29 @@ import (
 )
 
 func main() {
+	//Loading viper
+	//Viper is responsible for handling the config file
+	//TODO: make a start script that would force viper to work correctly
 	viper.SetConfigName("kntconfig")
 
 	viper.AddConfigPath("knt/config/")
 
-	err := viper.ReadInConfig() // Find and read the config file
+	err := viper.ReadInConfig()
 
-	if err != nil { // Handle errors reading the config file
+	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
 
 	fmt.Println("Config file successfully loaded")
 
+	//Open the database
 	db, err := sql.Open("sqlite3", viper.GetString("database"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
+	//Start the mux router, this router simplified http calls and reduces boilerplate code
 	r := mux.NewRouter()
 
 	kntrouter.AssignRoutes(r, db)
