@@ -5,9 +5,9 @@ import (
 	"log"
 )
 
-func GetAllProducts(db *sql.DB) ProductList {
-	var l ProductList
-	l.Products = genericQuery(queryBuilder(db, "select * from product"), func(r *sql.Rows) Product {
+func GetAllProducts(db *sql.DB) []Product {
+	var l []Product
+	l = genericQuery(queryBuilder(db, "select * from product"), func(r *sql.Rows) Product {
 		var p Product
 		err := r.Scan(&p.Id, &p.Price, &p.Name)
 		if err != nil {
@@ -18,9 +18,9 @@ func GetAllProducts(db *sql.DB) ProductList {
 	return l
 }
 
-func GetAllUsers(db *sql.DB) UserList {
-	var l UserList
-	l.Users = genericQuery(queryBuilder(db, "select * from user"), func(r *sql.Rows) User {
+func GetAllUsers(db *sql.DB) []User {
+	var l []User
+	l = genericQuery(queryBuilder(db, "select * from user"), func(r *sql.Rows) User {
 		var p User
 		err := r.Scan(&p.Id, &p.FirstName, &p.LastName, &p.VunetId, &p.Password, &p.Balance)
 		if err != nil {

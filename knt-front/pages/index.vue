@@ -4,8 +4,8 @@
         <input type="text" class="user-search-bar" v-model="search" placeholder="Search your name..."/>
 
         <div v-for="user in searchedUsers" :key="user.id">
-            <b-card v-b-modal.modal-1 :title="user.first_name + ' ' + user.last_name" class="user-card"
-                    v-on:click="updateUser(user.first_name, user.last_name, user.password); userSelected = !userSelected"></b-card>
+            <b-card v-b-modal.modal-1 :title="user.firstName + ' ' + user.lastName" class="user-card"
+                    v-on:click="updateUser(user.firstName, user.lastName, user.password); userSelected = !userSelected"></b-card>
         </div>
 
         <!--     Section for th login pop-up-->
@@ -82,9 +82,13 @@ export default Vue.extend({
         },
 
         handleOK(){
+            console.log("Actual password: ");
             console.log(this.selectedUser.password);
-
-            if(this.inputPassword === this.selectedUser.password){
+            console.log("Input: ");
+            console.log(this.inputPassword);
+            
+    
+            if(this.inputPassword == this.selectedUser.password){
                 this.passwordState = true
                 console.log("Logged in successfully")
                 this.$router.push('/products')
