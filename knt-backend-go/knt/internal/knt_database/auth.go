@@ -3,18 +3,22 @@ package kntdatabase
 import (
 	"database/sql"
 	"log"
+	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func ValidateKey(key string, priviliges string, db *sql.DB) bool {
-	return priviliges == matchKey(key, db)
+// Validate an api key recieved from the network.
+func ValidateKey(key string, privilages string, db *sql.DB) bool {
+	return checkUserPrivilages(key, db) == privilages
 }
 
-// matchKey compares the key with hashed keys in the database
-// Returns the privilage level denoted as user and admin
-func matchKey(key string, db *sql.DB) string {
-	rows, err := db.Query("select token, privilages from keys")
+func ValidatePin(pin string, userID int, db *sql.DB) bool {
+	return checkPasswordHash(pin, strconv.Itoa(GetUserPass(db, userID)))
+}
+
+func checkUserPrivilages(key string, db *sql.DB) string {
+	rows, err := db.Query("select token from keys")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,14 +27,15 @@ func matchKey(key string, db *sql.DB) string {
 		var hashedKey string
 		var privilages string
 		rows.Scan(&hashedKey, &privilages)
-		if CheckPasswordHash(key, hashedKey) {
+		if checkPasswordHash(key, hashedKey) {
 			return privilages
 		}
 	}
 	return ""
 }
 
-func CheckPasswordHash(password, hash string) bool {
+// Checks if the password is correct is correct.
+func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }

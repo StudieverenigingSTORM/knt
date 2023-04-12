@@ -21,6 +21,7 @@ func setCors(next http.Handler) http.Handler {
 	})
 }
 
+// Middleware to log all http calls
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println(r.RequestURI)
