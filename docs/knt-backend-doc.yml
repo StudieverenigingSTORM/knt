@@ -1,0 +1,363 @@
+openapi: '3.0.2'
+info:
+  title: KnT Backend
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:5000/
+paths:
+  /ping:
+    get:
+      description: "Basic ping function accessable without any keys"
+      tags:
+        - "Misc"
+      responses:
+        '200':
+          description: OK
+  /users:
+    get:
+      tags:
+        - "User Basic"
+      security:
+        - ApiKeyAuth: []
+      description: 'Get basic information about all registered users accessible with a user api key'
+      parameters: []
+      responses:
+        '200':
+          description: A list of basic user objects with removed sensitive information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+                  
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /products:
+    get:
+      tags:
+        - "Product Basic"
+      description: 'Retrieve a list of products from the database'
+      parameters: []
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: A list of product objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/product"
+                  
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /admin/products:
+    post:
+      tags:
+        - "Product Admin"
+      description: 'Create a new product in the database'
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        description: 'Basic product to create'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+
+      responses:
+        '201':
+          description: "Created"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /users/{userId}/purchase:
+    post:
+      tags:
+        - "User Basic"
+      description: 'Send purchase ammounts'
+      security:
+        - ApiKeyAuth: []
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
+      requestBody:
+        description: 'List of products the user has bought'
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: id of the product
+                  amount:
+                    type: integer
+                    description: amount of the product
+      responses:
+        '201':
+          description: "Created"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /users/{userId}:
+    get:
+      tags:
+        - "User Basic"
+      description: 'Get basic data of a specific user'
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /admin/users/{userId}:
+    post:
+      tags:
+        - "User Admin"
+      description: 'Create new user'
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/fulluser"
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    delete:
+      tags:
+        - "User Admin"
+      description: 'Delete user'
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    put:
+      tags:
+        - "User Admin"
+      description: 'Edit userdata'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/fulluser"
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No content
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /admin/products/{productId}:
+    delete:
+      tags:
+        - "Product Admin"
+      description: 'Delete a product'
+      parameters: 
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the product to target
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No content
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    put:
+      tags:
+        - "Product Admin"
+      description: 'Edit product'
+      security:
+        - ApiKeyAuth: []
+      parameters: 
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the product to target
+      responses:
+        '200':
+          description: OK
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /admin/users/{userId}/money:
+    post:
+      tags:
+        - "User Admin"
+      description: 'Add money to a users account'
+      security:
+        - ApiKeyAuth: []
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+              description: Amount in cents
+      responses:
+        '204':
+          description: OK
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+  /admin/users:
+    get:
+      tags:
+        - "User Admin"
+      description: 'Get full users'
+      parameters: []
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/fulluser"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The user ID.
+        firstName:
+          type: string
+          description: The users first name.
+        lastName:
+          type: string
+          description: The users last name.
+        money:
+          type: integer
+          description: The users balance amount in cents
+    fulluser:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The user ID.
+        firstName:
+          type: string
+          description: The users first name.
+        lastName:
+          type: string
+          description: The users last name.
+        money:
+          type: integer
+          description: The users balance amount in cents
+        vunetId:
+          type: string
+          description: vunetId
+        password:
+          type: string
+          description: new password (will be hashed in the Backend) (leave empty if not changed)
+    product:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The products ID.
+        price:
+          type: integer
+          description: The products price in cents
+        name:
+          type: string
+          description: The products name
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+    ForbidenError:
+      description: Api key does not have the necessary permissions to carry out this request
