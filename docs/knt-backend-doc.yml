@@ -120,7 +120,7 @@ paths:
     get:
       tags:
         - "User Basic"
-      description: 'Get basic data of a specific user'
+      description: 'Get data of a specific user'
       parameters: 
         - in: path
           name: userId
