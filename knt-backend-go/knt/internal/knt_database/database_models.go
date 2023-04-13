@@ -1,17 +1,9 @@
 package kntdatabase
 
-type ProductList struct {
-	Products []Product `json:"products"`
-}
-
 type Product struct {
 	Id    int     `json:"id"`
 	Price float64 `json:"price"`
 	Name  string  `json:"name"`
-}
-
-type UserList struct {
-	Users []User `json:"users"`
 }
 
 type User struct {
