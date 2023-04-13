@@ -16,7 +16,6 @@ import (
 func main() {
 	//Loading viper
 	//Viper is responsible for handling the config file
-	//TODO: make a start script that would force viper to work correctly
 	viper.SetConfigName("kntconfig")
 
 	viper.AddConfigPath("knt/config/")
@@ -38,7 +37,7 @@ func main() {
 
 	//Start the mux router, this router simplified http calls and reduces boilerplate code
 	r := chi.NewRouter()
-	kntrouter.AssignMiddlewares(r)
+	
 	kntrouter.AssignRoutes(r, db)
 	//Sanity checck gets executed before the listen because listen blocks the thread.
 	go sanityCheck()
