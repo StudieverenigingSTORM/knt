@@ -83,7 +83,7 @@ paths:
     post:
       tags:
         - "User Basic"
-      description: 'Send purchase ammounts'
+      description: 'Send a list of purchased products'
       security:
         - ApiKeyAuth: []
       parameters: 
@@ -103,7 +103,7 @@ paths:
               items:
                 type: object
                 properties:
-                  id:
+                  productId:
                     type: integer
                     description: id of the product
                   amount:
