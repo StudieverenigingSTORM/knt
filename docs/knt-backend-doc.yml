@@ -35,7 +35,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
-  /products:
+  /users/products:
     get:
       tags:
         - "Product Basic"
