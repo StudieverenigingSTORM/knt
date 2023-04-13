@@ -2,10 +2,33 @@ port: ":5000"
 database: "./app.db"
 cors: "*"
 
-routes: 
+
+#These routes with their explanations are available within the documentation provided in docs
+routes:
   ping: "/ping"
-  getUsers: "/users"
-  getUser: "/user/validate" #This call must contain an basic auth header of username and password. 
-                    #This is not the most secure solution available, but for the purposes of this project it will suffice.
-  spendMoney: "/user/spend/{amount}" #same as the previous call 
+  #Basic routes
+  basicEndpoint: "/users"
+
+  getUsers: "/"
+  getUser: "/{userId}" 
+  makePurchase: "/{userId}/purchase"
+
   getProducts: "/products"
+
+  #Admin routes
+  adminEndpoint: "/admin"
+
+  getUserAdmin: "/users/{userId}"
+  createNewUser: "/users/{userId}"
+  deleteUser: "/users/{userId}"
+  updateUser: "/users/{userId}"
+  updateUserMoney: "/users/{userId}/money"
+  getUsersAdmin: "/users"
+
+  createNewProduct: "/products"
+  deleteProduct: "/products/{productId}"
+  updateProduct: "/products/{productId}"
+
+
+
+
