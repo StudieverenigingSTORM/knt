@@ -19,11 +19,11 @@ paths:
         - "User Basic"
       security:
         - ApiKeyAuth: []
-      description: 'Get basic information about all registered users accessible with a user api key'
+      description: 'Get information about all registered users accessible with a user api key'
       parameters: []
       responses:
         '200':
-          description: A list of basic user objects with removed sensitive information
+          description: A list of user objects with removed sensitive information
           content:
             application/json:
               schema:
@@ -142,6 +142,25 @@ paths:
         '407':
           $ref: "#/components/responses/ForbidenError"
   /admin/users/{userId}:
+    get:
+      tags:
+        - "User Admin"
+      security:
+        - ApiKeyAuth: []
+      description: 'Get complete information about a registered user with a specific id'
+      parameters: []
+      responses:
+        '200':
+          description: A object of full user prividing complete user data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+                  
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
     post:
       tags:
         - "User Admin"
@@ -284,7 +303,7 @@ paths:
     get:
       tags:
         - "User Admin"
-      description: 'Get full users'
+      description: 'Get complete list of data on all of the users'
       parameters: []
       security:
         - ApiKeyAuth: []
