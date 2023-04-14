@@ -12,6 +12,8 @@ import (
 
 // Middleware assigning calls
 // These basically get called from the router on the appropriate routes
+// Be careful when assigning the middlewares
+// Their order matters, the middlewares that get declared first also get executed first
 func assignGeneralMiddlewares(r chi.Router) {
 	r.Use(setCors)
 	r.Use(loggingMiddleware)

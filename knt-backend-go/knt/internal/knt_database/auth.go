@@ -18,6 +18,8 @@ func ValidatePin(pin string, userID int, db *sql.DB) bool {
 	return true
 }
 
+
+//CheckUserPrivileges iterates through every logged api key and compares it to the current function
 func CheckUserPrivileges(key string, db *sql.DB) string {
 	hashedClientKey := shaHashing(key)
 	rows, err := db.Query("select token, privileges from keys")
@@ -36,7 +38,7 @@ func CheckUserPrivileges(key string, db *sql.DB) string {
 	return ""
 }
 
-// Checks if the password is correct is correct.
+// Hash the password to compare it.
 func shaHashing(input string) string {
 	h := sha256.New()
 	h.Write([]byte(input))
