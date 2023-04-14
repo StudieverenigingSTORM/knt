@@ -305,7 +305,7 @@ paths:
         - "User Admin"
       description: 'Get complete list of data on all of the users'
       parameters: []
-      security:
+      security: 
         - ApiKeyAuth: []
       responses:
         '200':
@@ -374,6 +374,7 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
+      description: Api key for the knt (test defined in backend root)
 
   responses:
     UnauthorizedError:

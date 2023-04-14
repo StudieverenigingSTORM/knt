@@ -21,6 +21,11 @@ func getUsersAdmin(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getUsers(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return generateJsonResponse(kntdatabase.GetAllMinimalUsers(db))
+
+}
+
 func generateJsonResponse[K any](data K) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		jsonString, _ := json.Marshal(data)

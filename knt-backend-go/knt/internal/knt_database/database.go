@@ -3,56 +3,62 @@ package kntdatabase
 import (
 	"database/sql"
 	"log"
+	"reflect"
 )
 
 func GetAllProducts(db *sql.DB) []Product {
-	var l []Product
-	l = genericQuery(queryBuilder(db, "select * from product"), func(r *sql.Rows) Product {
-		var p Product
-		err := r.Scan(&p.Id, &p.Price, &p.Name)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return p
-	})
-	return l
+	return genericQuery[Product](queryBuilder(db, "select * from product"))
 }
 
 func GetAllUsers(db *sql.DB) []User {
-	var l []User
-	l = genericQuery(queryBuilder(db, "select * from user"), func(r *sql.Rows) User {
-		var p User
-		err := r.Scan(&p.Id, &p.FirstName, &p.LastName, &p.VunetId, &p.Password, &p.Balance)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return p
-	})
-	return l
+	return genericQuery[User](queryBuilder(db, "select * from user"))
 }
 
-func GetUserPass(db *sql.DB, userID int) int {
-	return getSingleVar[int](queryBuilder(db, "select password from user where id = ?", userID))
+func GetAllMinimalUsers(db *sql.DB) []MinimalUser {
+	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user"))
 }
 
-func getSingleVar[K any](rows *sql.Rows) K {
+func GetUser(db *sql.DB, userID int) User {
+	return getSingleEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
+}
+
+func getSingleEntry[K any](rows *sql.Rows) K {
 	defer rows.Close()
 	var output K
 	if rows.Next() {
-		rows.Scan(&output)
+		rows.Scan(structForScan(&output)...)
 	}
 	return output
 }
 
-// Generic query handles scaling through all the rows. Functions using this query have to provide
-// Code that will handle each row. Appending and everything else is handles by the function
-func genericQuery[K any](rows *sql.Rows, f func(*sql.Rows) K) (output []K) {
+// Generic query handles scaling through all the rows.
+// You only need to define the object for it to expect.
+// In most cases this object should not be an array
+// Also be sure to provide the exact struct matching the query
+// Failure to do so might cause undeffined problems
+func genericQuery[K any](rows *sql.Rows) (output []K) {
 	defer rows.Close()
 	var slice []K
 	for rows.Next() {
-		slice = append(slice, f(rows))
+		var temp K
+		rows.Scan(structForScan(&temp)...)
+		slice = append(slice, temp)
 	}
 	return slice
+}
+
+// Okay I know this looks scary but I promise it makes sense
+// What this function does it converts a struct into an interface that provides access to itself.
+// This allows the databases scan function to populate the privided struct.
+// Pro tip do not touch this function as its just boiler plate
+func structForScan(u interface{}) []interface{} {
+	val := reflect.ValueOf(u).Elem()
+	v := make([]interface{}, val.NumField())
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		v[i] = valueField.Addr().Interface()
+	}
+	return v
 }
 
 // Function to simplify building queries and reduce code reuse, this should be used whenever any query is made.

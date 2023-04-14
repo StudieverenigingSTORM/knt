@@ -10,15 +10,15 @@ import (
 
 // Validate an api key recieved from the network.
 func ValidateKey(key string, privilages string, db *sql.DB) bool {
-	return checkUserPrivilages(key, db) == privilages
+	return CheckUserPrivileges(key, db) == privilages
 }
 
 func ValidatePin(pin string, userID int, db *sql.DB) bool {
-	return checkPasswordHash(pin, strconv.Itoa(GetUserPass(db, userID)))
+	return checkPasswordHash(pin, strconv.Itoa(GetUser(db, userID).Password))
 }
 
-func checkUserPrivilages(key string, db *sql.DB) string {
-	rows, err := db.Query("select token from keys")
+func CheckUserPrivileges(key string, db *sql.DB) string {
+	rows, err := db.Query("select token, privileges from keys")
 	if err != nil {
 		log.Fatal(err)
 	}
