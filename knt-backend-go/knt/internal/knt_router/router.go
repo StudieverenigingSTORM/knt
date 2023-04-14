@@ -21,7 +21,7 @@ func AssignRoutes(r chi.Router, db *sql.DB) {
 // Assigns user routes with the approriate user middleware
 func assignUserRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 	r.Route(configRoutes.GetString("basicEndpoint"), func(r chi.Router) {
-		assignUserMiddleware(r)
+		assignUserMiddleware(r, db)
 		r.HandleFunc(configRoutes.GetString("getUsers"), getUsers(db))
 		r.HandleFunc(configRoutes.GetString("getUser"), notImplemented)
 		r.HandleFunc(configRoutes.GetString("makePurchase"), notImplemented)

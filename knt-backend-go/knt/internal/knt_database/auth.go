@@ -1,11 +1,10 @@
 package kntdatabase
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"log"
-	"strconv"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // Validate an api key recieved from the network.
@@ -14,10 +13,13 @@ func ValidateKey(key string, privilages string, db *sql.DB) bool {
 }
 
 func ValidatePin(pin string, userID int, db *sql.DB) bool {
-	return checkPasswordHash(pin, strconv.Itoa(GetUser(db, userID).Password))
+	//TODO: Implement this function
+	//return checkPasswordHash(pin, strconv.Itoa(GetUser(db, userID).Password))
+	return true
 }
 
 func CheckUserPrivileges(key string, db *sql.DB) string {
+	hashedClientKey := shaHashing(key)
 	rows, err := db.Query("select token, privileges from keys")
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +29,7 @@ func CheckUserPrivileges(key string, db *sql.DB) string {
 		var hashedKey string
 		var privilages string
 		rows.Scan(&hashedKey, &privilages)
-		if checkPasswordHash(key, hashedKey) {
+		if hashedKey == hashedClientKey {
 			return privilages
 		}
 	}
@@ -35,7 +37,9 @@ func CheckUserPrivileges(key string, db *sql.DB) string {
 }
 
 // Checks if the password is correct is correct.
-func checkPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+func shaHashing(input string) string {
+	h := sha256.New()
+	h.Write([]byte(input))
+	bs := h.Sum(nil)
+	return hex.EncodeToString(bs)
 }

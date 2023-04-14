@@ -21,8 +21,8 @@ func assignAdminMiddleware(r chi.Router, db *sql.DB) {
 	r.Use(generateAdminMiddleware(db))
 }
 
-func assignUserMiddleware(r chi.Router) {
-	r.Use(userMiddleware)
+func assignUserMiddleware(r chi.Router, db *sql.DB) {
+	r.Use(generateUserMiddleware(db))
 }
 
 // This sets the cors for all requests, this should be edited in the config
@@ -67,17 +67,34 @@ func generateAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				return
 			}
 			//Write appropriate headers
-
 			http.Error(w, http.StatusText(407), 407)
-
 		})
 	}
 }
 
 // Middleware to auth user
-func userMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Trying to auth user... and not succeeding")
-		next.ServeHTTP(w, r)
-	})
+func generateUserMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			//Allow preflight
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(200)
+				return
+			}
+			//Get the header and validate it
+			key := r.Header.Get("X-API-Key")
+			if key == "" {
+				http.Error(w, http.StatusText(401), 401)
+				return
+			}
+			privileges := kntdatabase.CheckUserPrivileges(key, db)
+			//Allow admins
+			if privileges == "admin" || privileges == "user" {
+				next.ServeHTTP(w, r)
+				return
+			}
+			//Write appropriate headers
+			http.Error(w, http.StatusText(407), 407)
+		})
+	}
 }

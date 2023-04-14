@@ -2,10 +2,9 @@ package main
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -16,7 +15,7 @@ func main() {
 	token := GenerateSecureToken(first)
 
 	fmt.Println(token)
-	hashedToken, _ := HashPassword(token)
+	hashedToken := shaHashing(token)
 	fmt.Println(hashedToken)
 }
 
@@ -28,7 +27,9 @@ func GenerateSecureToken(length int) string {
 	return hex.EncodeToString(b)
 }
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
+func shaHashing(input string) string {
+	h := sha256.New()
+	h.Write([]byte(input))
+	bs := h.Sum(nil)
+	return hex.EncodeToString(bs)
 }
