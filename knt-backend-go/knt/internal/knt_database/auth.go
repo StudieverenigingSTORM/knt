@@ -8,8 +8,8 @@ import (
 )
 
 // Validate an api key recieved from the network.
-func ValidateKey(key string, privilages string, db *sql.DB) bool {
-	return CheckUserPrivileges(key, db) == privilages
+func ValidateKey(key string, privileges string, db *sql.DB) bool {
+	return CheckUserPrivileges(key, db) == privileges
 }
 
 func ValidatePin(pin string, userID int, db *sql.DB) bool {
@@ -18,8 +18,7 @@ func ValidatePin(pin string, userID int, db *sql.DB) bool {
 	return true
 }
 
-
-//CheckUserPrivileges iterates through every logged api key and compares it to the current function
+// CheckUserPrivileges iterates through every logged api key and compares it to the current function
 func CheckUserPrivileges(key string, db *sql.DB) string {
 	hashedClientKey := shaHashing(key)
 	rows, err := db.Query("select token, privileges from keys")
@@ -29,10 +28,10 @@ func CheckUserPrivileges(key string, db *sql.DB) string {
 	defer rows.Close()
 	for rows.Next() {
 		var hashedKey string
-		var privilages string
-		rows.Scan(&hashedKey, &privilages)
+		var privileges string
+		rows.Scan(&hashedKey, &privileges)
 		if hashedKey == hashedClientKey {
-			return privilages
+			return privileges
 		}
 	}
 	return ""
