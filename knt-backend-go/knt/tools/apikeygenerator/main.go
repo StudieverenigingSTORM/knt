@@ -8,19 +8,22 @@ import (
 )
 
 func main() {
-	var first int
-	fmt.Println("Enter key length (32 for the knt): ")
+	var first string
+	fmt.Println("Enter key to be hashed (Leave blank for random 32 key): ")
 	fmt.Scanln(&first)
-
-	token := GenerateSecureToken(first)
-
-	fmt.Println(token)
+	var token string
+	if first != "" {
+		token = first
+	} else {
+		token = GenerateSecureToken()
+	}
+	fmt.Println("Key to be hashed: " + token)
 	hashedToken := shaHashing(token)
-	fmt.Println(hashedToken)
+	fmt.Println("Hashed key: ", hashedToken)
 }
 
-func GenerateSecureToken(length int) string {
-	b := make([]byte, length)
+func GenerateSecureToken() string {
+	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
 		return ""
 	}

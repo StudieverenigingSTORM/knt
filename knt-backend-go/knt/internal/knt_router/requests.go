@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"kntdatabase"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func ping(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +26,41 @@ func getUsersAdmin(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
 func getUsers(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return generateJsonResponse(kntdatabase.GetAllMinimalUsers(db))
-
 }
 
-func generateJsonResponse[K any](data K) func(w http.ResponseWriter, r *http.Request) {
+func makePurchase(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
+		decoder := json.NewDecoder(r.Body)
+		var body kntdatabase.PurchaseRequest
+		err = decoder.Decode(&body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
+		err = kntdatabase.MakeTransaction(userId, body, db)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
+		// Write success
+		w.WriteHeader(http.StatusCreated)
+	}
+}
+
+func generateJsonResponse[K any](data K, err error) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 		jsonString, _ := json.Marshal(data)
 		fmt.Fprintf(w, string(jsonString))
 	}

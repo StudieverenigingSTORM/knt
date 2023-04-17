@@ -99,16 +99,22 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: object
-                properties:
-                  productId:
-                    type: integer
-                    description: id of the product
-                  amount:
-                    type: integer
-                    description: amount of the product
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: user pin
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: integer
+                        description: id of the product
+                      amount:
+                        type: integer
+                        description: amount of the product
       responses:
         '201':
           description: "Created"

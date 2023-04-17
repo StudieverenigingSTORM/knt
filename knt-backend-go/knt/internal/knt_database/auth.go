@@ -12,10 +12,8 @@ func ValidateKey(key string, privileges string, db *sql.DB) bool {
 	return CheckUserPrivileges(key, db) == privileges
 }
 
-func ValidatePin(pin string, userID int, db *sql.DB) bool {
-	//TODO: Implement this function
-	//return checkPasswordHash(pin, strconv.Itoa(GetUser(db, userID).Password))
-	return true
+func ValidatePin(pin string, user User, db *sql.DB) bool {
+	return user.Password == shaHashing(pin)
 }
 
 // CheckUserPrivileges iterates through every logged api key and compares it to the current function

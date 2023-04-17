@@ -2,33 +2,47 @@ package kntdatabase
 
 import (
 	"database/sql"
-	"log"
 	"reflect"
 )
 
-func GetAllProducts(db *sql.DB) []Product {
+func GetAllProducts(db *sql.DB) ([]Product, error) {
 	return genericQuery[Product](queryBuilder(db, "select * from product"))
 }
 
-func GetAllUsers(db *sql.DB) []User {
+func GetAllUsers(db *sql.DB) ([]User, error) {
 	return genericQuery[User](queryBuilder(db, "select * from user"))
 }
 
-func GetAllMinimalUsers(db *sql.DB) []MinimalUser {
+func GetAllMinimalUsers(db *sql.DB) ([]MinimalUser, error) {
 	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user"))
 }
 
-func GetUser(db *sql.DB, userID int) User {
+func GetUser(db *sql.DB, userID int) (User, error) {
 	return getSingleEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
 }
 
-func getSingleEntry[K any](rows *sql.Rows) K {
-	defer rows.Close()
+func getSingleEntry[K any](rows *sql.Rows, err error) (K, error) {
 	var output K
+	if err != nil {
+		return output, err
+	}
+	defer rows.Close()
 	if rows.Next() {
 		rows.Scan(structForScan(&output)...)
 	}
-	return output
+	return output, nil
+}
+
+func getSingleValue[K any](rows *sql.Rows, err error) (K, error) {
+	var output K
+	if err != nil {
+		return output, err
+	}
+	defer rows.Close()
+	if rows.Next() {
+		rows.Scan(&output)
+	}
+	return output, nil
 }
 
 // Generic query handles scaling through all the rows.
@@ -36,15 +50,18 @@ func getSingleEntry[K any](rows *sql.Rows) K {
 // In most cases this object should not be an array
 // Also be sure to provide the exact struct matching the query
 // Failure to do so might cause undeffined problems
-func genericQuery[K any](rows *sql.Rows) (output []K) {
-	defer rows.Close()
+func genericQuery[K any](rows *sql.Rows, err error) ([]K, error) {
 	var slice []K
+	if err != nil {
+		return slice, err
+	}
+	defer rows.Close()
 	for rows.Next() {
 		var temp K
 		rows.Scan(structForScan(&temp)...)
 		slice = append(slice, temp)
 	}
-	return slice
+	return slice, nil
 }
 
 // Okay I know this looks scary but I promise it makes sense
@@ -63,10 +80,30 @@ func structForScan(u interface{}) []interface{} {
 
 // Function to simplify building queries and reduce code reuse, this should be used whenever any query is made.
 // Keep note do not append any data to the query string instead use the key ? and pass in aditional parameters
-func queryBuilder(db *sql.DB, queryString string, args ...any) *sql.Rows {
+func queryBuilder(db *sql.DB, queryString string, args ...any) (*sql.Rows, error) {
 	rows, err := db.Query(queryString, args...)
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
-	return rows
+	return rows, nil
+}
+
+// This allows inserting new rows into the table
+func commitTransaction(db *sql.DB, queryString string, args ...any) (int64, error) {
+	transaction, err := db.Prepare(queryString)
+	if err != nil {
+		return 0, err
+	}
+
+	res, err := transaction.Exec(args...)
+	if err != nil {
+		return 0, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+
 }
