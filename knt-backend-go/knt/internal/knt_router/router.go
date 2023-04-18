@@ -23,7 +23,7 @@ func assignUserRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 	r.Route(configRoutes.GetString("basicEndpoint"), func(r chi.Router) {
 		assignUserMiddleware(r, db)
 		r.HandleFunc(configRoutes.GetString("getUsers"), getUsers(db))
-		r.HandleFunc(configRoutes.GetString("getUser"), notImplemented)
+		r.HandleFunc(configRoutes.GetString("getUser"), getUser(db))
 		r.HandleFunc(configRoutes.GetString("makePurchase"), makePurchase(db))
 
 		r.HandleFunc(configRoutes.GetString("getProducts"), getProducts(db))

@@ -17,10 +17,15 @@ func GetAllMinimalUsers(db *sql.DB) ([]MinimalUser, error) {
 	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user"))
 }
 
+func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
+	return getSingleEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ?", userId))
+}
+
 func GetUser(db *sql.DB, userID int) (User, error) {
 	return getSingleEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
 }
 
+// Returns a single entry in a specific structure
 func getSingleEntry[K any](rows *sql.Rows, err error) (K, error) {
 	var output K
 	if err != nil {
@@ -33,6 +38,7 @@ func getSingleEntry[K any](rows *sql.Rows, err error) (K, error) {
 	return output, nil
 }
 
+// generic query that returns a single value
 func getSingleValue[K any](rows *sql.Rows, err error) (K, error) {
 	var output K
 	if err != nil {
