@@ -21,12 +21,7 @@ There are still some things that need to be figured out on this fork if we decid
 - How to use Swagger and SQLAlchemy to create the REST API
 
 **Relevant documentation**
-- [The best tutorial for Flask ever](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
-- [Official Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/quickstart/)
-- [Nuxt documentation](https://nuxtjs.org/)
 - [SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
-- [Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
-- [flask-restful](https://flask-restful.readthedocs.io/en/latest/)
 
 ## Why replace it?
 
@@ -57,13 +52,9 @@ Webshop calls API on backend to update the account.
 
 ## Tech stack
 
-Backend: Python?
+Backend: Go
 
-*Rationale*: Known by everybody, easy to piece together a web app backend with Flask.
-
-Backend: Go?
-
-*Rationale*: Very easy to learn, makes self contained executables, it's not Python, super nice HTTP libs
+*Rationale*: Relatively simple and has an extremely strong stl that allows to do most things without using third party libraries which ensures future support of the added functions. Most importantly its *functional* (AKA: Not cringe)
 
 Frontend: HTML/JS/CSS
 
