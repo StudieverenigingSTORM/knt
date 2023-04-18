@@ -36,13 +36,11 @@ func assignAdminRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 		assignAdminMiddleware(r, db)
 		r.HandleFunc(configRoutes.GetString("getUsersAdmin"), getUsersAdmin(db))
 		r.HandleFunc(configRoutes.GetString("createNewUser"), notImplemented)
-		r.HandleFunc(configRoutes.GetString("deleteUser"), notImplemented)
 		r.HandleFunc(configRoutes.GetString("updateUser"), notImplemented)
 		r.HandleFunc(configRoutes.GetString("updateUserMoney"), notImplemented)
 		r.HandleFunc(configRoutes.GetString("getUserAdmin"), notImplemented)
 
 		r.HandleFunc(configRoutes.GetString("createNewProduct"), notImplemented)
-		r.HandleFunc(configRoutes.GetString("deleteProduct"), notImplemented)
 		r.HandleFunc(configRoutes.GetString("updateProduct"), notImplemented)
 
 	})
