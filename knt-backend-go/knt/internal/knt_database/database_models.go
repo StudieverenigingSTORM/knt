@@ -45,3 +45,10 @@ type Receipt struct {
 	Id   int
 	Data string
 }
+
+type TaxEntry struct {
+	Id        int
+	ProductId int
+	Amount    int
+	TotalCost int
+}
