@@ -1,15 +1,17 @@
 # The New and Improved K&T System
 
 **Setup**
-1. Make sure you have Python3, ``pip`` and ``npm`` installed.
-2. Run ``pip install pipenv``. This is a python package manager and works (and looks) similar to what we are used to with ``npm``.
-3. Navigate to ``/knt-backend`` and run ``pipenv --three``.
-4. Run ``pipenv sync`` to install all dependencies. These are specified in the Pipfile.lock, so make sure that this file does not end up in the gitignore! 
-5. Run ``pipenv shell`` to start up the virtual environment. This starts up the virtual environment. It allows us to install python packages for this project that won't interfere with your global python packages and configs.
-6. Once all the packages are installed, run ``flask run`` to have the Flask app start up and run! You should see the url of the app, as well as some debugging input.
-7. Once your app is all up and running, open another command line and navigate ``/knt-font``. 
-8. Run ``npm install`` to install all the packages in the ``package.json``
-9. Run ``npm run dev``. The front-end app should be up and running now.
+1. Make sure you have [Go](https://go.dev/doc/install) version 1.20 at least (If you are running linux you can get it from snap) and ``npm`` installed.
+2. Run the start file in ```/knt-backend``` named ```start-backend.sh```
+3. Once your app is all up and running, open another command line and navigate ``/knt-font``. 
+4. Run ``npm install`` to install all the packages in the ``package.json``
+5. Run ``npm run dev``. The front-end app should be up and running now.
+
+**Backend Documentation**
+
+The backend has swagger docummentation which allows you to test out the backend queries without setting up the frontend or the admin panel.
+
+You can run the swagger docummentation either from the start script (requires [open-swagger-ui](https://www.npmjs.com/package/open-swagger-ui)) or the swagger ui vscode extention
 
 **Notes**
 
@@ -19,12 +21,7 @@ There are still some things that need to be figured out on this fork if we decid
 - How to use Swagger and SQLAlchemy to create the REST API
 
 **Relevant documentation**
-- [The best tutorial for Flask ever](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
-- [Official Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/quickstart/)
-- [Nuxt documentation](https://nuxtjs.org/)
 - [SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
-- [Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
-- [flask-restful](https://flask-restful.readthedocs.io/en/latest/)
 
 ## Why replace it?
 
@@ -55,13 +52,9 @@ Webshop calls API on backend to update the account.
 
 ## Tech stack
 
-Backend: Python?
+Backend: Go
 
-*Rationale*: Known by everybody, easy to piece together a web app backend with Flask.
-
-Backend: Go?
-
-*Rationale*: Very easy to learn, makes self contained executables, it's not Python, super nice HTTP libs
+*Rationale*: Relatively simple and has an extremely strong stl that allows to do most things without using third party libraries which ensures future support of the added functions. Most importantly its *functional* (AKA: Not cringe)
 
 Frontend: HTML/JS/CSS
 
