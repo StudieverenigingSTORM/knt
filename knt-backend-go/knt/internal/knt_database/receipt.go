@@ -45,6 +45,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) error {
 	return nil
 }
 
+// Calculates the total cost of the purchased products
 func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 	var cost int
 
@@ -59,11 +60,13 @@ func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 	return cost, nil
 }
 
+// returns the value of a specific entry
 func getProductValue(entry PurchaseEntry, db *sql.DB) (int, error) {
 	value, err := getSingleValue[int](queryBuilder(db, "select price from product where id = ?", entry.ProductId))
 	return value * entry.Amount, err
 }
 
+// Generated the receipt and stores it in the database
 func generateReceipt(db *sql.DB, entries []PurchaseEntry) (int64, error) {
 	dataString, err := json.Marshal(entries)
 	if err != nil {
@@ -78,12 +81,14 @@ func generateReceipt(db *sql.DB, entries []PurchaseEntry) (int64, error) {
 	return receiptId, nil
 }
 
+// Generates the transaction and stores it in the database
 func generateTransaction(db *sql.DB, userId int, startingBal int, deltaBal int, finalBal int, receiptId int64) error {
 	_, err := commitTransaction(db, "INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id) VALUES (?, ?, ?, ?, ?)",
 		userId, startingBal, deltaBal, finalBal, receiptId)
 	return err
 }
 
+// Sets the users balance to a specified ammount
 func setBalance(db *sql.DB, userId int, balance int) error {
 	_, err := commitTransaction(db, "UPDATE user SET balance = ? WHERE id = ?", balance, userId)
 	return err

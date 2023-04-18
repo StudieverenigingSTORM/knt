@@ -89,6 +89,8 @@ func queryBuilder(db *sql.DB, queryString string, args ...any) (*sql.Rows, error
 }
 
 // This allows inserting new rows into the table
+// As always when passing args to query string pass it as aditional parameters
+// Do NOT concatinate them as a string as that will make it vulnerable to exploits
 func commitTransaction(db *sql.DB, queryString string, args ...any) (int64, error) {
 	transaction, err := db.Prepare(queryString)
 	if err != nil {
