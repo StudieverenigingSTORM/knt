@@ -61,20 +61,19 @@ paths:
     get:
       tags:
         - "Product Admin"
-      description: 'Create a new product in the database'
+      description: 'Retrieve full data on all products'
       security:
         - ApiKeyAuth: []
-      requestBody:
-        description: 'Basic product to create'
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/product'
 
       responses:
-        '201':
-          description: "Created"
+        '200':
+          description: A list of product objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/fullproduct"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
@@ -175,7 +174,13 @@ paths:
       security:
         - ApiKeyAuth: []
       description: 'Get complete information about a registered user with a specific id'
-      parameters: []
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
       responses:
         '200':
           description: A object of full user prividing complete user data
