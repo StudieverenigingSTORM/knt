@@ -174,7 +174,13 @@ paths:
       security:
         - ApiKeyAuth: []
       description: 'Get complete information about a registered user with a specific id'
-      parameters: []
+      parameters: 
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to target
       responses:
         '200':
           description: A object of full user prividing complete user data
