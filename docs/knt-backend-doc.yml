@@ -58,6 +58,27 @@ paths:
         '407':
           $ref: "#/components/responses/ForbidenError"
   /admin/products:
+    get:
+      tags:
+        - "Product Admin"
+      description: 'Create a new product in the database'
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        description: 'Basic product to create'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+
+      responses:
+        '201':
+          description: "Created"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
     post:
       tags:
         - "Product Admin"
@@ -322,6 +343,9 @@ components:
         password:
           type: string
           description: new password (will be hashed in the Backend) (leave empty if not changed)
+        visibility:
+          type: integer
+          description: Visibility status of the user 0 will make the user invisable to the knt front end
     product:
       type: object
       properties:
@@ -334,7 +358,21 @@ components:
         name:
           type: string
           description: The products name
-
+    fullproduct:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The products ID.
+        price:
+          type: integer
+          description: The products price in cents
+        name:
+          type: string
+          description: The products name
+        visibility:
+          type: integer
+          description: Visibility status of the product will make the product invisable to the knt front end
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

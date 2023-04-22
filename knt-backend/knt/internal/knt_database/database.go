@@ -9,16 +9,20 @@ func GetAllProducts(db *sql.DB) ([]Product, error) {
 	return genericQuery[Product](queryBuilder(db, "select * from product"))
 }
 
+func GetMinimalProducts(db *sql.DB) ([]MinimalProduct, error) {
+	return genericQuery[MinimalProduct](queryBuilder(db, "select * from product where visibility = 1"))
+}
+
 func GetAllUsers(db *sql.DB) ([]User, error) {
 	return genericQuery[User](queryBuilder(db, "select * from user"))
 }
 
 func GetAllMinimalUsers(db *sql.DB) ([]MinimalUser, error) {
-	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user"))
+	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where visibility = 1"))
 }
 
 func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
-	return getSingleEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ?", userId))
+	return getSingleEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ?, visibility = 1", userId))
 }
 
 func GetUser(db *sql.DB, userID int) (User, error) {
