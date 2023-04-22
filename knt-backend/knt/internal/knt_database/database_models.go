@@ -1,18 +1,26 @@
 package kntdatabase
 
-type Product struct {
+type MinimalProduct struct {
 	Id    int    `json:"id"`
 	Price int    `json:"price"`
 	Name  string `json:"name"`
 }
 
+type Product struct {
+	Id         int    `json:"id"`
+	Price      int    `json:"price"`
+	Name       string `json:"name"`
+	Visibility int    `json:"visibility"`
+}
+
 type User struct {
-	Id        int    `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	VunetId   string `json:"vunetId"`
-	Password  string `json:"password"`
-	Balance   int    `json:"balance"`
+	Id         int    `json:"id"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	VunetId    string `json:"vunetId"`
+	Password   string `json:"password"`
+	Balance    int    `json:"balance"`
+	Visibility int    `json:"visibility"`
 }
 
 type MinimalUser struct {

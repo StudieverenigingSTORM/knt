@@ -26,6 +26,7 @@ routes:
 
   createNewProduct: "/products"
   updateProduct: "/products/{productId}"
+  getFullProducts: "/products/{productId}"
 
 
 

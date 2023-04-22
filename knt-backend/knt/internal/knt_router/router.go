@@ -2,6 +2,7 @@ package kntrouter
 
 import (
 	"database/sql"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
@@ -12,7 +13,7 @@ func AssignRoutes(r chi.Router, db *sql.DB) {
 	configRoutes := viper.Sub("routes")
 	assignGeneralMiddlewares(r)
 
-	r.HandleFunc(configRoutes.GetString("ping"), ping)
+	r.MethodFunc(http.MethodGet, configRoutes.GetString("ping"), ping)
 
 	assignUserRoutes(r, db, configRoutes)
 	assignAdminRoutes(r, db, configRoutes)
@@ -22,11 +23,11 @@ func AssignRoutes(r chi.Router, db *sql.DB) {
 func assignUserRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 	r.Route(configRoutes.GetString("basicEndpoint"), func(r chi.Router) {
 		assignUserMiddleware(r, db)
-		r.HandleFunc(configRoutes.GetString("getUsers"), getUsers(db))
-		r.HandleFunc(configRoutes.GetString("getUser"), getUser(db))
-		r.HandleFunc(configRoutes.GetString("makePurchase"), makePurchase(db))
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUsers"), getUsers(db))
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUser"), getUser(db))
+		r.MethodFunc(http.MethodPost, configRoutes.GetString("makePurchase"), makePurchase(db))
 
-		r.HandleFunc(configRoutes.GetString("getProducts"), getProducts(db))
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getProducts"), getProducts(db))
 	})
 }
 
@@ -34,14 +35,15 @@ func assignUserRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 func assignAdminRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 	r.Route(configRoutes.GetString("adminEndpoint"), func(r chi.Router) {
 		assignAdminMiddleware(r, db)
-		r.HandleFunc(configRoutes.GetString("getUsersAdmin"), getUsersAdmin(db))
-		r.HandleFunc(configRoutes.GetString("createNewUser"), notImplemented)
-		r.HandleFunc(configRoutes.GetString("updateUser"), notImplemented)
-		r.HandleFunc(configRoutes.GetString("updateUserMoney"), notImplemented)
-		r.HandleFunc(configRoutes.GetString("getUserAdmin"), notImplemented)
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUsersAdmin"), getUsersAdmin(db))
+		r.MethodFunc(http.MethodPost, configRoutes.GetString("createNewUser"), notImplemented)
+		r.MethodFunc(http.MethodPut, configRoutes.GetString("updateUser"), notImplemented)
+		r.MethodFunc(http.MethodPost, configRoutes.GetString("updateUserMoney"), notImplemented)
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUserAdmin"), notImplemented)
 
-		r.HandleFunc(configRoutes.GetString("createNewProduct"), notImplemented)
-		r.HandleFunc(configRoutes.GetString("updateProduct"), notImplemented)
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("createNewProduct"), notImplemented)
+		r.MethodFunc(http.MethodPut, configRoutes.GetString("updateProduct"), notImplemented)
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getFullProducts"), getAdminProducts(db))
 
 	})
 }

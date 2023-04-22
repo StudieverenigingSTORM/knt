@@ -15,6 +15,10 @@ func ping(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func getAdminProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return generateJsonResponse(kntdatabase.GetAllProducts(db))
+}
+
 func getProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return generateJsonResponse(kntdatabase.GetAllProducts(db))
 }
@@ -33,6 +37,17 @@ func getUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
 		checkErr(w, err)
 		user, err := kntdatabase.GetMinimalUser(db, userId)
+		checkErr(w, err)
+		jsonString, _ := json.Marshal(user)
+		fmt.Fprintf(w, string(jsonString))
+	}
+}
+
+func getAdminUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
+		checkErr(w, err)
+		user, err := kntdatabase.GetUser(db, userId)
 		checkErr(w, err)
 		jsonString, _ := json.Marshal(user)
 		fmt.Fprintf(w, string(jsonString))
