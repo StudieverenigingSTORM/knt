@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"strconv"
+	"fmt"
 	"time"
 )
 
@@ -71,7 +71,7 @@ func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 
 // returns the value of a specific entry
 func getProductValue(entry PurchaseEntry, db *sql.DB) (int, error) {
-	value, err := getSingleValue[int](queryBuilder(db, "select price from product where id = ?", entry.ProductId))
+	value, err := getFirstSingleValue[int](queryBuilder(db, "select price from product where id = ?", entry.ProductId))
 	return value * entry.Amount, err
 }
 
@@ -107,31 +107,35 @@ func setBalance(db *sql.DB, userId int, balance int) error {
 // Function designed to calculate total ammounts for tax reasons
 // The taxes are stored in their own tables in the form of tax{year}
 func addTaxTotals(entries []PurchaseEntry, db *sql.DB, cost int) error {
-	year := strconv.Itoa(time.Now().Year())
+	year := time.Now().Year()
 
 	//Ensure yearly tables existance
 	err := ensureTaxTableExists(db, year)
 	if err != nil {
+		fmt.Println("LOl")
 		return err
 	}
 	//Go through all the entries and apply the operation on all of them
 	for _, entry := range entries {
 		//check if entry exists
-		tax, err := getSingleEntry[TaxEntry](queryBuilder(db, "SELECT * FROM tax"+year+" where product_id = ?", entry.ProductId))
+		tax, err := getFirstEntry[TaxEntry](queryBuilder(db, "SELECT * FROM tax where year = ? and product_id = ?", year, entry.ProductId))
 		if err != nil {
+			fmt.Println("LOl2")
 			return err
 		}
 		if tax.Id == 0 {
 			//The row for this product doesnt already exist in the table so create a new row for it
-			_, err = commitTransaction(db, "INSERT INTO tax"+year+" (product_id, amount, totalCost) VALUES (?, ?, ?)", entry.ProductId, entry.Amount, cost)
+			_, err = commitTransaction(db, "INSERT INTO tax (product_id, amount, totalCost, year) VALUES (?, ?, ?, ?)", entry.ProductId, entry.Amount, cost, year)
 			if err != nil {
+				fmt.Println("LOl3")
 				return err
 			}
 			continue
 		}
 		//The product exists update it
-		_, err = commitTransaction(db, "UPDATE tax"+year+" SET amount = ?, totalCost = ? WHERE id = ?", tax.Amount+entry.Amount, tax.TotalCost+cost, tax.Id)
+		_, err = commitTransaction(db, "UPDATE tax SET amount = ?, totalCost = ? WHERE year = ? and id = ?", tax.Amount+entry.Amount, tax.TotalCost+cost, year, tax.Id)
 		if err != nil {
+			fmt.Println("LOl4")
 			return err
 		}
 	}
@@ -139,7 +143,7 @@ func addTaxTotals(entries []PurchaseEntry, db *sql.DB, cost int) error {
 	return nil
 }
 
-func ensureTaxTableExists(db *sql.DB, year string) error {
-	_, err := commitTransaction(db, "CREATE TABLE IF NOT EXISTS tax"+year+" (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INT, amount INT, totalCost INT)")
+func ensureTaxTableExists(db *sql.DB, year int) error {
+	_, err := commitTransaction(db, "CREATE TABLE IF NOT EXISTS tax (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INT, amount INT, totalCost INT, year INT)")
 	return err
 }

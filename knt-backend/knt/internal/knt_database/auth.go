@@ -7,11 +7,6 @@ import (
 	"log"
 )
 
-// Validate an api key recieved from the network.
-func ValidateKey(key string, privileges string, db *sql.DB) bool {
-	return CheckUserPrivileges(key, db) == privileges
-}
-
 func ValidatePin(pin string, user User, db *sql.DB) bool {
 	return user.Password == shaHashing(pin)
 }
@@ -19,18 +14,15 @@ func ValidatePin(pin string, user User, db *sql.DB) bool {
 // CheckUserPrivileges iterates through every logged api key and compares it to the current function
 func CheckUserPrivileges(key string, db *sql.DB) string {
 	hashedClientKey := shaHashing(key)
-	rows, err := db.Query("select token, privileges from keys")
+	rows, err := db.Query("select privileges from keys where token = ?", hashedClientKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	for rows.Next() {
-		var hashedKey string
+	if rows.Next() {
 		var privileges string
-		rows.Scan(&hashedKey, &privileges)
-		if hashedKey == hashedClientKey {
-			return privileges
-		}
+		rows.Scan(&privileges)
+		return privileges
 	}
 	return ""
 }

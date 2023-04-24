@@ -1,6 +1,10 @@
-port: ":5000"
+port: "5000"
 database: "./app.db"
-cors: "*"
+
+corsAllowOrigin: "*"
+corsAllowCredentials: "true"
+corsAllowMethods: "*"
+corsAllowHeaders: "*"
 
 
 #These routes with their explanations are available within the documentation provided in docs

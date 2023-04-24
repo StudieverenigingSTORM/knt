@@ -329,7 +329,7 @@ paths:
               type: object
               properties:
                 balance:
-                  example: 80
+                  example: 80 
                   type: integer
                   description: Amount in cents
       responses:
