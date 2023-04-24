@@ -41,9 +41,10 @@ func assignAdminRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 		r.MethodFunc(http.MethodPost, configRoutes.GetString("updateUserMoney"), notImplemented)
 		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUserAdmin"), notImplemented)
 
-		r.MethodFunc(http.MethodGet, configRoutes.GetString("createNewProduct"), notImplemented)
+		r.MethodFunc(http.MethodPost, configRoutes.GetString("createNewProduct"), notImplemented)
 		r.MethodFunc(http.MethodPut, configRoutes.GetString("updateProduct"), notImplemented)
 		r.MethodFunc(http.MethodGet, configRoutes.GetString("getFullProducts"), getAdminProducts(db))
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getFullProduct"), notImplemented)
 
 	})
 }

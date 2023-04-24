@@ -10,48 +10,48 @@ import (
 
 //This file handles everything having to do with purchases and receipts
 
-func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) error {
+func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, error) {
 	// get user
 	user, err := GetUser(db, userId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	//pin validation
 	if !ValidatePin(purchase.Password, user, db) {
-		return errors.New("Unauthorized")
+		return 0, errors.New("Unauthorized")
 	}
 	//calculate cost
 	cost, err := calculateCost(purchase.Data, db)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	//validate users balance
 	if cost > user.Balance {
-		return errors.New("Insufficient balance on user")
+		return 0, errors.New("Insufficient balance on user")
 	}
 	//generate receipt
 	receiptId, err := generateReceipt(db, purchase.Data)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	//make a transaction
 	err = generateTransaction(db, userId, user.Balance, cost, user.Balance-cost, receiptId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	//subtract balance
 	err = setBalance(db, userId, user.Balance-cost)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	//Add tax
 	err = addTaxTotals(purchase.Data, db, cost)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return cost, nil
 }
 
 // Calculates the total cost of the purchased products
@@ -92,7 +92,8 @@ func generateReceipt(db *sql.DB, entries []PurchaseEntry) (int64, error) {
 
 // Generates the transaction and stores it in the database
 func generateTransaction(db *sql.DB, userId int, startingBal int, deltaBal int, finalBal int, receiptId int64) error {
-	_, err := commitTransaction(db, "INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id) VALUES (?, ?, ?, ?, ?)",
+	_, err := commitTransaction(db,
+		"INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id) VALUES (?, ?, ?, ?, ?)",
 		userId, startingBal, deltaBal, finalBal, receiptId)
 	return err
 }

@@ -22,7 +22,7 @@ func GetAllMinimalUsers(db *sql.DB) ([]MinimalUser, error) {
 }
 
 func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
-	return getSingleEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ?, visibility = 1", userId))
+	return getSingleEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ? and visibility = 1", userId))
 }
 
 func GetUser(db *sql.DB, userID int) (User, error) {

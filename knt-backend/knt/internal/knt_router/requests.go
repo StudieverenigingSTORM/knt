@@ -20,7 +20,7 @@ func getAdminProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 }
 
 func getProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
-	return generateJsonResponse(kntdatabase.GetAllProducts(db))
+	return generateJsonResponse(kntdatabase.GetMinimalProducts(db))	
 }
 
 func getUsersAdmin(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -35,9 +35,18 @@ func getUsers(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 func getUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			fmt.Println("1")
+			return
+		}
+
 		user, err := kntdatabase.GetMinimalUser(db, userId)
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
 		jsonString, _ := json.Marshal(user)
 		fmt.Fprintf(w, string(jsonString))
 	}
@@ -46,9 +55,17 @@ func getUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 func getAdminUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
 		user, err := kntdatabase.GetUser(db, userId)
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
 		jsonString, _ := json.Marshal(user)
 		fmt.Fprintf(w, string(jsonString))
 	}
@@ -57,24 +74,41 @@ func getAdminUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 func makePurchase(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 
 		decoder := json.NewDecoder(r.Body)
 		var body kntdatabase.PurchaseRequest
 		err = decoder.Decode(&body)
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 
-		err = kntdatabase.MakeTransaction(userId, body, db)
-		checkErr(w, err)
+		var format struct {
+			Cost int `json:"moneySpent"`
+		}
+		format.Cost, err = kntdatabase.MakeTransaction(userId, body, db)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 
 		// Write success
 		w.WriteHeader(http.StatusCreated)
+		s, _ := json.Marshal(format)
+		fmt.Fprintf(w, string(s))
 	}
 }
 
 func generateJsonResponse[K any](data K, err error) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		checkErr(w, err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 		jsonString, _ := json.Marshal(data)
 		fmt.Fprintf(w, string(jsonString))
 	}
@@ -82,11 +116,4 @@ func generateJsonResponse[K any](data K, err error) func(w http.ResponseWriter, 
 
 func notImplemented(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Not implemented")
-}
-
-func checkErr(w http.ResponseWriter, err error) {
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
-		return
-	}
 }

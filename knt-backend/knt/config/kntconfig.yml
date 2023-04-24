@@ -21,12 +21,13 @@ routes:
   getUserAdmin: "/users/{userId}"
   createNewUser: "/users/{userId}"
   updateUser: "/users/{userId}"
-  updateUserMoney: "/users/{userId}/money"
+  updateUserMoney: "/users/{userId}/balance"
   getUsersAdmin: "/users"
 
   createNewProduct: "/products"
-  updateProduct: "/products/{productId}"
-  getFullProducts: "/products/{productId}"
+  updateProduct: "/products"
+  getFullProduct: "/products/{productId}"
+  getFullProducts: "/products"
 
 
 

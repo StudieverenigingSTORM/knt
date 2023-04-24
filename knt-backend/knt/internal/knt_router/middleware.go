@@ -31,9 +31,11 @@ func assignUserMiddleware(r chi.Router, db *sql.DB) {
 func setCors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", viper.GetString("cors"))
-		w.Header().Set("Access-Control-Allow-Credentials", viper.GetString("cors"))
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Methods", viper.GetString("cors"))
 		w.Header().Set("Access-Control-Allow-Headers", viper.GetString("cors"))
+		w.Header().Set("Access-Control-Expose-Headers", viper.GetString("cors"))
+
 		next.ServeHTTP(w, r)
 	})
 }
