@@ -23,7 +23,7 @@ routes:
   adminEndpoint: "/admin"
 
   getUserAdmin: "/users/{userId}"
-  createNewUser: "/users/{userId}"
+  createNewUser: "/users"
   updateUser: "/users/{userId}"
   updateUserMoney: "/users/{userId}/balance"
   getUsersAdmin: "/users"

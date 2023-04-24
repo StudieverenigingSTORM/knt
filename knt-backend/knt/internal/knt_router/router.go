@@ -36,15 +36,15 @@ func assignAdminRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 	r.Route(configRoutes.GetString("adminEndpoint"), func(r chi.Router) {
 		assignAdminMiddleware(r, db)
 		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUsersAdmin"), getUsersAdmin(db))
-		r.MethodFunc(http.MethodPost, configRoutes.GetString("createNewUser"), notImplemented)
+		r.MethodFunc(http.MethodPost, configRoutes.GetString("createNewUser"), createNewUser(db))
 		r.MethodFunc(http.MethodPut, configRoutes.GetString("updateUser"), notImplemented)
 		r.MethodFunc(http.MethodPost, configRoutes.GetString("updateUserMoney"), notImplemented)
-		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUserAdmin"), notImplemented)
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getUserAdmin"), getAdminUser(db))
 
 		r.MethodFunc(http.MethodPost, configRoutes.GetString("createNewProduct"), notImplemented)
 		r.MethodFunc(http.MethodPut, configRoutes.GetString("updateProduct"), notImplemented)
 		r.MethodFunc(http.MethodGet, configRoutes.GetString("getFullProducts"), getAdminProducts(db))
-		r.MethodFunc(http.MethodGet, configRoutes.GetString("getFullProduct"), notImplemented)
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("getFullProduct"), getAdminProduct(db))
 
 	})
 }

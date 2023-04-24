@@ -8,12 +8,12 @@ import (
 )
 
 func ValidatePin(pin string, user User, db *sql.DB) bool {
-	return user.Password == shaHashing(pin)
+	return user.Password == ShaHashing(pin)
 }
 
 // CheckUserPrivileges iterates through every logged api key and compares it to the current function
 func CheckUserPrivileges(key string, db *sql.DB) string {
-	hashedClientKey := shaHashing(key)
+	hashedClientKey := ShaHashing(key)
 	rows, err := db.Query("select privileges from keys where token = ?", hashedClientKey)
 	if err != nil {
 		log.Fatal(err)
@@ -28,7 +28,7 @@ func CheckUserPrivileges(key string, db *sql.DB) string {
 }
 
 // Hash the password to compare it.
-func shaHashing(input string) string {
+func ShaHashing(input string) string {
 	h := sha256.New()
 	h.Write([]byte(input))
 	bs := h.Sum(nil)

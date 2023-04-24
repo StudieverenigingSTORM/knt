@@ -100,7 +100,8 @@ func generateTransaction(db *sql.DB, userId int, startingBal int, deltaBal int, 
 
 // Sets the users balance to a specified ammount
 func setBalance(db *sql.DB, userId int, balance int) error {
-	_, err := commitTransaction(db, "UPDATE user SET balance = ? WHERE id = ?", balance, userId)
+	_, err := commitTransaction(db, "UPDATE user SET balance = ? WHERE id = ?", 
+	balance, userId)
 	return err
 }
 
@@ -118,14 +119,16 @@ func addTaxTotals(entries []PurchaseEntry, db *sql.DB, cost int) error {
 	//Go through all the entries and apply the operation on all of them
 	for _, entry := range entries {
 		//check if entry exists
-		tax, err := getFirstEntry[TaxEntry](queryBuilder(db, "SELECT * FROM tax where year = ? and product_id = ?", year, entry.ProductId))
+		tax, err := getFirstEntry[TaxEntry](queryBuilder(db, "SELECT * FROM tax where year = ? and product_id = ?", 
+		year, entry.ProductId))
 		if err != nil {
 			fmt.Println("LOl2")
 			return err
 		}
 		if tax.Id == 0 {
 			//The row for this product doesnt already exist in the table so create a new row for it
-			_, err = commitTransaction(db, "INSERT INTO tax (product_id, amount, totalCost, year) VALUES (?, ?, ?, ?)", entry.ProductId, entry.Amount, cost, year)
+			_, err = commitTransaction(db, "INSERT INTO tax (product_id, amount, totalCost, year) VALUES (?, ?, ?, ?)", 
+			entry.ProductId, entry.Amount, cost, year)
 			if err != nil {
 				fmt.Println("LOl3")
 				return err
@@ -133,7 +136,8 @@ func addTaxTotals(entries []PurchaseEntry, db *sql.DB, cost int) error {
 			continue
 		}
 		//The product exists update it
-		_, err = commitTransaction(db, "UPDATE tax SET amount = ?, totalCost = ? WHERE year = ? and id = ?", tax.Amount+entry.Amount, tax.TotalCost+cost, year, tax.Id)
+		_, err = commitTransaction(db, "UPDATE tax SET amount = ?, totalCost = ? WHERE year = ? and id = ?",
+		 tax.Amount+entry.Amount, tax.TotalCost+cost, year, tax.Id)
 		if err != nil {
 			fmt.Println("LOl4")
 			return err

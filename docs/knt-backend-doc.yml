@@ -138,7 +138,7 @@ paths:
       parameters: 
         - in: path
           required: true
-          name: userId
+          name: productId
           schema:
             type: integer
       responses:
@@ -258,31 +258,6 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
-    post:
-      tags:
-        - "User Admin"
-      description: 'Create new user'
-      parameters: 
-        - in: path
-          name: userId
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the user to target
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/fulluser"
-      security:
-        - ApiKeyAuth: []
-      responses:
-        '200':
-          description: OK
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '407':
-          $ref: "#/components/responses/ForbidenError"
     put:
       tags:
         - "User Admin"
@@ -356,6 +331,25 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/fulluser"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    post:
+      tags:
+        - "User Admin"
+      description: 'Create new user'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/fulluser"
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':

@@ -9,6 +9,10 @@ func GetAllProducts(db *sql.DB) ([]Product, error) {
 	return genericQuery[Product](queryBuilder(db, "select * from product"))
 }
 
+func GetProduct(db *sql.DB, productId int) ([]Product, error) {
+	return genericQuery[Product](queryBuilder(db, "select * from product where id = ?", productId))
+}
+
 func GetMinimalProducts(db *sql.DB) ([]MinimalProduct, error) {
 	return genericQuery[MinimalProduct](queryBuilder(db, "select * from product where visibility = 1"))
 }
@@ -27,6 +31,12 @@ func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
 
 func GetUser(db *sql.DB, userID int) (User, error) {
 	return getFirstEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
+}
+
+func CreateNewUser(db *sql.DB, user User) (int64, error) {
+	return commitTransaction(db,
+		"insert into user (first_name, last_name, vunetid, password, balance, visibility) VALUES (?, ?, ?, ?, ?, ?)",
+		user.FirstName, user.LastName, user.VunetId, user.Password, user.Balance, user.Visibility)
 }
 
 // Returns a single entry in a specific structure
