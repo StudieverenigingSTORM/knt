@@ -7,10 +7,11 @@ type MinimalProduct struct {
 }
 
 type Product struct {
-	Id         int    `json:"id"`
-	Price      int    `json:"price"`
-	Name       string `json:"name"`
-	Visibility int    `json:"visibility"`
+	Id          int    `json:"id"`
+	Price       int    `json:"price"`
+	Name        string `json:"name"`
+	Visibility  int    `json:"visibility"`
+	TaxCategory int    `json:"taxcategory"`
 }
 
 type User struct {

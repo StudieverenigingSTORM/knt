@@ -64,13 +64,7 @@ paths:
       description: 'Edit product'
       security:
         - ApiKeyAuth: []
-      parameters: 
-        - in: path
-          name: productId
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the product to target
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -322,6 +316,7 @@ paths:
       parameters: []
       security: 
         - ApiKeyAuth: []
+     
       responses:
         '200':
           description: OK
@@ -354,14 +349,101 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+  /admin/tax:
+    get:
+      tags:
+        - "Tax Admin"
+      description: 'Return a complete list of tax categories'
+      parameters: []
+      security: 
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/taxcategory"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    post:
+      tags:
+        - "Tax Admin"
+      description: 'Create a new tax category'
+      parameters: []
+      security: 
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the category
+                  example: alcohol
+                percentage:
+                  type: integer
+                  description: amount in percentages that the product is taxed
+                  example: 21
+      responses:
+        '201':
+          description: "Created"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    put:
+      tags:
+        - "Tax Admin"
+      description: 'Update a tax category'
+      parameters: []
+      security: 
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/taxcategory"
+      responses:
+        '200':
+          description: "OK"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
 components:
   schemas:
+    taxcategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The category ID.
+          example: 1
+        name:
+          type: string
+          description: name of the category
+          example: alcohol
+        percentage:
+          type: integer
+          description: amount in percentages that the product is taxed
+          example: 21
     user:
       type: object
       properties:
         id:
           type: integer
           description: The user ID.
+          example: 1
+        taxcategory:
+          type: integer
+          description: The category id of the product.
           example: 1
         firstName:
           type: string
@@ -439,6 +521,10 @@ components:
         visibility:
           type: integer
           description: Visibility status of the product will make the product invisable to the knt front end
+          example: 1
+        taxcategory:
+          type: integer
+          description: tax category of the product
           example: 1
   securitySchemes:
     ApiKeyAuth:

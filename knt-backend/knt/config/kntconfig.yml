@@ -33,6 +33,7 @@ routes:
   getFullProduct: "/products/{productId}"
   getFullProducts: "/products"
 
+  taxcategories: "/tax"
 
 
 
