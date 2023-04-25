@@ -1,6 +1,10 @@
-port: ":5000"
+port: "5000"
 database: "./app.db"
-cors: "*"
+
+corsAllowOrigin: "*"
+corsAllowCredentials: "true"
+corsAllowMethods: "*"
+corsAllowHeaders: "*"
 
 
 #These routes with their explanations are available within the documentation provided in docs
@@ -19,15 +23,17 @@ routes:
   adminEndpoint: "/admin"
 
   getUserAdmin: "/users/{userId}"
-  createNewUser: "/users/{userId}"
+  createNewUser: "/users"
   updateUser: "/users/{userId}"
-  updateUserMoney: "/users/{userId}/money"
+  updateUserMoney: "/users/{userId}/balance"
   getUsersAdmin: "/users"
 
   createNewProduct: "/products"
-  updateProduct: "/products/{productId}"
-  getFullProducts: "/products/{productId}"
+  updateProduct: "/products"
+  getFullProduct: "/products/{productId}"
+  getFullProducts: "/products"
 
+  taxcategories: "/tax"
 
 
 

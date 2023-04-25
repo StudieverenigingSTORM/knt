@@ -7,10 +7,11 @@ type MinimalProduct struct {
 }
 
 type Product struct {
-	Id         int    `json:"id"`
-	Price      int    `json:"price"`
-	Name       string `json:"name"`
-	Visibility int    `json:"visibility"`
+	Id          int    `json:"id"`
+	Price       int    `json:"price"`
+	Name        string `json:"name"`
+	Visibility  int    `json:"visibility"`
+	TaxCategory int    `json:"taxcategory"`
 }
 
 type User struct {
@@ -41,22 +42,23 @@ type PurchaseEntry struct {
 }
 
 type Transaction struct {
-	Id              int
-	UserId          int
-	StartingBalance int
-	DeltaBalance    int
-	FinalBalance    int
-	ReceiptId       int
+	Id              int `json:"id"`
+	UserId          int `json:"userId"`
+	StartingBalance int `json:"startingBalance"`
+	DeltaBalance    int `json:"deltaBalance"`
+	FinalBalance    int `json:"finalBalance"`
+	ReceiptId       int `json:"receiptId"`
 }
 
 type Receipt struct {
-	Id   int
-	Data string
+	Id   int    `json:"id"`
+	Data string `json:"data"`
 }
 
 type TaxEntry struct {
-	Id        int
-	ProductId int
-	Amount    int
-	TotalCost int
+	Id        int `json:"id"`
+	ProductId int `json:"productId"`
+	Amount    int `json:"amount"`
+	TotalCost int `json:"totalCost"`
+	Year      int `json:"year"`
 }

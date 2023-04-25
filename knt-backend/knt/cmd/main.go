@@ -37,13 +37,13 @@ func main() {
 
 	//Start the mux router, this router simplified http calls and reduces boilerplate code
 	r := chi.NewRouter()
-	
+
 	kntrouter.AssignRoutes(r, db)
 	//Sanity checck gets executed before the listen because listen blocks the thread.
 	go sanityCheck()
 
 	fmt.Println("Attempting to start listening on port: " + viper.GetString("port"))
-	log.Fatalln(http.ListenAndServe(viper.GetString("port"), r))
+	log.Fatalln(http.ListenAndServe(":"+viper.GetString("port"), r))
 
 }
 
@@ -53,10 +53,10 @@ func main() {
 func sanityCheck() {
 	for {
 		var resp *http.Response
-		resp, _ = http.Get("http://127.0.0.1" + viper.GetString("port") + "/ping")
+		resp, _ = http.Get("http://127.0.0.1:" + viper.GetString("port") + "/ping")
 
 		if resp.StatusCode == http.StatusOK {
-			fmt.Println("Server successfully started on http://127.0.0.1" + viper.GetString("port"))
+			fmt.Println("Server successfully started on http://127.0.0.1:" + viper.GetString("port"))
 			break
 		}
 
