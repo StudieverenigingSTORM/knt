@@ -83,7 +83,7 @@
   if (process.server) {
     let userData: User[] = [];
     await useFetch('/users', {
-      baseURL: runtimeConfig.public.apiBase,
+      baseURL: runtimeConfig.public.backendBase,
       headers: {
         "X-API-Key": runtimeConfig.apiSecret
       },
