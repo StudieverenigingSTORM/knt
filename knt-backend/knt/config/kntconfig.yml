@@ -24,8 +24,8 @@ routes:
 
   getUserAdmin: "/users/{userId}"
   createNewUser: "/users"
-  updateUser: "/users/{userId}"
-  updateUserMoney: "/users/{userId}/balance"
+  updateUser: "/users"
+  updateUserMoney: "/users/balance"
   getUsersAdmin: "/users"
 
   createNewProduct: "/products"

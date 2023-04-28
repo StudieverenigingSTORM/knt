@@ -252,45 +252,15 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
-    put:
-      tags:
-        - "User Admin"
-      description: 'Edit userdata'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/fulluser"
-      parameters: 
-        - in: path
-          name: userId
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the user to target
-      security:
-        - ApiKeyAuth: []
-      responses:
-        '204':
-          description: No content
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '407':
-          $ref: "#/components/responses/ForbidenError"
-  /admin/users/{userId}/balance:
+
+  /admin/users/balance:
     post:
       tags:
         - "User Admin"
-      description: 'Add balance to a users account'
+      description: 'Modify balance of the account based on the vunet id'
       security:
         - ApiKeyAuth: []
-      parameters: 
-        - in: path
-          name: userId
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the user to target
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -301,6 +271,10 @@ paths:
                   example: 80 
                   type: integer
                   description: Amount in cents
+                vunetId:
+                  example: pps999
+                  type: string
+                  description: vunetID
       responses:
         '204':
           description: OK
@@ -330,6 +304,26 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+    put:
+      tags:
+        - "User Admin"
+      description: 'Edit userdata, balance is not able to be updated. Empty string values will be ignored'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/fulluser"
+      parameters: []
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '204':
+          description: No content
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
+    
     post:
       tags:
         - "User Admin"

@@ -5,40 +5,6 @@ import (
 	"reflect"
 )
 
-func GetAllProducts(db *sql.DB) ([]Product, error) {
-	return genericQuery[Product](queryBuilder(db, "select * from product"))
-}
-
-func GetProduct(db *sql.DB, productId int) ([]Product, error) {
-	return genericQuery[Product](queryBuilder(db, "select * from product where id = ?", productId))
-}
-
-func GetMinimalProducts(db *sql.DB) ([]MinimalProduct, error) {
-	return genericQuery[MinimalProduct](queryBuilder(db, "select * from product where visibility = 1"))
-}
-
-func GetAllUsers(db *sql.DB) ([]User, error) {
-	return genericQuery[User](queryBuilder(db, "select * from user"))
-}
-
-func GetAllMinimalUsers(db *sql.DB) ([]MinimalUser, error) {
-	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where visibility = 1"))
-}
-
-func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
-	return getFirstEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ? and visibility = 1", userId))
-}
-
-func GetUser(db *sql.DB, userID int) (User, error) {
-	return getFirstEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
-}
-
-func CreateNewUser(db *sql.DB, user User) (int64, error) {
-	return commitTransaction(db,
-		"insert into user (first_name, last_name, vunetid, password, balance, visibility) VALUES (?, ?, ?, ?, ?, ?)",
-		user.FirstName, user.LastName, user.VunetId, user.Password, user.Balance, user.Visibility)
-}
-
 // Returns a single entry in a specific structure
 func getFirstEntry[K any](rows *sql.Rows, err error) (K, error) {
 	var output K
@@ -127,5 +93,21 @@ func commitTransaction(db *sql.DB, queryString string, args ...any) (int64, erro
 	}
 
 	return id, nil
+}
 
+// Add to transaction
+// This function adds to an already started transaction
+// Incase any error occurs this function will automatically rollback the transaction
+func addToTransaction(transaction *sql.Tx, queryString string, args ...any) (int64, error) {
+	res, err := transaction.Exec(queryString, args...)
+	if err != nil {
+		transaction.Rollback()
+		return 0, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		transaction.Rollback()
+		return 0, err
+	}
+	return id, nil
 }
