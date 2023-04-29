@@ -49,5 +49,7 @@ func assignAdminRoutes(r chi.Router, db *sql.DB, configRoutes *viper.Viper) {
 		r.MethodFunc(http.MethodGet, configRoutes.GetString("taxcategories"), notImplemented)
 		r.MethodFunc(http.MethodPost, configRoutes.GetString("taxcategories"), notImplemented)
 		r.MethodFunc(http.MethodPut, configRoutes.GetString("taxcategories"), notImplemented)
+
+		r.MethodFunc(http.MethodGet, configRoutes.GetString("transactions"), notImplemented)
 	})
 }

@@ -436,6 +436,68 @@ paths:
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
+          $ref: "#/components/responses/ForbidenError"  
+  /admin/transactions:
+    get:
+      tags:
+        - "Transactions Admin"
+      description: 'Return a complete list of transactions with paginations'
+      parameters: []
+      security: 
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pp:
+                  type: integer
+                  example: 10
+                  description: Amoount of items per page
+                p:
+                  type: integer
+                  example: 1
+                  description: page to display
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: user id
+                      example: 1
+                    vunetid:
+                      type: string
+                      example: skn999
+                    starting_balance:
+                      type: integer
+                      example: 1000
+                    delta_balance:
+                      type: integer
+                      example: -20
+                    final_balance:
+                      type: integer
+                      example: 980
+                    reference:
+                      type: string
+                      example: Uwu~
+                    timestamp:
+                      type: string
+                      example: "2023-04-17 21:15:56"
+                    data:
+                      type: string
+                      description: data of the receipt
+                      example: '[{"productId":1,"amount":1}]'
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
           $ref: "#/components/responses/ForbidenError"
 components:
   schemas:
