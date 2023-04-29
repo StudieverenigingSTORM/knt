@@ -21,6 +21,10 @@ func GetUser(db *sql.DB, userID int) (User, error) {
 	return getFirstEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
 }
 
+func GetUserByVunetId(db *sql.DB, VunetId string) (User, error) {
+	return getFirstEntry[User](queryBuilder(db, "select * from user where vunetid = ?", VunetId))
+}
+
 func CreateNewUser(db *sql.DB, user User) (int64, error) {
 	return commitTransaction(db,
 		"insert into user (first_name, last_name, vunetid, password, balance, visibility) VALUES (?, ?, ?, ?, ?, ?)",

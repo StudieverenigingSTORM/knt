@@ -133,3 +133,33 @@ func updateUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
+
+func updateUserBalance(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		var format struct {
+			Balance   int    `json:"balance"`
+			VunetId   string `json:"vunetid"`
+			Reference string `json:"reference"`
+		}
+		err := decoder.Decode(&format)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
+		user, err := kntdatabase.GetUserByVunetId(db, format.VunetId)
+		if err != nil || user.Id == 0 {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+		var data []byte
+		r.Body.Read(data)
+		err = kntdatabase.UpdateUserBalance(user, format.Balance, db, string(data), format.Reference)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}
+}

@@ -40,12 +40,12 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 		return 0, err
 	}
 	//make a transaction
-	err = generateTransaction(transaction, userId, user.Balance, cost, user.Balance-cost, receiptId)
+	err = generateTransaction(transaction, userId, user.Balance, cost, user.Balance+cost, receiptId, "")
 	if err != nil {
 		return 0, err
 	}
 	//subtract balance
-	err = setBalance(transaction, userId, user.Balance-cost)
+	err = setBalance(transaction, userId, user.Balance+cost)
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +62,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 	if err != nil {
 		return 0, err
 	}
-	return cost, nil
+	return cost * -1, nil
 }
 
 // Calculates the total cost of the purchased products
@@ -76,6 +76,8 @@ func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 		}
 		cost += value
 	}
+
+	cost *= -1
 
 	return cost, nil
 }
@@ -93,6 +95,10 @@ func generateReceipt(transaction *sql.Tx, entries []PurchaseEntry) (int64, error
 		return 0, err
 	}
 
+	return addReceipt(transaction, string(dataString))
+}
+
+func addReceipt(transaction *sql.Tx, dataString string) (int64, error) {
 	receiptId, err := addToTransaction(transaction, "INSERT INTO receipts (data, timestamp) VALUES (?, datetime())", dataString)
 	if err != nil {
 		return 0, err
@@ -102,10 +108,10 @@ func generateReceipt(transaction *sql.Tx, entries []PurchaseEntry) (int64, error
 }
 
 // Generates the transaction and stores it in the database
-func generateTransaction(transaction *sql.Tx, userId int, startingBal int, deltaBal int, finalBal int, receiptId int64) error {
+func generateTransaction(transaction *sql.Tx, userId int, startingBal int, deltaBal int, finalBal int, receiptId int64, ref string) error {
 	_, err := addToTransaction(transaction,
-		"INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id) VALUES (?, ?, ?, ?, ?)",
-		userId, startingBal, deltaBal, finalBal, receiptId)
+		"INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id, ref) VALUES (?, ?, ?, ?, ?, ?)",
+		userId, startingBal, deltaBal, finalBal, receiptId, ref)
 	return err
 }
 
@@ -157,4 +163,33 @@ func addTaxTotals(entries []PurchaseEntry, db *sql.DB, transaction *sql.Tx, cost
 func ensureTaxTableExists(transaction *sql.Tx, year int) error {
 	_, err := addToTransaction(transaction, "CREATE TABLE IF NOT EXISTS tax (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INT, amount INT, totalCost INT, year INT)")
 	return err
+}
+
+func UpdateUserBalance(user User, balance int, db *sql.DB, body string, ref string) error {
+	transaction, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	receiptId, err := addReceipt(transaction, body)
+	if err != nil {
+		return err
+	}
+
+	err = generateTransaction(transaction, user.Id, user.Balance, balance, user.Balance+balance, receiptId, ref)
+	if err != nil {
+		return err
+	}
+
+	err = setBalance(transaction, user.Id, user.Balance+balance)
+	if err != nil {
+		return err
+	}
+
+	err = transaction.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -275,6 +275,10 @@ paths:
                   example: pps999
                   type: string
                   description: vunetID
+                reference:
+                  example: UwU~
+                  type: string
+                  description: reference given through the storm web shop
       responses:
         '204':
           description: OK
