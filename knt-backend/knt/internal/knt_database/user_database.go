@@ -18,7 +18,11 @@ func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
 }
 
 func GetUser(db *sql.DB, userID int) (User, error) {
-	return getFirstEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
+	user, err := getFirstEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
+	if user.Id == 0 {
+		return user, errors.New("User not found")
+	}
+	return user, err
 }
 
 func GetUserByVunetId(db *sql.DB, VunetId string) (User, error) {

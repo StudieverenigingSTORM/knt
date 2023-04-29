@@ -153,8 +153,7 @@ func updateUserBalance(db *sql.DB) func(w http.ResponseWriter, r *http.Request) 
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
-		var data []byte
-		r.Body.Read(data)
+		data, _ := json.Marshal(format)
 		err = kntdatabase.UpdateUserBalance(user, format.Balance, db, string(data), format.Reference)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
