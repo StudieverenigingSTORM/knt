@@ -193,3 +193,11 @@ func UpdateUserBalance(user User, balance int, db *sql.DB, body string, ref stri
 
 	return nil
 }
+
+func getBasicTransactions(pp int, p int, db *sql.DB) ([]Transaction, error) {
+	return genericQuery[Transaction](queryBuilder(db, "select * from transactions order by id desc limit ? offset ?", pp, p*pp))
+}
+
+func getReceipt(db *sql.DB, id int) (Receipt, error) {
+	return getFirstEntry[Receipt](queryBuilder(db, "select * from receipts where id = ?", id))
+}

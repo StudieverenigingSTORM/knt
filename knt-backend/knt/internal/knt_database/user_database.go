@@ -68,3 +68,32 @@ func ModifyUser(new User, old User) User {
 	}
 	return old
 }
+
+
+func GetPopulatedTransactions(pp int, p int, db *sql.DB) ([]TransactionDetails, error) {
+	basicTrans, err := getBasicTransactions(pp, p, db)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []TransactionDetails
+	for _, t := range basicTrans {
+		u, err := GetUser(db, t.UserId)
+		r, err := getReceipt(db, t.ReceiptId)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, TransactionDetails{
+			Id: t.Id,
+			VunetId: u.VunetId,
+			StartingBalance: t.StartingBalance,
+			DeltaBalance: t.DeltaBalance,
+			FinalBalance: t.FinalBalance,
+			Reference: t.Reference,
+			Timestamp: r.Timestamp,
+			Data: r.Data,
+		})
+	}
+	return result, nil
+}

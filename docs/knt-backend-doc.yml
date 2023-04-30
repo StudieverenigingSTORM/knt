@@ -441,24 +441,22 @@ paths:
     get:
       tags:
         - "Transactions Admin"
-      description: 'Return a complete list of transactions with paginations'
-      parameters: []
+      description: 'Return a complete list of transactions with paginations, if no querries are attached default value of 10 per page and 0th page is assumed'
+      parameters: 
+        - in: query
+          name: pp
+          schema:
+            type: integer
+          required: false
+          description: Amount of items per page
+        - in: query
+          name: p
+          schema:
+            type: integer
+          required: false
+          description: Page number starting at index 0  
       security: 
         - ApiKeyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                pp:
-                  type: integer
-                  example: 10
-                  description: Amoount of items per page
-                p:
-                  type: integer
-                  example: 1
-                  description: page to display
       responses:
         '200':
           description: OK

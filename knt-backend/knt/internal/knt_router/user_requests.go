@@ -162,3 +162,33 @@ func updateUserBalance(db *sql.DB) func(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
+
+func getTransactions(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pp := r.URL.Query().Get("pp")
+		p := r.URL.Query().Get("p")
+
+		if pp == "" {
+			pp = "10"
+		}
+		if p == "" {
+			p = "0"
+		}
+
+		itemCount, err := strconv.Atoi(pp)
+		pageNum, err := strconv.Atoi(p)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
+		data, err := kntdatabase.GetPopulatedTransactions(itemCount, pageNum, db)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
+		s, _ := json.Marshal(data)
+		fmt.Fprintf(w, string(s))
+	}
+}
