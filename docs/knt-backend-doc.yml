@@ -64,6 +64,7 @@ paths:
       description: 'Edit product'
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       parameters: []
       requestBody:
         content:
@@ -100,7 +101,6 @@ paths:
       description: 'Retrieve full data on all products'
       security:
         - ApiKeyAuth: []
-
       responses:
         '200':
           description: A list of product objects
@@ -120,6 +120,7 @@ paths:
       description: 'Create a new product in the database'
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       requestBody:
         description: 'Basic product to create'
         required: true
@@ -287,7 +288,6 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
-
   /admin/users/balance:
     post:
       tags:
@@ -295,6 +295,7 @@ paths:
       description: 'Modify balance of the account based on the vunet id'
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       parameters: []
       requestBody:
         content:
@@ -380,6 +381,7 @@ paths:
       parameters: []
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       responses:
         '204':
           description: No content
@@ -387,7 +389,6 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
-    
     post:
       tags:
         - "User Admin"
@@ -421,6 +422,7 @@ paths:
                   example: 1
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       responses:
         '200':
           description: OK
@@ -456,6 +458,7 @@ paths:
       parameters: []
       security: 
         - ApiKeyAuth: []
+        - AdminId: []
       requestBody:
         content:
           application/json:
@@ -484,6 +487,7 @@ paths:
       parameters: []
       security: 
         - ApiKeyAuth: []
+        - AdminId: []
       requestBody:
         content:
           application/json:
@@ -671,7 +675,11 @@ components:
       in: header
       name: X-API-Key
       description: Api key for the knt (test defined in backend root)
-
+    AdminId:
+      type: apiKey
+      in: header
+      name: X-Admin-Id
+      description: Admin identifier assigned to the user
   responses:
     UnauthorizedError:
       description: API key is missing or invalid

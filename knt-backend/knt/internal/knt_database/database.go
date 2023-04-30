@@ -111,3 +111,8 @@ func addToTransaction(transaction *sql.Tx, queryString string, args ...any) (int
 	}
 	return id, nil
 }
+
+func AddAdminLogs(db *sql.DB, route string, method string, body string, admin string) error {
+	_, err := commitTransaction(db, "insert into admin_log (admin, route, method, data, timestamp) VALUES (?, ?, ?, ?, datetime())", admin, route, method, body)
+	return err
+}
