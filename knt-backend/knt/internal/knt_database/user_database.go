@@ -31,8 +31,8 @@ func GetUserByVunetId(db *sql.DB, VunetId string) (User, error) {
 
 func CreateNewUser(db *sql.DB, user User) (int64, error) {
 	return commitTransaction(db,
-		"insert into user (first_name, last_name, vunetid, password, balance, visibility) VALUES (?, ?, ?, ?, ?, ?)",
-		user.FirstName, user.LastName, user.VunetId, user.Password, user.Balance, user.Visibility)
+		"insert into user (first_name, last_name, vunetid, password, visibility) VALUES (?, ?, ?, ?, ?)",
+		user.FirstName, user.LastName, user.VunetId, user.Password, user.Visibility)
 }
 
 func UpdateUser(db *sql.DB, userNew User) (int64, error) {

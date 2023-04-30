@@ -40,6 +40,7 @@ func createNewUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			Id int64 `json:"id"`
 		}
 		idStruct.Id = id
+		w.WriteHeader(http.StatusCreated)
 		jsonString, _ := json.Marshal(idStruct)
 		fmt.Fprintf(w, string(jsonString))
 	}
@@ -149,8 +150,12 @@ func updateUserBalance(db *sql.DB) func(w http.ResponseWriter, r *http.Request) 
 		}
 
 		user, err := kntdatabase.GetUserByVunetId(db, format.VunetId)
-		if err != nil || user.Id == 0 {
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+		if user.Id == 0 {
+			http.Error(w, "Cannot find user", http.StatusUnprocessableEntity)
 			return
 		}
 		data, _ := json.Marshal(format)

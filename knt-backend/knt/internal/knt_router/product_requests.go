@@ -57,6 +57,7 @@ func createNewProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			Id int64 `json:"id"`
 		}
 		idStruct.Id = id
+		w.WriteHeader(http.StatusCreated)
 		jsonString, _ := json.Marshal(idStruct)
 		fmt.Fprintf(w, string(jsonString))
 	}

@@ -18,7 +18,7 @@ func GetProduct(db *sql.DB, productId int) (Product, error) {
 }
 
 func GetMinimalProducts(db *sql.DB) ([]MinimalProduct, error) {
-	return genericQuery[MinimalProduct](queryBuilder(db, "select * from product where visibility = 1"))
+	return genericQuery[MinimalProduct](queryBuilder(db, "select id, price, name from product where visibility = 1"))
 }
 
 func CreateNewProduct(db *sql.DB, product Product) (int64, error) {

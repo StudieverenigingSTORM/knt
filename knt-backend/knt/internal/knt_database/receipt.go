@@ -31,7 +31,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 		return 0, err
 	}
 	//validate users balance
-	if cost > user.Balance {
+	if cost*-1 > user.Balance {
 		return 0, errors.New("Insufficient balance on user")
 	}
 	//generate receipt
@@ -84,7 +84,7 @@ func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 
 // returns the value of a specific entry
 func getProductValue(entry PurchaseEntry, db *sql.DB) (int, error) {
-	value, err := getFirstSingleValue[int](queryBuilder(db, "select price from product where id = ?", entry.ProductId))
+	value, err := getFirstSingleValue[int](queryBuilder(db, "select price from product where id = ? and visibility = 1", entry.ProductId))
 	return value * entry.Amount, err
 }
 

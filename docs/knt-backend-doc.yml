@@ -88,8 +88,8 @@ paths:
                   example: 1
                   description: is the product visable to the knt frontend
       responses:
-        '204':
-          description: OK
+        '201':
+          description: created
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
@@ -126,8 +126,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/product'
-
+              type: object
+              properties:
+                price:
+                  type: integer
+                  example: 80
+                  description: price in cents
+                name:
+                  type: string
+                  example: Beer
+                visibility: 
+                  type: integer
+                  example: 1
+                taxcategory:
+                  type: integer
+                  example: 1
       responses:
         '201':
           description: "Created"
@@ -338,7 +351,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/fulluser"
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: The user ID.
+                  example: 1
+                firstName:
+                  type: string
+                  description: The users first name.
+                  example: Person
+                lastName:
+                  type: string
+                  description: The users last name.
+                  example: Personson
+                vunetId:
+                  type: string
+                  description: vunetId
+                  example: pps999
+                password:
+                  type: string
+                  description: new password (will be hashed in the Backend) (leave empty if not changed)
+                  example: "12345678"
+                visibility:
+                  type: integer
+                  description: Visibility status of the user 0 will make the user invisable to the knt front end
+                  example: 1
       parameters: []
       security:
         - ApiKeyAuth: []
@@ -359,7 +397,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/fulluser"
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: The users first name.
+                  example: Person
+                lastName:
+                  type: string
+                  description: The users last name.
+                  example: Personson
+                vunetId:
+                  type: string
+                  description: vunetId
+                  example: pps999
+                password:
+                  type: string
+                  description: new password (will be hashed in the Backend) (leave empty if not changed)
+                  example: "12345678"
+                visibility:
+                  type: integer
+                  description: Visibility status of the user 0 will make the user invisable to the knt front end
+                  example: 1
       security:
         - ApiKeyAuth: []
       responses:
