@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/logger"
 )
 
 func getAdminProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -23,12 +24,14 @@ func getAdminProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		productId, err := strconv.Atoi(chi.URLParam(r, "productId"))
 		if err != nil {
+			logger.Error("Unable to get product id: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		product, err := kntdatabase.GetProduct(db, productId)
 		if err != nil {
+			logger.Error("Unable to get product: ", err.Error(), " id: ", productId)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -44,12 +47,14 @@ func createNewProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		var body kntdatabase.Product
 		err := decoder.Decode(&body)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		id, err := kntdatabase.CreateNewProduct(db, body)
 		if err != nil {
+			logger.Error("Unable to create new product: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -69,12 +74,14 @@ func updateProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		var body kntdatabase.Product
 		err := decoder.Decode(&body)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		_, err = kntdatabase.UpdateProduct(db, body)
 		if err != nil {
+			logger.Error("Unable to update product: ", err.Error(), " id: ", body.Id)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}

@@ -6,9 +6,11 @@ import (
 	"kntrouter"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/logger"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/viper"
 )
@@ -25,8 +27,18 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
+	//Insure that log directory exists
+	os.Mkdir(viper.GetString("logPath"), os.ModePerm)
+	//Open log directory
+	lf, err := os.OpenFile(viper.GetString("logPath")+viper.GetString("logName"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		logger.Fatalf("Failed to open log file: %v", err)
+	}
 
-	fmt.Println("Config file successfully loaded")
+	//Load the logger
+	logger.Init("KnT Backend", true, true, lf)
+	logger.SetFlags(log.Lshortfile)
+	logger.SetFlags(log.LstdFlags)
 
 	//Open the database
 	db, err := sql.Open("sqlite3", viper.GetString("database"))
@@ -42,8 +54,8 @@ func main() {
 	//Sanity checck gets executed before the listen because listen blocks the thread.
 	go sanityCheck()
 
-	fmt.Println("Attempting to start listening on port: " + viper.GetString("port"))
-	log.Fatalln(http.ListenAndServe(":"+viper.GetString("port"), r))
+	logger.Info("Attempting to start listening on port: ", viper.GetString("port"))
+	logger.Fatal(http.ListenAndServe(":"+viper.GetString("port"), r))
 
 }
 
@@ -56,7 +68,7 @@ func sanityCheck() {
 		resp, _ = http.Get("http://127.0.0.1:" + viper.GetString("port") + "/ping")
 
 		if resp.StatusCode == http.StatusOK {
-			fmt.Println("Server successfully started on http://127.0.0.1:" + viper.GetString("port"))
+			logger.Info("Server successfully started on http://127.0.0.1:", viper.GetString("port"))
 			break
 		}
 

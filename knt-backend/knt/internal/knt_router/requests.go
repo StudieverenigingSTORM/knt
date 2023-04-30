@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/google/logger"
 )
 
 func ping(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +15,7 @@ func ping(w http.ResponseWriter, r *http.Request) {
 func generateJsonResponse[K any](data K, err error) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
+			logger.Error("Unable to generate json response: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}

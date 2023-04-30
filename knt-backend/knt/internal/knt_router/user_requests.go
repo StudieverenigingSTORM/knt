@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/logger"
 )
 
 func getUsersAdmin(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -26,6 +27,7 @@ func createNewUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		var body kntdatabase.User
 		err := decoder.Decode(&body)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -33,6 +35,7 @@ func createNewUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		body.Password = kntdatabase.ShaHashing(body.Password)
 		id, err := kntdatabase.CreateNewUser(db, body)
 		if err != nil {
+			logger.Error("Unable to create new user: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -50,12 +53,14 @@ func getUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
 		if err != nil {
+			logger.Error("Unable to get user id: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		user, err := kntdatabase.GetMinimalUser(db, userId)
 		if err != nil {
+			logger.Error("Unable to get user: ", err.Error(), " id: ", userId)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -69,12 +74,14 @@ func getAdminUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
 		if err != nil {
+			logger.Error("Unable to get user id: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		user, err := kntdatabase.GetUser(db, userId)
 		if err != nil {
+			logger.Error("Unable to get user: ", err.Error(), " id: ", userId)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -88,6 +95,7 @@ func makePurchase(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
 		if err != nil {
+			logger.Error("Unable to get user id: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -96,6 +104,7 @@ func makePurchase(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		var body kntdatabase.PurchaseRequest
 		err = decoder.Decode(&body)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -105,6 +114,7 @@ func makePurchase(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 		format.Cost, err = kntdatabase.MakeTransaction(userId, body, db)
 		if err != nil {
+			logger.Error("Unable to make transaction: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -122,12 +132,14 @@ func updateUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		var body kntdatabase.User
 		err := decoder.Decode(&body)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		_, err = kntdatabase.UpdateUser(db, body)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -145,22 +157,26 @@ func updateUserBalance(db *sql.DB) func(w http.ResponseWriter, r *http.Request) 
 		}
 		err := decoder.Decode(&format)
 		if err != nil {
+			logger.Error("Unable to decode body: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		user, err := kntdatabase.GetUserByVunetId(db, format.VunetId)
 		if err != nil {
+			logger.Error("Unable to get user: ", err.Error(), " vunetid: ", format.VunetId)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 		if user.Id == 0 {
+			logger.Error("User does not exist vunetid: ", format.VunetId)
 			http.Error(w, "Cannot find user", http.StatusUnprocessableEntity)
 			return
 		}
 		data, _ := json.Marshal(format)
 		err = kntdatabase.UpdateUserBalance(user, format.Balance, db, string(data), format.Reference)
 		if err != nil {
+			logger.Error("Unable to update user balance: ", err.Error(), " vunetid: ", format.VunetId)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -183,12 +199,14 @@ func getTransactions(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		itemCount, err := strconv.Atoi(pp)
 		pageNum, err := strconv.Atoi(p)
 		if err != nil {
+			logger.Error("Unable to get page or item count: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
 
 		data, err := kntdatabase.GetPopulatedTransactions(itemCount, pageNum, db)
 		if err != nil {
+			logger.Error("Unable to return transactions: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}

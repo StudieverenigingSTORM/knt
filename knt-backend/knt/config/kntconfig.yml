@@ -1,5 +1,7 @@
 port: "5000"
 database: "./app.db"
+logPath: "/var/log/knt/"
+logName: "server.log"
 
 corsAllowOrigin: "*"
 corsAllowCredentials: "true"

@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"io/ioutil"
 	"kntdatabase"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/logger"
 	"github.com/spf13/viper"
 )
 
@@ -46,7 +46,7 @@ func setCors(next http.Handler) http.Handler {
 // Middleware to log all http calls
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.RequestURI)
+		logger.Info("Access: ", r.URL.Path, " ", r.Method)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -70,6 +70,7 @@ func generateAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			//Get the header and validate it
 			key := r.Header.Get("X-API-Key")
 			if key == "" {
+				logger.Error("API key missing")
 				http.Error(w, http.StatusText(401), 401)
 				return
 			}
@@ -79,7 +80,9 @@ func generateAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
+
 			//Write appropriate headers
+			logger.Error("Unauthorized")
 			http.Error(w, http.StatusText(407), 407)
 		})
 	}
@@ -91,6 +94,7 @@ func logAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			//Get the header and validate it
 			key := r.Header.Get("X-Admin-Id")
 			if key == "" {
+				logger.Error("No admin key provided")
 				http.Error(w, "No admin key provided", 401)
 				return
 			}
@@ -102,6 +106,7 @@ func logAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 
 			err := kntdatabase.AddAdminLogs(db, r.URL.Path, r.Method, string(data), key)
 			if err != nil {
+				logger.Error("Unable to write admin log: ", err.Error())
 				http.Error(w, err.Error(), 401)
 				return
 			}
@@ -118,6 +123,7 @@ func generateUserMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			//Get the header and validate it
 			key := r.Header.Get("X-API-Key")
 			if key == "" {
+				logger.Error("API key missing")
 				http.Error(w, http.StatusText(401), 401)
 				return
 			}
@@ -128,6 +134,7 @@ func generateUserMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				return
 			}
 			//Write appropriate headers
+			logger.Error("Unauthorized")
 			http.Error(w, http.StatusText(407), 407)
 		})
 	}
