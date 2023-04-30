@@ -21,6 +21,11 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 	if err != nil {
 		return 0, err
 	}
+
+	if user.Password == "" {
+		return 0, errors.New("User has no password, cannot complete the transaction")
+	}
+
 	//pin validation
 	if !ValidatePin(purchase.Password, user, db) {
 		return 0, errors.New("Unauthorized")
