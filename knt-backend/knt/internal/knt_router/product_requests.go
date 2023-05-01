@@ -37,7 +37,7 @@ func getAdminProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonString, _ := json.Marshal(product)
-		fmt.Fprintf(w, string(jsonString))
+		fmt.Fprint(w, string(jsonString))
 	}
 }
 
@@ -64,7 +64,7 @@ func createNewProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		idStruct.Id = id
 		w.WriteHeader(http.StatusCreated)
 		jsonString, _ := json.Marshal(idStruct)
-		fmt.Fprintf(w, string(jsonString))
+		fmt.Fprint(w, string(jsonString))
 	}
 }
 

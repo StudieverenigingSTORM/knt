@@ -37,7 +37,7 @@ func CreateNewUser(db *sql.DB, user User) (int64, error) {
 
 func UpdateUser(db *sql.DB, userNew User) (int64, error) {
 	if userNew.Id == 0 {
-		return 0, errors.New("Invalid user")
+		return 0, errors.New("invalid user")
 	}
 
 	userOld, err := GetUser(db, userNew.Id)
@@ -78,6 +78,9 @@ func GetPopulatedTransactions(pp int, p int, db *sql.DB) ([]TransactionDetails, 
 	var result []TransactionDetails
 	for _, t := range basicTrans {
 		u, err := GetUser(db, t.UserId)
+		if err != nil {
+			return nil, err
+		}
 		r, err := getReceipt(db, t.ReceiptId)
 		if err != nil {
 			return nil, err

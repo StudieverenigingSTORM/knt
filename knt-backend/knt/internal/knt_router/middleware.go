@@ -3,7 +3,7 @@ package kntrouter
 import (
 	"bytes"
 	"database/sql"
-	"io/ioutil"
+	"io"
 	"kntdatabase"
 	"net/http"
 
@@ -55,7 +55,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 func preflightMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "OPTIONS" {
-			w.WriteHeader(200)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -71,7 +71,7 @@ func generateAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			key := r.Header.Get("X-API-Key")
 			if key == "" {
 				logger.Error("API key missing")
-				http.Error(w, http.StatusText(401), 401)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
 			privileges := kntdatabase.CheckUserPrivileges(key, db)
@@ -83,7 +83,7 @@ func generateAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 
 			//Write appropriate headers
 			logger.Error("Unauthorized")
-			http.Error(w, http.StatusText(407), 407)
+			http.Error(w, http.StatusText(http.StatusProxyAuthRequired), http.StatusProxyAuthRequired)
 		})
 	}
 }
@@ -95,19 +95,19 @@ func logAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			key := r.Header.Get("X-Admin-Id")
 			if key == "" {
 				logger.Error("No admin key provided")
-				http.Error(w, "No admin key provided", 401)
+				http.Error(w, "No admin key provided", http.StatusUnauthorized)
 				return
 			}
 
-			data, _ := ioutil.ReadAll(r.Body)
+			data, _ := io.ReadAll(r.Body)
 			//after reading the data we want to put it back in the buffer for other middlewares/requests to read it
 			r.Body.Close()
-			r.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+			r.Body = io.NopCloser(bytes.NewBuffer(data))
 
 			err := kntdatabase.AddAdminLogs(db, r.URL.Path, r.Method, string(data), key)
 			if err != nil {
 				logger.Error("Unable to write admin log: ", err.Error())
-				http.Error(w, err.Error(), 401)
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 			//Write appropriate headers
@@ -124,7 +124,7 @@ func generateUserMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			key := r.Header.Get("X-API-Key")
 			if key == "" {
 				logger.Error("API key missing")
-				http.Error(w, http.StatusText(401), 401)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
 			privileges := kntdatabase.CheckUserPrivileges(key, db)
@@ -135,7 +135,7 @@ func generateUserMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			}
 			//Write appropriate headers
 			logger.Error("Unauthorized")
-			http.Error(w, http.StatusText(407), 407)
+			http.Error(w, http.StatusText(http.StatusProxyAuthRequired), http.StatusProxyAuthRequired)
 		})
 	}
 }

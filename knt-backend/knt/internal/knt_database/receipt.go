@@ -37,7 +37,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 	}
 	//validate users balance
 	if cost*-1 > user.Balance {
-		return 0, errors.New("Insufficient balance on user")
+		return 0, errors.New("insufficient balance on user")
 	}
 	//generate receipt
 	receiptId, err := generateReceipt(transaction, purchase.Data)

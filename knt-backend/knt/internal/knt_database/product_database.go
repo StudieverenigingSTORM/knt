@@ -29,7 +29,7 @@ func CreateNewProduct(db *sql.DB, product Product) (int64, error) {
 
 func UpdateProduct(db *sql.DB, product Product) (int64, error) {
 	if product.Id == 0 {
-		return 0, errors.New("Invalid user")
+		return 0, errors.New("invalid user")
 	}
 
 	productOld, err := GetProduct(db, product.Id)

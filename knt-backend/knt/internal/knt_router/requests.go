@@ -20,7 +20,7 @@ func generateJsonResponse[K any](data K, err error) func(w http.ResponseWriter, 
 			return
 		}
 		jsonString, _ := json.Marshal(data)
-		fmt.Fprintf(w, string(jsonString))
+		fmt.Fprint(w, string(jsonString))
 	}
 }
 

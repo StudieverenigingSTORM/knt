@@ -45,7 +45,7 @@ func createNewUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		idStruct.Id = id
 		w.WriteHeader(http.StatusCreated)
 		jsonString, _ := json.Marshal(idStruct)
-		fmt.Fprintf(w, string(jsonString))
+		fmt.Fprint(w, string(jsonString))
 	}
 }
 
@@ -66,7 +66,7 @@ func getUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonString, _ := json.Marshal(user)
-		fmt.Fprintf(w, string(jsonString))
+		fmt.Fprint(w, string(jsonString))
 	}
 }
 
@@ -87,7 +87,7 @@ func getAdminUser(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		jsonString, _ := json.Marshal(user)
-		fmt.Fprintf(w, string(jsonString))
+		fmt.Fprint(w, string(jsonString))
 	}
 }
 
@@ -122,7 +122,7 @@ func makePurchase(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		// Write success
 		w.WriteHeader(http.StatusCreated)
 		s, _ := json.Marshal(format)
-		fmt.Fprintf(w, string(s))
+		fmt.Fprint(w, string(s))
 	}
 }
 
@@ -197,9 +197,14 @@ func getTransactions(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		itemCount, err := strconv.Atoi(pp)
+		if err != nil {
+			logger.Error("Unable to get item count: ", err.Error())
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 		pageNum, err := strconv.Atoi(p)
 		if err != nil {
-			logger.Error("Unable to get page or item count: ", err.Error())
+			logger.Error("Unable to get page: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -212,6 +217,6 @@ func getTransactions(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		s, _ := json.Marshal(data)
-		fmt.Fprintf(w, string(s))
+		fmt.Fprint(w, string(s))
 	}
 }
