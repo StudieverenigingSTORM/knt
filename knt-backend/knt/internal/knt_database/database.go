@@ -6,8 +6,9 @@ import (
 )
 
 // Returns a single entry in a specific structure
-func getFirstEntry[K any](rows *sql.Rows, err error) (K, error) {
+func getFirstEntry[K any](db *sql.DB, queryString string, args ...any) (K, error) {
 	var output K
+	rows, err := db.Query(queryString, args...)
 	if err != nil {
 		return output, err
 	}
@@ -19,8 +20,9 @@ func getFirstEntry[K any](rows *sql.Rows, err error) (K, error) {
 }
 
 // generic query that returns the first row of a single column query
-func getFirstSingleValue[K any](rows *sql.Rows, err error) (K, error) {
+func getFirstSingleValue[K any](db *sql.DB, queryString string, args ...any) (K, error) {
 	var output K
+	rows, err := db.Query(queryString, args...)
 	if err != nil {
 		return output, err
 	}
@@ -36,10 +38,11 @@ func getFirstSingleValue[K any](rows *sql.Rows, err error) (K, error) {
 // In most cases this object should not be an array
 // Also be sure to provide the exact struct matching the query
 // Failure to do so might cause undeffined problems
-func genericQuery[K any](rows *sql.Rows, err error) ([]K, error) {
+func genericQuery[K any](db *sql.DB, queryString string, args ...any) ([]K, error) {
 	var slice []K
+	rows, err := db.Query(queryString, args...)
 	if err != nil {
-		return slice, err
+		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -62,16 +65,6 @@ func structForScan(u interface{}) []interface{} {
 		v[i] = valueField.Addr().Interface()
 	}
 	return v
-}
-
-// Function to simplify building queries and reduce code reuse, this should be used whenever any query is made.
-// Keep note do not append any data to the query string instead use the key ? and pass in aditional parameters
-func queryBuilder(db *sql.DB, queryString string, args ...any) (*sql.Rows, error) {
-	rows, err := db.Query(queryString, args...)
-	if err != nil {
-		return nil, err
-	}
-	return rows, nil
 }
 
 // This allows inserting new rows into the table

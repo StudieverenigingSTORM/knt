@@ -6,19 +6,19 @@ import (
 )
 
 func GetAllUsers(db *sql.DB) ([]User, error) {
-	return genericQuery[User](queryBuilder(db, "select * from user"))
+	return genericQuery[User](db, "select * from user")
 }
 
 func GetAllMinimalUsers(db *sql.DB) ([]MinimalUser, error) {
-	return genericQuery[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where visibility = 1"))
+	return genericQuery[MinimalUser](db, "select id, first_name, last_name, balance from user where visibility = 1")
 }
 
 func GetMinimalUser(db *sql.DB, userId int) (MinimalUser, error) {
-	return getFirstEntry[MinimalUser](queryBuilder(db, "select id, first_name, last_name, balance from user where id = ? and visibility = 1", userId))
+	return getFirstEntry[MinimalUser](db, "select id, first_name, last_name, balance from user where id = ? and visibility = 1", userId)
 }
 
 func GetUser(db *sql.DB, userID int) (User, error) {
-	user, err := getFirstEntry[User](queryBuilder(db, "select * from user where id = ?", userID))
+	user, err := getFirstEntry[User](db, "select * from user where id = ?", userID)
 	if user.Id == 0 {
 		return user, errors.New("User not found")
 	}
@@ -26,7 +26,7 @@ func GetUser(db *sql.DB, userID int) (User, error) {
 }
 
 func GetUserByVunetId(db *sql.DB, VunetId string) (User, error) {
-	return getFirstEntry[User](queryBuilder(db, "select * from user where vunetid = ?", VunetId))
+	return getFirstEntry[User](db, "select * from user where vunetid = ?", VunetId)
 }
 
 func CreateNewUser(db *sql.DB, user User) (int64, error) {
@@ -69,7 +69,6 @@ func ModifyUser(new User, old User) User {
 	return old
 }
 
-
 func GetPopulatedTransactions(pp int, p int, db *sql.DB) ([]TransactionDetails, error) {
 	basicTrans, err := getBasicTransactions(pp, p, db)
 	if err != nil {
@@ -85,14 +84,14 @@ func GetPopulatedTransactions(pp int, p int, db *sql.DB) ([]TransactionDetails, 
 		}
 
 		result = append(result, TransactionDetails{
-			Id: t.Id,
-			VunetId: u.VunetId,
+			Id:              t.Id,
+			VunetId:         u.VunetId,
 			StartingBalance: t.StartingBalance,
-			DeltaBalance: t.DeltaBalance,
-			FinalBalance: t.FinalBalance,
-			Reference: t.Reference,
-			Timestamp: r.Timestamp,
-			Data: r.Data,
+			DeltaBalance:    t.DeltaBalance,
+			FinalBalance:    t.FinalBalance,
+			Reference:       t.Reference,
+			Timestamp:       r.Timestamp,
+			Data:            r.Data,
 		})
 	}
 	return result, nil

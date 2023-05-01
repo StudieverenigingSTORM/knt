@@ -89,7 +89,7 @@ func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 
 // returns the value of a specific entry
 func getProductValue(entry PurchaseEntry, db *sql.DB) (int, error) {
-	value, err := getFirstSingleValue[int](queryBuilder(db, "select price from product where id = ? and visibility = 1", entry.ProductId))
+	value, err := getFirstSingleValue[int](db, "select price from product where id = ? and visibility = 1", entry.ProductId)
 	return value * entry.Amount, err
 }
 
@@ -140,8 +140,8 @@ func addTaxTotals(entries []PurchaseEntry, db *sql.DB, transaction *sql.Tx, cost
 	//Go through all the entries and apply the operation on all of them
 	for _, entry := range entries {
 		//check if entry exists
-		tax, err := getFirstEntry[TaxEntry](queryBuilder(db, "SELECT * FROM tax where year = ? and product_id = ?",
-			year, entry.ProductId))
+		tax, err := getFirstEntry[TaxEntry](db, "SELECT * FROM tax where year = ? and product_id = ?",
+			year, entry.ProductId)
 		if err != nil {
 			return err
 		}
@@ -200,9 +200,9 @@ func UpdateUserBalance(user User, balance int, db *sql.DB, body string, ref stri
 }
 
 func getBasicTransactions(pp int, p int, db *sql.DB) ([]Transaction, error) {
-	return genericQuery[Transaction](queryBuilder(db, "select * from transactions order by id desc limit ? offset ?", pp, p*pp))
+	return genericQuery[Transaction](db, "select * from transactions order by id desc limit ? offset ?", pp, p*pp)
 }
 
 func getReceipt(db *sql.DB, id int) (Receipt, error) {
-	return getFirstEntry[Receipt](queryBuilder(db, "select * from receipts where id = ?", id))
+	return getFirstEntry[Receipt](db, "select * from receipts where id = ?", id)
 }

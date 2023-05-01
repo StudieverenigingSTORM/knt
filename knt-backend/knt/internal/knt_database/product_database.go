@@ -6,11 +6,11 @@ import (
 )
 
 func GetAllProducts(db *sql.DB) ([]Product, error) {
-	return genericQuery[Product](queryBuilder(db, "select * from product"))
+	return genericQuery[Product](db, "select * from product")
 }
 
 func GetProduct(db *sql.DB, productId int) (Product, error) {
-	product, err := getFirstEntry[Product](queryBuilder(db, "select * from product where id = ?", productId))
+	product, err := getFirstEntry[Product](db, "select * from product where id = ?", productId)
 	if product.Id == 0 {
 		return product, errors.New("Product not found")
 	}
@@ -18,7 +18,7 @@ func GetProduct(db *sql.DB, productId int) (Product, error) {
 }
 
 func GetMinimalProducts(db *sql.DB) ([]MinimalProduct, error) {
-	return genericQuery[MinimalProduct](queryBuilder(db, "select id, price, name from product where visibility = 1"))
+	return genericQuery[MinimalProduct](db, "select id, price, name from product where visibility = 1")
 }
 
 func CreateNewProduct(db *sql.DB, product Product) (int64, error) {
