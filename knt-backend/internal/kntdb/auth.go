@@ -1,4 +1,4 @@
-package kntdatabase
+package kntdb
 
 import (
 	"crypto/sha256"

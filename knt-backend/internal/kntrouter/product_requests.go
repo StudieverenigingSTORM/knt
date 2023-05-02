@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"kntdatabase"
+	"knt/internal/kntdb"
 	"net/http"
 	"strconv"
 
@@ -13,11 +13,11 @@ import (
 )
 
 func getAdminProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
-	return generateJsonResponse(kntdatabase.GetAllProducts(db))
+	return generateJsonResponse(kntdb.GetAllProducts(db))
 }
 
 func getProducts(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
-	return generateJsonResponse(kntdatabase.GetMinimalProducts(db))
+	return generateJsonResponse(kntdb.GetMinimalProducts(db))
 }
 
 func getAdminProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +29,7 @@ func getAdminProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		product, err := kntdatabase.GetProduct(db, productId)
+		product, err := kntdb.GetProduct(db, productId)
 		if err != nil {
 			logger.Error("Unable to get product: ", err.Error(), " id: ", productId)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
@@ -44,7 +44,7 @@ func getAdminProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 func createNewProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
-		var body kntdatabase.Product
+		var body kntdb.Product
 		err := decoder.Decode(&body)
 		if err != nil {
 			logger.Error("Unable to decode body: ", err.Error())
@@ -52,7 +52,7 @@ func createNewProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id, err := kntdatabase.CreateNewProduct(db, body)
+		id, err := kntdb.CreateNewProduct(db, body)
 		if err != nil {
 			logger.Error("Unable to create new product: ", err.Error())
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
@@ -71,7 +71,7 @@ func createNewProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 func updateProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
-		var body kntdatabase.Product
+		var body kntdb.Product
 		err := decoder.Decode(&body)
 		if err != nil {
 			logger.Error("Unable to decode body: ", err.Error())
@@ -79,7 +79,7 @@ func updateProduct(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = kntdatabase.UpdateProduct(db, body)
+		_, err = kntdb.UpdateProduct(db, body)
 		if err != nil {
 			logger.Error("Unable to update product: ", err.Error(), " id: ", body.Id)
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)

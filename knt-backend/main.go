@@ -3,11 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"kntrouter"
+	"knt/internal/kntrouter"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/logger"
@@ -20,7 +19,7 @@ func main() {
 	//Viper is responsible for handling the config file
 	viper.SetConfigName("kntconfig")
 
-	viper.AddConfigPath("knt/config/")
+	viper.AddConfigPath("./config/")
 
 	err := viper.ReadInConfig()
 
@@ -51,29 +50,8 @@ func main() {
 	r := chi.NewRouter()
 
 	kntrouter.AssignRoutes(r, db)
-	//Sanity checck gets executed before the listen because listen blocks the thread.
-	go sanityCheck()
 
 	logger.Info("Attempting to start listening on port: ", viper.GetString("port"))
 	logger.Fatal(http.ListenAndServe(":"+viper.GetString("port"), r))
 
-}
-
-//Sanity checks the server if it has been successfully started.
-//This is moslty done to avoid weird errors where server does not start for one or more reasons.
-
-func sanityCheck() {
-	for {
-		var resp *http.Response
-		resp, _ = http.Get("http://127.0.0.1:" + viper.GetString("port") + "/ping")
-
-		if resp.StatusCode == http.StatusOK {
-			logger.Info("Server successfully started on http://127.0.0.1:", viper.GetString("port"))
-			break
-		}
-
-		resp.Body.Close()
-
-		time.Sleep(1)
-	}
 }

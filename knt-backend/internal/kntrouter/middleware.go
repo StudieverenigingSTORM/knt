@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"io"
-	"kntdatabase"
+	"knt/internal/kntdb"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -74,7 +74,7 @@ func generateAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
-			privileges := kntdatabase.CheckUserPrivileges(key, db)
+			privileges := kntdb.CheckUserPrivileges(key, db)
 			//Allow admins
 			if privileges == "admin" {
 				next.ServeHTTP(w, r)
@@ -104,7 +104,7 @@ func logAdminMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 			r.Body.Close()
 			r.Body = io.NopCloser(bytes.NewBuffer(data))
 
-			err := kntdatabase.AddAdminLogs(db, r.URL.Path, r.Method, string(data), key)
+			err := kntdb.AddAdminLogs(db, r.URL.Path, r.Method, string(data), key)
 			if err != nil {
 				logger.Error("Unable to write admin log: ", err.Error())
 				http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -127,7 +127,7 @@ func generateUserMiddleware(db *sql.DB) func(next http.Handler) http.Handler {
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
-			privileges := kntdatabase.CheckUserPrivileges(key, db)
+			privileges := kntdb.CheckUserPrivileges(key, db)
 			//Allow admins
 			if privileges == "admin" || privileges == "user" {
 				next.ServeHTTP(w, r)

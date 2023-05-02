@@ -1,4 +1,4 @@
-package kntdatabase
+package kntdb
 
 type MinimalProduct struct {
 	Id    int    `json:"id"`
