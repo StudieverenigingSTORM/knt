@@ -1,3 +1,297 @@
 INFO : 2023/05/02 19:10:06 Attempting to start listening on port: 5000
 INFO : 2023/05/02 19:10:20 Access: /ping GET
 INFO : 2023/05/02 19:10:20 Access: /favicon.ico GET
+INFO : 2023/05/03 10:59:42 Attempting to start listening on port: 5000
+INFO : 2023/05/03 11:01:04 Access: /users GET
+INFO : 2023/05/03 11:02:48 Attempting to start listening on port: 5000
+INFO : 2023/05/03 11:02:54 Access: /users GET
+INFO : 2023/05/03 11:04:11 Access: /admin/users POST
+INFO : 2023/05/03 11:04:34 Access: /users GET
+INFO : 2023/05/03 11:04:49 Access: /users GET
+INFO : 2023/05/03 11:05:05 Access: /admin/users GET
+INFO : 2023/05/03 11:06:49 Attempting to start listening on port: 5000
+INFO : 2023/05/03 11:06:59 Access: /admin/users GET
+INFO : 2023/05/03 11:16:08 Access: /users GET
+INFO : 2023/05/03 11:16:35 Access: /admin/users POST
+INFO : 2023/05/03 11:16:48 Access: /admin/users GET
+INFO : 2023/05/03 11:16:53 Access: /admin/users GET
+INFO : 2023/05/03 13:19:46 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:19:55 Access: /admin/users GET
+INFO : 2023/05/03 13:20:10 Access: /admin/users POST
+INFO : 2023/05/03 13:20:14 Access: /admin/users GET
+INFO : 2023/05/03 13:20:18 Access: /admin/users GET
+INFO : 2023/05/03 13:21:46 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:21:52 Access: /admin/users GET
+INFO : 2023/05/03 13:22:01 Access: /admin/users POST
+INFO : 2023/05/03 13:22:08 Access: /admin/users GET
+INFO : 2023/05/03 13:22:11 Access: /admin/users GET
+INFO : 2023/05/03 13:22:13 Access: /admin/users GET
+INFO : 2023/05/03 13:22:25 Access: /admin/users GET
+INFO : 2023/05/03 13:23:14 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:23:21 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:23:25 Access: /admin/users GET
+INFO : 2023/05/03 13:23:33 Access: /admin/users POST
+INFO : 2023/05/03 13:23:38 Access: /admin/users GET
+INFO : 2023/05/03 13:23:39 Access: /admin/users GET
+INFO : 2023/05/03 13:23:40 Access: /admin/users GET
+INFO : 2023/05/03 13:29:19 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:29:26 Access: /admin/users GET
+INFO : 2023/05/03 13:29:36 Access: /admin/users POST
+INFO : 2023/05/03 13:29:48 Access: /admin/users GET
+INFO : 2023/05/03 13:33:41 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:33:53 Access: /admin/users GET
+INFO : 2023/05/03 13:34:06 Access: /admin/users POST
+INFO : 2023/05/03 13:34:11 Access: /admin/users GET
+INFO : 2023/05/03 13:36:52 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:37:16 Access: /admin/users POST
+INFO : 2023/05/03 13:37:20 Access: /admin/users GET
+INFO : 2023/05/03 13:37:23 Access: /admin/users GET
+INFO : 2023/05/03 13:42:48 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:43:05 Access: /admin/users GET
+INFO : 2023/05/03 13:43:19 Access: /admin/users POST
+INFO : 2023/05/03 13:43:28 Access: /admin/users GET
+INFO : 2023/05/03 13:43:54 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:44:09 Access: /admin/users GET
+INFO : 2023/05/03 13:44:20 Access: /admin/users POST
+INFO : 2023/05/03 13:44:25 Access: /admin/users GET
+INFO : 2023/05/03 13:47:33 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:47:47 Access: /admin/users GET
+INFO : 2023/05/03 13:47:59 Access: /admin/users POST
+INFO : 2023/05/03 13:48:03 Access: /admin/users GET
+INFO : 2023/05/03 13:53:38 Attempting to start listening on port: 5000
+INFO : 2023/05/03 13:53:55 Access: /admin/products GET
+INFO : 2023/05/03 13:54:13 Access: /admin/products POST
+INFO : 2023/05/03 13:54:23 Access: /admin/products GET
+INFO : 2023/05/03 14:07:39 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:07:48 Access: /users GET
+INFO : 2023/05/03 14:07:57 Access: /admin/users POST
+INFO : 2023/05/03 14:08:02 Access: /users GET
+INFO : 2023/05/03 14:13:29 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:13:39 Access: /users GET
+INFO : 2023/05/03 14:13:52 Access: /admin/users POST
+INFO : 2023/05/03 14:14:01 Access: /users GET
+INFO : 2023/05/03 14:14:02 Access: /users GET
+INFO : 2023/05/03 14:22:42 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:27:02 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:27:07 Access: /users GET
+INFO : 2023/05/03 14:27:25 Access: /users GET
+INFO : 2023/05/03 14:27:52 Access: /admin/users PUT
+INFO : 2023/05/03 14:28:02 Access: /users GET
+INFO : 2023/05/03 14:32:31 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:32:38 Access: /users GET
+INFO : 2023/05/03 14:32:48 Access: /admin/products POST
+ERROR: 2023/05/03 14:32:48 Unable to write admin log: attempt to write a readonly database
+INFO : 2023/05/03 14:33:27 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:34:42 Access: /admin/products POST
+INFO : 2023/05/03 14:34:48 Access: /admin/products GET
+INFO : 2023/05/03 14:39:04 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:39:07 Access: /admin/products GET
+INFO : 2023/05/03 14:39:16 Access: /admin/products POST
+INFO : 2023/05/03 14:39:20 Access: /admin/products GET
+INFO : 2023/05/03 14:39:22 Access: /admin/products GET
+INFO : 2023/05/03 14:39:37 Access: /admin/products POST
+INFO : 2023/05/03 14:39:41 Access: /admin/products GET
+INFO : 2023/05/03 14:45:33 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:45:39 Access: /admin/products GET
+INFO : 2023/05/03 14:45:45 Access: /admin/products POST
+INFO : 2023/05/03 14:45:46 Access: /admin/products POST
+INFO : 2023/05/03 14:45:51 Access: /admin/products GET
+INFO : 2023/05/03 14:51:28 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:51:37 Access: /admin/products GET
+INFO : 2023/05/03 14:51:42 Access: /admin/products POST
+INFO : 2023/05/03 14:51:46 Access: /admin/products GET
+INFO : 2023/05/03 14:53:19 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:53:54 Access: /admin/products GET
+INFO : 2023/05/03 14:54:02 Access: /admin/products POST
+INFO : 2023/05/03 14:54:05 Access: /admin/products GET
+INFO : 2023/05/03 14:54:06 Access: /admin/products GET
+INFO : 2023/05/03 14:55:39 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:55:46 Access: /admin/products POST
+INFO : 2023/05/03 14:55:49 Access: /admin/products GET
+INFO : 2023/05/03 14:55:52 Access: /admin/products GET
+INFO : 2023/05/03 14:55:55 Access: /admin/products POST
+INFO : 2023/05/03 14:55:58 Access: /admin/products GET
+INFO : 2023/05/03 14:57:58 Attempting to start listening on port: 5000
+INFO : 2023/05/03 14:58:03 Access: /users GET
+INFO : 2023/05/03 14:58:17 Access: /admin/products GET
+INFO : 2023/05/03 14:58:23 Access: /admin/products POST
+INFO : 2023/05/03 14:58:28 Access: /admin/products GET
+INFO : 2023/05/03 15:30:21 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:30:30 Access: /admin/products GET
+INFO : 2023/05/03 15:30:31 Access: /admin/products GET
+INFO : 2023/05/03 15:30:36 Access: /admin/products POST
+INFO : 2023/05/03 15:30:41 Access: /admin/products GET
+INFO : 2023/05/03 15:30:43 Access: /admin/products GET
+INFO : 2023/05/03 15:30:43 Access: /admin/products GET
+INFO : 2023/05/03 15:31:26 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:31:32 Access: /admin/products GET
+INFO : 2023/05/03 15:32:30 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:32:33 Access: /admin/products GET
+INFO : 2023/05/03 15:32:40 Access: /admin/products POST
+INFO : 2023/05/03 15:32:44 Access: /admin/products GET
+INFO : 2023/05/03 15:32:45 Access: /admin/products GET
+INFO : 2023/05/03 15:34:16 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:34:19 Access: /admin/products GET
+INFO : 2023/05/03 15:34:23 Access: /admin/products POST
+INFO : 2023/05/03 15:34:26 Access: /admin/products GET
+INFO : 2023/05/03 15:34:27 Access: /admin/products GET
+INFO : 2023/05/03 15:35:01 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:35:04 Access: /admin/products GET
+INFO : 2023/05/03 15:35:07 Access: /admin/products POST
+INFO : 2023/05/03 15:35:10 Access: /admin/products GET
+INFO : 2023/05/03 15:35:12 Access: /admin/products GET
+INFO : 2023/05/03 15:40:33 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:40:45 Access: /admin/products GET
+INFO : 2023/05/03 15:42:50 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:46:23 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:46:27 Access: /admin/products GET
+INFO : 2023/05/03 15:46:34 Access: /admin/products POST
+INFO : 2023/05/03 15:46:34 Added product: Hertog Jan
+INFO : 2023/05/03 15:46:34 Added product: Beer
+INFO : 2023/05/03 15:46:38 Access: /admin/products GET
+INFO : 2023/05/03 15:46:39 Access: /admin/products GET
+INFO : 2023/05/03 15:48:46 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:48:50 Access: /admin/products GET
+INFO : 2023/05/03 15:48:57 Access: /admin/products POST
+INFO : 2023/05/03 15:48:57 Added product: Beer
+INFO : 2023/05/03 15:51:01 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:51:09 Access: /admin/products GET
+INFO : 2023/05/03 15:51:13 Access: /admin/products POST
+INFO : 2023/05/03 15:51:13 Added product: Monster Energy Ultra Violet
+INFO : 2023/05/03 15:51:13 Added product: Beer
+INFO : 2023/05/03 15:51:19 Access: /admin/products GET
+INFO : 2023/05/03 15:52:05 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:52:08 Access: /admin/products GET
+INFO : 2023/05/03 15:52:14 Access: /admin/products POST
+INFO : 2023/05/03 15:52:14 Added product: Sand
+INFO : 2023/05/03 15:52:14 Added product: Beer
+INFO : 2023/05/03 15:54:09 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:54:12 Access: /admin/products POST
+INFO : 2023/05/03 15:54:12 Added product: The theoretical concept of food
+INFO : 2023/05/03 15:54:12 Added product: Beer
+INFO : 2023/05/03 15:55:09 Attempting to start listening on port: 5000
+FATAL: 2023/05/03 15:55:09 listen tcp :5000: bind: address already in use
+INFO : 2023/05/03 15:55:15 Attempting to start listening on port: 5000
+FATAL: 2023/05/03 15:55:15 listen tcp :5000: bind: address already in use
+INFO : 2023/05/03 15:58:56 Attempting to start listening on port: 5000
+INFO : 2023/05/03 15:59:11 Access: /admin/products GET
+ERROR: 2023/05/03 15:59:11 API key missing
+INFO : 2023/05/03 15:59:41 Access: /admin/products GET
+INFO : 2023/05/03 16:00:41 Access: /admin/products POST
+INFO : 2023/05/03 16:00:41 Added product: Soda
+INFO : 2023/05/03 16:00:41 Added product: Hertog Jan
+INFO : 2023/05/03 16:00:41 Added product: Coffee
+INFO : 2023/05/03 16:00:41 Added product: Monster Energy Ultra Violet
+INFO : 2023/05/03 16:00:41 Added product: Sand
+INFO : 2023/05/03 16:00:41 Added product: The theoretical concept of food
+INFO : 2023/05/03 16:00:41 Added product: Meter of beer
+INFO : 2023/05/03 16:00:41 Added product: Hope
+INFO : 2023/05/03 16:00:41 Added product: Hope
+INFO : 2023/05/03 16:00:41 Added product: Happyness
+INFO : 2023/05/03 16:00:41 Added product: Dirt
+INFO : 2023/05/03 16:00:41 Added product: Tree Bark
+INFO : 2023/05/03 16:00:41 Added product: test3
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Soda
+INFO : 2023/05/03 16:00:41 Added product: Hertog Jan
+INFO : 2023/05/03 16:00:41 Added product: Coffee
+INFO : 2023/05/03 16:00:41 Added product: Monster Energy Ultra Violet
+INFO : 2023/05/03 16:00:41 Added product: Sand
+INFO : 2023/05/03 16:00:41 Added product: The theoretical concept of food
+INFO : 2023/05/03 16:00:41 Added product: Meter of beer
+INFO : 2023/05/03 16:00:41 Added product: Hope
+INFO : 2023/05/03 16:00:41 Added product: Hope
+INFO : 2023/05/03 16:00:41 Added product: Happyness
+INFO : 2023/05/03 16:00:41 Added product: Dirt
+INFO : 2023/05/03 16:00:41 Added product: Tree Bark
+INFO : 2023/05/03 16:00:41 Added product: test3
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beer
+INFO : 2023/05/03 16:00:41 Added product: Beeroor
+INFO : 2023/05/03 16:03:42 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:04:02 Access: /admin/products GET
+ERROR: 2023/05/03 16:04:02 API key missing
+INFO : 2023/05/03 16:04:34 Access: /admin/products GET
+INFO : 2023/05/03 16:04:44 Access: /admin/products POST
+INFO : 2023/05/03 16:04:44 Added product: Hope
+INFO : 2023/05/03 16:04:44 Added product: Beeroor
+INFO : 2023/05/03 16:04:45 Access: /admin/products POST
+INFO : 2023/05/03 16:04:45 Added product: Hope
+INFO : 2023/05/03 16:04:45 Added product: Beeroor
+INFO : 2023/05/03 16:04:56 Access: /admin/products GET
+INFO : 2023/05/03 16:06:45 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:06:49 Access: /admin/products GET
+INFO : 2023/05/03 16:06:55 Access: /admin/products POST
+INFO : 2023/05/03 16:06:55 Added product: Happyness
+INFO : 2023/05/03 16:06:55 Added product: Beeroor
+INFO : 2023/05/03 16:06:57 Access: /admin/products GET
+INFO : 2023/05/03 16:09:10 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:09:13 Access: /admin/products GET
+ERROR: 2023/05/03 16:09:13 Unable to generate json response: no such table: products
+INFO : 2023/05/03 16:09:19 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:09:21 Access: /admin/products GET
+INFO : 2023/05/03 16:09:25 Access: /admin/products POST
+INFO : 2023/05/03 16:09:25 Added product: Dirt
+INFO : 2023/05/03 16:09:25 Added product: Beeroor
+INFO : 2023/05/03 16:09:28 Access: /admin/products GET
+INFO : 2023/05/03 16:09:30 Access: /admin/products GET
+INFO : 2023/05/03 16:12:20 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:12:23 Access: /admin/products POST
+INFO : 2023/05/03 16:12:23 Added product: Tree Bark
+INFO : 2023/05/03 16:12:23 Added product: Beeroor
+INFO : 2023/05/03 16:12:23 Added product: Beeroor
+INFO : 2023/05/03 16:13:53 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:13:57 Access: /admin/products POST
+INFO : 2023/05/03 16:13:57 Added product: test3
+INFO : 2023/05/03 16:13:57 Added product: Beeroor
+INFO : 2023/05/03 16:13:57 Added product: Beeroor
+INFO : 2023/05/03 16:14:13 Access: /admin/products POST
+INFO : 2023/05/03 16:14:13 Added product: Beer
+INFO : 2023/05/03 16:14:13 Added product: Beeroor
+INFO : 2023/05/03 16:14:13 Added product: Beeroor
+INFO : 2023/05/03 16:15:18 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:15:28 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:15:55 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:16:03 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:16:08 Access: /admin/products POST
+INFO : 2023/05/03 16:16:08 Added product: Beer
+INFO : 2023/05/03 16:16:08 Added product: Beeroor
+INFO : 2023/05/03 16:16:30 Access: /admin/products GET
+INFO : 2023/05/03 16:17:26 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:17:28 Access: /admin/products GET
+INFO : 2023/05/03 16:17:39 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:18:00 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:18:28 Attempting to start listening on port: 5000
+FATAL: 2023/05/03 16:18:28 listen tcp :5000: bind: address already in use
+INFO : 2023/05/03 16:22:24 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:26:33 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:28:25 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:33:51 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:34:09 Access: /admin/products GET
+ERROR: 2023/05/03 16:34:09 API key missing
+INFO : 2023/05/03 16:34:35 Access: /admin/products GET
+INFO : 2023/05/03 16:34:53 Access: /admin/products POST
+INFO : 2023/05/03 16:34:53 Added product: Beer
+INFO : 2023/05/03 16:34:53 Added product: Beer
+INFO : 2023/05/03 16:35:03 Access: /admin/products GET
+INFO : 2023/05/03 16:35:03 Added product: Beer
+INFO : 2023/05/03 16:54:48 Attempting to start listening on port: 5000
+INFO : 2023/05/03 16:54:51 Access: /admin/products GET
+INFO : 2023/05/03 16:54:51 Added product: Beer
+INFO : 2023/05/03 16:54:58 Access: /admin/products POST

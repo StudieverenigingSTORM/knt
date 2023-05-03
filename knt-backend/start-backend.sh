@@ -1,3 +1,3 @@
 #!/bin/sh
 cd "${0%/*}"
-go run .
+go run main.go -tags "libsqlite3"

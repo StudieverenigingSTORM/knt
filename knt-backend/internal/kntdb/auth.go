@@ -2,19 +2,18 @@ package kntdb
 
 import (
 	"crypto/sha256"
-	"database/sql"
 	"encoding/hex"
 	"log"
 )
 
-func ValidatePin(pin string, user User, db *sql.DB) bool {
+func ValidatePin(pin string, user User) bool {
 	return user.Password == ShaHashing(pin)
 }
 
 // CheckUserPrivileges iterates through every logged api key and compares it to the current function
-func CheckUserPrivileges(key string, db *sql.DB) string {
+func CheckUserPrivileges(key string) string {
 	hashedClientKey := ShaHashing(key)
-	rows, err := db.Query("select privileges from keys where token = ?", hashedClientKey)
+	rows, err := DB.Query("select privileges from keys where token = ?", hashedClientKey)
 	if err != nil {
 		log.Fatal(err)
 	}

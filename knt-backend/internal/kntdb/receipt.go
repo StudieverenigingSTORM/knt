@@ -9,15 +9,15 @@ import (
 
 //This file handles everything having to do with purchases and receipts
 
-func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, error) {
+func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 	//Begins the transaction
 	//This is important because if ANY error were to occur we need to reset the database to its original state
-	transaction, err := db.Begin()
+	transaction, err := DB.Begin()
 	if err != nil {
 		return 0, err
 	}
 	// get user
-	user, err := GetUser(db, userId)
+	user, err := GetUser(userId)
 	if err != nil {
 		return 0, err
 	}
@@ -27,11 +27,11 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 	}
 
 	//pin validation
-	if !ValidatePin(purchase.Password, user, db) {
+	if !ValidatePin(purchase.Password, user) {
 		return 0, errors.New("Unauthorized")
 	}
 	//calculate cost
-	cost, err := calculateCost(purchase.Data, db)
+	cost, err := calculateCost(purchase.Data)
 	if err != nil {
 		return 0, err
 	}
@@ -56,7 +56,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 	}
 
 	//Add tax
-	err = addTaxTotals(purchase.Data, db, transaction, cost)
+	err = addTaxTotals(purchase.Data, transaction, cost)
 	if err != nil {
 		transaction.Rollback()
 		return 0, err
@@ -71,11 +71,11 @@ func MakeTransaction(userId int, purchase PurchaseRequest, db *sql.DB) (int, err
 }
 
 // Calculates the total cost of the purchased products
-func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
+func calculateCost(entries []PurchaseEntry) (int, error) {
 	var cost int
 
 	for _, element := range entries {
-		value, err := getProductValue(element, db)
+		value, err := getProductValue(element)
 		if err != nil {
 			return 0, err
 		}
@@ -88,8 +88,8 @@ func calculateCost(entries []PurchaseEntry, db *sql.DB) (int, error) {
 }
 
 // returns the value of a specific entry
-func getProductValue(entry PurchaseEntry, db *sql.DB) (int, error) {
-	value, err := getFirstSingleValue[int](db, "select price from product where id = ? and visibility = 1", entry.ProductId)
+func getProductValue(entry PurchaseEntry) (int, error) {
+	value, err := getFirstSingleValue[int]("select price from product where id = ? and visibility = 1", entry.ProductId)
 	return value * entry.Amount, err
 }
 
@@ -129,7 +129,7 @@ func setBalance(transaction *sql.Tx, userId int, balance int) error {
 
 // Function designed to calculate total ammounts for tax reasons
 // The taxes are stored in their own tables in the form of tax{year}
-func addTaxTotals(entries []PurchaseEntry, db *sql.DB, transaction *sql.Tx, cost int) error {
+func addTaxTotals(entries []PurchaseEntry, transaction *sql.Tx, cost int) error {
 	year := time.Now().Year()
 
 	//Ensure yearly tables existance
@@ -140,7 +140,7 @@ func addTaxTotals(entries []PurchaseEntry, db *sql.DB, transaction *sql.Tx, cost
 	//Go through all the entries and apply the operation on all of them
 	for _, entry := range entries {
 		//check if entry exists
-		tax, err := getFirstEntry[TaxEntry](db, "SELECT * FROM tax where year = ? and product_id = ?",
+		tax, err := getFirstEntry[TaxEntry]("SELECT * FROM tax where year = ? and product_id = ?",
 			year, entry.ProductId)
 		if err != nil {
 			return err
@@ -170,8 +170,8 @@ func ensureTaxTableExists(transaction *sql.Tx, year int) error {
 	return err
 }
 
-func UpdateUserBalance(user User, balance int, db *sql.DB, body string, ref string) error {
-	transaction, err := db.Begin()
+func UpdateUserBalance(user User, balance int, body string, ref string) error {
+	transaction, err := DB.Begin()
 	if err != nil {
 		return err
 	}
@@ -199,10 +199,10 @@ func UpdateUserBalance(user User, balance int, db *sql.DB, body string, ref stri
 	return nil
 }
 
-func getBasicTransactions(pp int, p int, db *sql.DB) ([]Transaction, error) {
-	return genericQuery[Transaction](db, "select * from transactions order by id desc limit ? offset ?", pp, p*pp)
+func getBasicTransactions(pp int, p int) ([]Transaction, error) {
+	return genericQuery[Transaction]("select * from transactions order by id desc limit ? offset ?", pp, p*pp)
 }
 
-func getReceipt(db *sql.DB, id int) (Receipt, error) {
-	return getFirstEntry[Receipt](db, "select * from receipts where id = ?", id)
+func getReceipt(id int) (Receipt, error) {
+	return getFirstEntry[Receipt]("select * from receipts where id = ?", id)
 }
