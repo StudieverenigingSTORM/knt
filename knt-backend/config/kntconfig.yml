@@ -1,5 +1,7 @@
 port: "5000"
-database: "./app.db"
+database: "./database/app.db"
+logPath: "logs/"
+logName: "server.log"
 
 corsAllowOrigin: "*"
 corsAllowCredentials: "true"
@@ -24,8 +26,8 @@ routes:
 
   getUserAdmin: "/users/{userId}"
   createNewUser: "/users"
-  updateUser: "/users/{userId}"
-  updateUserMoney: "/users/{userId}/balance"
+  updateUser: "/users"
+  updateUserMoney: "/users/balance"
   getUsersAdmin: "/users"
 
   createNewProduct: "/products"
@@ -34,6 +36,7 @@ routes:
   getFullProducts: "/products"
 
   taxcategories: "/tax"
+  transactions: "/transactions"
 
 
 

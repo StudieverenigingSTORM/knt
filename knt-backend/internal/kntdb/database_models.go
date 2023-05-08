@@ -1,4 +1,4 @@
-package kntdatabase
+package kntdb
 
 type MinimalProduct struct {
 	Id    int    `json:"id"`
@@ -42,17 +42,19 @@ type PurchaseEntry struct {
 }
 
 type Transaction struct {
-	Id              int `json:"id"`
-	UserId          int `json:"userId"`
-	StartingBalance int `json:"startingBalance"`
-	DeltaBalance    int `json:"deltaBalance"`
-	FinalBalance    int `json:"finalBalance"`
-	ReceiptId       int `json:"receiptId"`
+	Id              int    `json:"id"`
+	UserId          int    `json:"userId"`
+	StartingBalance int    `json:"startingBalance"`
+	DeltaBalance    int    `json:"deltaBalance"`
+	FinalBalance    int    `json:"finalBalance"`
+	ReceiptId       int    `json:"receiptId"`
+	Reference       string `json:"reference"`
 }
 
 type Receipt struct {
-	Id   int    `json:"id"`
-	Data string `json:"data"`
+	Id        int    `json:"id"`
+	Data      string `json:"data"`
+	Timestamp string `json:"timestamp"`
 }
 
 type TaxEntry struct {
@@ -61,4 +63,16 @@ type TaxEntry struct {
 	Amount    int `json:"amount"`
 	TotalCost int `json:"totalCost"`
 	Year      int `json:"year"`
+}
+
+// This struct is specifically designed to be returned by the paginated transaction
+type TransactionDetails struct {
+	Id              int    `json:"id"`
+	VunetId         string `json:"vunetid"`
+	StartingBalance int    `json:"startingBalance"`
+	DeltaBalance    int    `json:"deltaBalance"`
+	FinalBalance    int    `json:"finalBalance"`
+	Reference       string `json:"reference"`
+	Timestamp       string `json:"timestamp"`
+	Data            string `json:"string"`
 }

@@ -64,19 +64,33 @@ paths:
       description: 'Edit product'
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       parameters: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/fullproduct"
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 4
+                  description: id of the product
+                name: 
+                  type: string
+                  example: "Beer"
+                  description: Name of the product
+                taxcategory:
+                  type: integer
+                  example: 1
+                  description: id of the tax category of the product
+                visibility:
+                  type: integer
+                  example: 1
+                  description: is the product visable to the knt frontend
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/fullproduct"
+        '201':
+          description: created
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
@@ -87,7 +101,6 @@ paths:
       description: 'Retrieve full data on all products'
       security:
         - ApiKeyAuth: []
-
       responses:
         '200':
           description: A list of product objects
@@ -107,17 +120,40 @@ paths:
       description: 'Create a new product in the database'
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       requestBody:
         description: 'Basic product to create'
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/product'
-
+              type: object
+              properties:
+                price:
+                  type: integer
+                  example: 80
+                  description: price in cents
+                name:
+                  type: string
+                  example: Beer
+                visibility: 
+                  type: integer
+                  example: 1
+                taxcategory:
+                  type: integer
+                  example: 1
       responses:
         '201':
           description: "Created"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: id of the created product
+                    example: 69
+                    type: integer
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
@@ -252,45 +288,15 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
-    put:
-      tags:
-        - "User Admin"
-      description: 'Edit userdata'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/fulluser"
-      parameters: 
-        - in: path
-          name: userId
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the user to target
-      security:
-        - ApiKeyAuth: []
-      responses:
-        '204':
-          description: No content
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '407':
-          $ref: "#/components/responses/ForbidenError"
-  /admin/users/{userId}/balance:
+  /admin/users/balance:
     post:
       tags:
         - "User Admin"
-      description: 'Add balance to a users account'
+      description: 'Modify balance of the account based on the vunet id'
       security:
         - ApiKeyAuth: []
-      parameters: 
-        - in: path
-          name: userId
-          schema:
-            type: integer
-          required: true
-          description: Numeric ID of the user to target
+        - AdminId: []
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -301,6 +307,14 @@ paths:
                   example: 80 
                   type: integer
                   description: Amount in cents
+                vunetId:
+                  example: pps999
+                  type: string
+                  description: vunetID
+                reference:
+                  example: UwU~
+                  type: string
+                  description: reference given through the storm web shop
       responses:
         '204':
           description: OK
@@ -330,6 +344,51 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+    put:
+      tags:
+        - "User Admin"
+      description: 'Edit userdata, balance is not able to be updated. Empty string values will be ignored'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: The user ID.
+                  example: 1
+                firstName:
+                  type: string
+                  description: The users first name.
+                  example: Person
+                lastName:
+                  type: string
+                  description: The users last name.
+                  example: Personson
+                vunetId:
+                  type: string
+                  description: vunetId
+                  example: pps999
+                password:
+                  type: string
+                  description: new password (will be hashed in the Backend) (leave empty if not changed)
+                  example: "12345678"
+                visibility:
+                  type: integer
+                  description: Visibility status of the user 0 will make the user invisable to the knt front end
+                  example: 1
+      parameters: []
+      security:
+        - ApiKeyAuth: []
+        - AdminId: []
+      responses:
+        '204':
+          description: No content
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"
     post:
       tags:
         - "User Admin"
@@ -339,9 +398,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/fulluser"
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: The users first name.
+                  example: Person
+                lastName:
+                  type: string
+                  description: The users last name.
+                  example: Personson
+                vunetId:
+                  type: string
+                  description: vunetId
+                  example: pps999
+                password:
+                  type: string
+                  description: new password (will be hashed in the Backend) (leave empty if not changed)
+                  example: "12345678"
+                visibility:
+                  type: integer
+                  description: Visibility status of the user 0 will make the user invisable to the knt front end
+                  example: 1
       security:
         - ApiKeyAuth: []
+        - AdminId: []
       responses:
         '200':
           description: OK
@@ -377,6 +458,7 @@ paths:
       parameters: []
       security: 
         - ApiKeyAuth: []
+        - AdminId: []
       requestBody:
         content:
           application/json:
@@ -405,6 +487,7 @@ paths:
       parameters: []
       security: 
         - ApiKeyAuth: []
+        - AdminId: []
       requestBody:
         content:
           application/json:
@@ -413,6 +496,66 @@ paths:
       responses:
         '200':
           description: "OK"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '407':
+          $ref: "#/components/responses/ForbidenError"  
+  /admin/transactions:
+    get:
+      tags:
+        - "Transactions Admin"
+      description: 'Return a complete list of transactions with paginations, if no querries are attached default value of 10 per page and 0th page is assumed'
+      parameters: 
+        - in: query
+          name: pp
+          schema:
+            type: integer
+          required: false
+          description: Amount of items per page
+        - in: query
+          name: p
+          schema:
+            type: integer
+          required: false
+          description: Page number starting at index 0  
+      security: 
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: user id
+                      example: 1
+                    vunetid:
+                      type: string
+                      example: skn999
+                    starting_balance:
+                      type: integer
+                      example: 1000
+                    delta_balance:
+                      type: integer
+                      example: -20
+                    final_balance:
+                      type: integer
+                      example: 980
+                    reference:
+                      type: string
+                      example: Uwu~
+                    timestamp:
+                      type: string
+                      example: "2023-04-17 21:15:56"
+                    data:
+                      type: string
+                      description: data of the receipt
+                      example: '[{"productId":1,"amount":1}]'
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
@@ -532,7 +675,11 @@ components:
       in: header
       name: X-API-Key
       description: Api key for the knt (test defined in backend root)
-
+    AdminId:
+      type: apiKey
+      in: header
+      name: X-Admin-Id
+      description: Admin identifier assigned to the user
   responses:
     UnauthorizedError:
       description: API key is missing or invalid
