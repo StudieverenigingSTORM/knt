@@ -10,8 +10,7 @@ dev:
 build: ${RELEASE_NAME}
 
 ${RELEASE_NAME}: main.go go.mod go.sum internal
-	go build -o ./${REALEASE_NAME} .
+	go build -o ./${RELEASE_NAME} .
 
 clean:
 	go clean
-	rm ${RELEASE_NAME}
