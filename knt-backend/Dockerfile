@@ -1,6 +1,4 @@
-# syntax=docker/dockerfile:1
-
-FROM golang:1.20
+FROM golang:1.20 AS build-stage
 
 WORKDIR /app
 
@@ -10,3 +8,15 @@ COPY ./internal ./internal
 RUN go mod download
 
 RUN GOOS=linux go build -o /knt .
+
+# Deploy the application binary into a lean image
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
+
+WORKDIR /
+
+COPY --from=build-stage /knt /knt
+COPY ./config ./config
+
+EXPOSE 5000
+
+ENTRYPOINT ["/knt"]
