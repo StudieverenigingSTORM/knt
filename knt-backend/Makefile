@@ -4,6 +4,15 @@ all: build
 docker:
 	docker build -t ${RELEASE_NAME}:$(shell date +%Y%m%d) -t ${RELEASE_NAME}:latest  .
 
+docker-up:
+	docker compose up -d
+
+docker-down:
+	docker compose down
+
+docker-test: docker
+	docker compose up
+
 dev:
 	go run main.go -tags "libsqlite3"
 

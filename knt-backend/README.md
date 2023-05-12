@@ -15,9 +15,12 @@ You can use a Make:
 To facilitate usage, Docker has been added.
 
 Docker usage can be simplified to 3 steps:
-1. `make docker`
-2. `docker compose up -d`
-3. `docker compose down`
+1. `make docker`: builds the image
+2. `make docker-up`: creates the container according to docker-compose.yml and detaches it
+3. `make docker-down`: stops the container (according to docker-compose)
+
+If you wish to test Docker after having done modifications:
+- `make docker-test`: builds the image + creates a container and keeps console attached
 
 ## KnT Demo API keys
 ### user
