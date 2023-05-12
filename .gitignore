@@ -2,6 +2,10 @@
 admin-ui/examples/*
 admin-ui/__pycache__/*
 
+# KnT backend binary
 knt-backend/knt-backend
+# KnT backend logs
+knt-backend/logs/server.log
 
+# macOS directory file
 .DS_Store
