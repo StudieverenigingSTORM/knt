@@ -1,0 +1,31 @@
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>In cart</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td><b>{{ product.name }}</b></td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.description }}</td>
+        <td>{% for k, v in cart.items %} {%if k == product.id %} {{v}} {%endif%} {%endfor%}</td>
+        <td><a href="{% url 'knt:add_to_cart' product.id %}?next={{ request.path }}">Add to cart</a></td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<button><a href="{% url 'knt:reset_cart' %}?next={{ request.path }}">Reset Cart</a></button>
+<button><a href="{% url 'knt:checkout' %}?next={{ request.path }}">Checkout</a></button>
+
+<!--Form for auth-->
+<div>
+    <form action="{% url 'knt:login' %}?next={{ request.path }}">
+        <input type="text" name="username" placeholder="Username">
+        <input type="pin" name="password" placeholder="Password">
+        <input type="submit" value="Login">
+    </form>
+</div>
