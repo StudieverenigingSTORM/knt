@@ -1,3 +1,7 @@
 .vscode/launch.json
 admin-ui/examples/*
 admin-ui/__pycache__/*
+
+knt-backend/knt-backend
+
+.DS_Store
