@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "knt_backend.User"
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
-
+SESSION_COOKIE_AGE = 60 * 5  # 5 minutes
 
 # Application definition
 
@@ -81,6 +81,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        # "ATOMIC_REQUESTS": True,
     }
 }
 

@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404, render
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.db import transaction
 from django.core.exceptions import SuspiciousOperation
 from pydantic import BaseModel
@@ -18,6 +18,16 @@ def index(request):
     return HttpResponse("Hello, world. You're at the knt index.")
 
 
+def calculate_cart_total(request) -> int:
+    cart = request.session.get("cart", {})
+    total = 0
+    for product_id, quantity in cart.items():
+        product = Product.objects.get(id=product_id)
+        total += product.price * quantity
+
+    return total
+
+
 def products_table(request):
     products = Product.objects.all()
     template = "products.html"
@@ -29,22 +39,28 @@ def products_table(request):
             "products": products,
             "cart": {int(k): v for k, v in request.session.get("cart", {}).items()},
             "message": request.GET.get("message", ""),
+            "total": calculate_cart_total(request),
         },
     )
 
 
 def login(request):
-    user_id = request.POST.get("user_id")
+    username = request.POST.get("username")
     password = request.POST.get("password")
 
-    user = authenticate(username=user_id, password=password)
+    user = authenticate(username=username, password=password)
 
     if user is None:
         return redirect_to_next(request, message="Invalid login")
     else:
-        request.session["user_id"] = user.pk
+        dj_login(request, user)
 
     return redirect_to_next(request, message="Logged in!")
+
+
+def logout(request):
+    dj_logout(request)
+    return redirect_to_next(request, message="Logged out!")
 
 
 def product(request, product_id):
@@ -78,7 +94,6 @@ def reset_cart(request):
     return redirect_to_next(request)
 
 
-@transaction.atomic
 def checkout(request):
     # user purchases multiple products
 
@@ -94,12 +109,10 @@ def checkout(request):
 
     products = Product.objects.filter(id__in=cart.keys())
 
-    total_cost = 0
-    for product in products:
-        total_cost += product.price * cart[product.id]
+    total_cost = calculate_cart_total(request)
 
     # check if user has enough money
-    user: User = request.user
+    user: User = User.objects.get(id=request.user.id)
 
     if user.balance < total_cost:
         raise SuspiciousOperation("User does not have enough money")
@@ -107,9 +120,9 @@ def checkout(request):
     user_balance_before = user.balance
     # update user balance
     user.balance -= total_cost
-    user.save()
 
     user_balance_after = user.balance
+    user.save()
 
     receipt_text = "\n".join(
         [
@@ -117,11 +130,11 @@ def checkout(request):
             for product in products
         ]
     )
-
-    receipt = Receipt.objects.create(data=receipt_text)
+    receipt = Receipt(data=receipt_text)
+    receipt.save(force_insert=True)
 
     # create transaction
-    Transaction.objects.create(
+    new_transaction = Transaction.objects.create(
         user_id=user.id,
         starting_balance=user_balance_before,
         delta_balance=total_cost,
@@ -130,10 +143,12 @@ def checkout(request):
         ref="idk lol",
     )
 
+    new_transaction.save()
+
     # clear cart
     request.session["cart"] = {}
 
     # logout user
-    del request.session["user_id"]
+    logout(request)
 
-    return HttpResponse("You bought some stuff!")
+    return redirect_to_next(request, message="Checkout successful!")

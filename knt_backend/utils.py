@@ -21,6 +21,7 @@ def load_model(request, model: Type[T]) -> T:
 
 def redirect_to_next(request, **kwargs) -> HttpResponseRedirect:
     next = request.GET.get("next", "/")
+
     if next[-1] != "?":
         next += "?"
 

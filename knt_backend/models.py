@@ -15,7 +15,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Product(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     price = models.IntegerField()
     name = models.TextField()
     visibility = models.BooleanField(default=True)
@@ -35,7 +35,7 @@ class Product(models.Model):
 
 
 class User(AbstractUser):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     first_name = models.CharField(max_length=120)
     last_name = models.CharField(max_length=120)
     vunetid = models.CharField(max_length=120, unique=True)
@@ -57,12 +57,12 @@ class User(AbstractUser):
 
 
 class Transaction(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
-    user_id = models.ForeignKey("User", on_delete=models.PROTECT)
+    id = models.AutoField(primary_key=True, editable=False)
+    user = models.ForeignKey("User", on_delete=models.PROTECT)
     starting_balance = models.IntegerField()
     delta_balance = models.IntegerField()
     final_balance = models.IntegerField()
-    receipt_id = models.ForeignKey("Receipt", on_delete=models.PROTECT)
+    receipt = models.ForeignKey("Receipt", on_delete=models.PROTECT)
     ref = models.TextField()
 
     def __str__(self):
@@ -70,8 +70,8 @@ class Transaction(models.Model):
 
 
 class TransactionItem(models.Model):
-    transaction_id = models.ForeignKey("Transaction", on_delete=models.PROTECT)
-    product_id = models.ForeignKey("Product", on_delete=models.PROTECT)
+    transaction = models.ForeignKey("Transaction", on_delete=models.PROTECT)
+    product = models.ForeignKey("Product", on_delete=models.PROTECT)
     quantity = models.IntegerField()
     price = models.IntegerField()
     tax = models.IntegerField()
@@ -81,7 +81,7 @@ class TransactionItem(models.Model):
         unique_together = (("transaction_id", "product_id"),)
 
     def __str__(self):
-        return self.transaction_id
+        return self.transaction
 
 
 # id INTEGER "id" INTEGER NOT NULL UNIQUE
@@ -90,16 +90,16 @@ class TransactionItem(models.Model):
 
 
 class Receipt(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     data = models.TextField()
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.data
 
 
 class TaxCategory(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=200)
     percentage = models.IntegerField()
 

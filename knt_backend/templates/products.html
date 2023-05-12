@@ -1,3 +1,10 @@
+<!--{% if message %}
+
+<p>{{ message }}</p>
+
+{% endif %}
+-->
+
 <table>
     <tr>
         <th>Name</th>
@@ -20,12 +27,45 @@
 
 <button><a href="{% url 'knt:reset_cart' %}?next={{ request.path }}">Reset Cart</a></button>
 <button><a href="{% url 'knt:checkout' %}?next={{ request.path }}">Checkout</a></button>
+<p>Total: {{ total }}</p>
 
-<!--Form for auth-->
+<!--Form for auth, use AJAX to submit-->
+
+{% if not request.user.is_authenticated %}
 <div>
-    <form action="{% url 'knt:login' %}?next={{ request.path }}">
+    <form action="">
         <input type="text" name="username" placeholder="Username">
-        <input type="pin" name="password" placeholder="Password">
+        <input type="password" name="password" placeholder="Password">
         <input type="submit" value="Login">
     </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        // import jquery
+        $(document).ready(function () {
+            $('form').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'knt:login' %}?next={{ request.path }}",
+                    data: {
+                        username: $('input[name="username"]').val(),
+                        password: $('input[name="password"]').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
 </div>
+{% else %}
+<div>
+    <p>Logged in as {{ request.user.first_name }} {{request.user.last_name }}</p>
+    <p>Balance: {{ request.user.balance }}</p>
+    <button><a href="{% url 'knt:logout' %}?next={{ request.path }}">Logout</a></button>
+</div>
+{% endif %}
