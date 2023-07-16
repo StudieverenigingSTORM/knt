@@ -9,7 +9,9 @@
         <div class="left-section">
             <div class="header-section d-flex justify-content-between">
                 <h5 class="align-self-center username-display">Test user | Balance: $$$</h5>
-                <button type="button" class="btn btn-primary">Back</button>
+                <button type="button" class="btn btn-primary">
+                    <a href="http://localhost:3000" class="text-reset text-decoration-none">Back</a>
+                </button>
             </div>
 
             <!-- POPULATED WITH DUMMY VALUES -->
@@ -51,6 +53,7 @@
 </template>
 
 <script lang="ts">
+
 interface User {
     id: number;
     firstName: string;
@@ -74,7 +77,7 @@ export default defineComponent({
     },
 
     mounted() {
-        console.log(this.$route.query.user);
+        //console.log(this.$route.query.user);
     }
 })
 </script>
@@ -96,9 +99,10 @@ if (process.server) {
         },
         server: true
     })
-    //console.log(productData)
+    console.log(productData)
     useState('productData', () => productData)
 }
+
 </script>
 
 <style>

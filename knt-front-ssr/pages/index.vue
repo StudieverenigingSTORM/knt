@@ -13,15 +13,16 @@
     <div class="top-section">
 
       <!--Displaying users-->
-      <NuxtLink
-      :to="{ name: 'products', query:{user: user.id}}" 
-        v-for="user in searchedUsers()" :key="user.id"
-        class="d-flex user-card align-items-center border-bottom border-2 "
-        >
-        <div class="p-3">
-          <h5>{{ user.firstName + " " + user.lastName }}</h5>
-        </div>
-      </NuxtLink >
+
+      <div v-for="user in searchedUsers()" :key="user.id"
+        class="d-flex user-card align-items-center border-bottom border-2 " :refresh-page="true">
+        <a :href="getLink(user.id)" class="text-reset text-decoration-none">
+          <div class="p-3">
+            <h5>{{ user.firstName + " " + user.lastName }}</h5>
+          </div>
+        </a>
+      </div>
+
     </div>
 
     <div class="bottom-section d-flex align-items-center flex-column">
@@ -35,67 +36,77 @@
   </div>
 </template>
 
+
 <script lang="ts">
-  import { defineComponent } from "vue";
-  import SimpleKeyboard from "../components/SimpleKeyboardUserPage.vue";
+import { defineComponent } from "vue";
+import SimpleKeyboard from "../components/SimpleKeyboardUserPage.vue";
 
-  interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    balance: number;
-  }
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  balance: number;
+}
 
-  export default defineComponent({
+export default defineComponent({
 
-    components: {
-      SimpleKeyboard
+  components: {
+    SimpleKeyboard
+  },
+
+  data() {
+    return {
+      search: "",
+      input: "",
+      users: useState<User[]>('userData'),
+    };
+  },
+
+  methods: {
+    onChange(input: string) {
+      this.search = input;
     },
-
-    data() {
-      return {
-        search: "",
-        input: "",
-        users: useState<User[]>('userData'),
-      };
+    onKeyPress(button: string) {
+      console.log("button", button);
     },
-
-    methods: {
-      onChange(input: string) {
-        this.search = input;
-      },
-      onKeyPress(button: string) {
-        console.log("button", button);
-      },
-      onInputChange(input: any) {
-        this.search = input.target.value;
-      },
-      searchedUsers() {
-        return this.users.filter(user => (user.firstName + " " + user.lastName).toLowerCase().includes(this.search.toLowerCase()))
-      }
+    onInputChange(input: any) {
+      this.search = input.target.value;
     },
-  
-  });
+    searchedUsers() {
+      // if(this.users !== undefined){
+      //   return this.users.filter(user => (user.firstName + " " + user.lastName).toLowerCase().includes(this.search.toLowerCase()))
+      // }
+      return this.users.filter(user => (user.firstName + " " + user.lastName).toLowerCase().includes(this.search.toLowerCase()))
+    },
+    getLink(userID: number){
+      return `http://localhost:3000/products?user=${userID}`;
+    }
+  },
+});
 </script>
+
+
+
 <script setup lang="ts">
-  const runtimeConfig = useRuntimeConfig();
+const runtimeConfig = useRuntimeConfig();
 
-  if (process.server) {
-    let userData: User[] = [];
-    await useFetch('/users', {
-      baseURL: runtimeConfig.public.backendBase,
-      headers: {
-        "X-API-Key": runtimeConfig.apiSecret
-      },
-      transform: function (data: string) {
-        userData = JSON.parse(data)
-      },
-      server: true
-    })
-    console.log(userData)
-    useState('userData', () => userData)
-  }
+if (process.server) {
+  let userData: User[] = [];
+  await useFetch('/users', {
+    baseURL: runtimeConfig.public.backendBase,
+    headers: {
+      "X-API-Key": runtimeConfig.apiSecret
+    },
+    transform: function (data: string) {
+      userData = JSON.parse(data)
+    },
+    server: true
+  })
+  // console.log(userData)
+  useState('userData', () => userData)
+}
 </script>
+
 <style>
 .top-section,
 .bottom-section {
@@ -128,8 +139,8 @@
   margin: 0.5rem 0.5rem 0;
 }
 
-.user-card{
-  text-decoration: none; 
+.user-card {
+  text-decoration: none;
   color: inherit;
 }
 
@@ -147,7 +158,7 @@
   width: 20%;
 }
 
-.keyboard{
+.keyboard {
   width: 100%;
   height: 100%;
 }
