@@ -4,8 +4,6 @@
     <!-- <router-link to="/">Back</router-link> -->
     <!-- <p>User id: {{ $route.query.user }}</p> -->
 
-
-
     <!-- Top section -->
     <div class="product-page-section d-flex flex-row">
         <div class="left-section">
@@ -17,32 +15,8 @@
             <!-- POPULATED WITH DUMMY VALUES -->
             <div class="product-section border border-2">
                 <div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 1</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 2</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 3</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 4</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 5</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 6</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 7</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 8</h5>
-                    </div>
-                    <div class="p-3 product-item border-bottom border-2">
-                        <h5>Product 9</h5>
+                    <div class="p-3 product-item border-bottom border-2" v-for="product in products">
+                        <h5>{{ product.name + ": " + product.price / 100 + "€" }}</h5>
                     </div>
                 </div>
             </div>
@@ -66,54 +40,6 @@
                         </button>
                     </div>
                 </div>
-                <div class="d-flex flex-row justify-content-between">
-                    <h5 class="p-3 w-50">Product2:</h5>
-                    <h5 class="p-3">qty</h5>
-                    <div class="p-3 w-50 d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary mr-auto">
-                            <h5>+</h5>
-                        </button>
-                        <button type="button" class="btn btn-danger mr-auto">
-                            <h5>-</h5>
-                        </button>
-                    </div>
-                </div>
-                <div class="d-flex flex-row justify-content-between">
-                    <h5 class="p-3 w-50">Product3:</h5>
-                    <h5 class="p-3">qty</h5>
-                    <div class="p-3 w-50 d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary mr-auto">
-                            <h5>+</h5>
-                        </button>
-                        <button type="button" class="btn btn-danger mr-auto">
-                            <h5>-</h5>
-                        </button>
-                    </div>
-                </div>
-                <div class="d-flex flex-row justify-content-between">
-                    <h5 class="p-3 w-50">Product4:</h5>
-                    <h5 class="p-3">qty</h5>
-                    <div class="p-3 w-50 d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary mr-auto">
-                            <h5>+</h5>
-                        </button>
-                        <button type="button" class="btn btn-danger mr-auto">
-                            <h5>-</h5>
-                        </button>
-                    </div>
-                </div>
-                <div class="d-flex flex-row justify-content-between">
-                    <h5 class="p-3 w-50">Product5:</h5>
-                    <h5 class="p-3">qty</h5>
-                    <div class="p-3 w-50 d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary mr-auto">
-                            <h5>+</h5>
-                        </button>
-                        <button type="button" class="btn btn-danger mr-auto">
-                            <h5>-</h5>
-                        </button>
-                    </div>
-                </div>
 
             </div>
             <!-- Purchase Button -->
@@ -122,17 +48,57 @@
             </div>
         </div>
     </div>
-        
 </template>
 
 <script lang="ts">
+interface User {
+    id: number;
+    firstName: string;
+    lastName: string;
+    balance: number;
+}
+
+interface Product {
+    id: number;
+    price: number;
+    name: string;
+}
+
 import { defineComponent } from "vue";
 
 export default defineComponent({
+    data() {
+        return {
+            products: useState<Product[]>('productData'),
+        };
+    },
+
     mounted() {
         console.log(this.$route.query.user);
     }
 })
+</script>
+
+
+<script setup lang="ts">
+//Get Products
+const runtimeConfig = useRuntimeConfig();
+
+if (process.server) {
+    let productData: Product[] = [];
+    await useFetch('/users/products', {
+        baseURL: runtimeConfig.public.backendBase,
+        headers: {
+            "X-API-Key": runtimeConfig.apiSecret
+        },
+        transform: function (data: string) {
+            productData = JSON.parse(data)
+        },
+        server: true
+    })
+    //console.log(productData)
+    useState('productData', () => productData)
+}
 </script>
 
 <style>
@@ -154,7 +120,7 @@ export default defineComponent({
     overflow: scroll;
 }
 
-.purchase-section{
+.purchase-section {
     height: calc(25vh);
 }
 
