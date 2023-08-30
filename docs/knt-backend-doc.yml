@@ -89,12 +89,14 @@ paths:
                   example: 1
                   description: is the product visable to the knt frontend
       responses:
-        '201':
-          description: created
+        '204':
+          description: updated
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
     get:
       tags:
         - "Product Admin"
@@ -158,6 +160,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /admin/products/{productId}:
     get:
       tags:
@@ -182,6 +186,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /users/{userId}/purchase:
     post:
       tags:
@@ -237,6 +243,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /users/{userId}:
     get:
       tags:
@@ -260,8 +268,12 @@ paths:
                 $ref: "#/components/schemas/user"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /admin/users/{userId}:
     get:
       tags:
@@ -286,13 +298,17 @@ paths:
                   
         '401':
           $ref: "#/components/responses/UnauthorizedError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /admin/users/balance:
     post:
       tags:
         - "User Admin"
-      description: 'Modify balance of the account based on the vunet id'
+      description: 'Increment balance of the account based on the vunet id'
       security:
         - ApiKeyAuth: []
         - AdminId: []
@@ -322,6 +338,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /admin/users:
     get:
       tags:
@@ -389,6 +407,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
     post:
       tags:
         - "User Admin"
@@ -430,6 +450,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /admin/tax:
     get:
       tags:
@@ -480,6 +502,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
     put:
       tags:
         - "Tax Admin"
@@ -499,21 +523,23 @@ paths:
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
-          $ref: "#/components/responses/ForbidenError"  
+          $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
   /admin/transactions:
     get:
       tags:
         - "Transactions Admin"
-      description: 'Return a complete list of transactions with paginations, if no querries are attached default value of 10 per page and 0th page is assumed'
+      description: 'Return a complete list of transactions with paginations'
       parameters: 
         - in: query
-          name: pp
+          name: perPage
           schema:
             type: integer
           required: false
           description: Amount of items per page
         - in: query
-          name: p
+          name: page
           schema:
             type: integer
           required: false
@@ -560,6 +586,8 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '407':
           $ref: "#/components/responses/ForbidenError"
+        '422':
+          $ref: "#/components/responses/UnprocessableError"
 components:
   schemas:
     taxcategory:
@@ -683,5 +711,9 @@ components:
   responses:
     UnauthorizedError:
       description: API key is missing or invalid
+    NotFoundError:
+      description: Resource does not exist
     ForbidenError:
       description: Api key does not have the necessary permissions to carry out this request
+    UnprocessableError:
+      description: Malformed user input

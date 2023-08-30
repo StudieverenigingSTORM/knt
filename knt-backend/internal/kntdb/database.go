@@ -2,6 +2,7 @@ package kntdb
 
 import (
 	"database/sql"
+	"errors"
 	"reflect"
 
 	"github.com/google/logger"
@@ -41,8 +42,13 @@ func getFirstSingleValue[K any](queryString string, args ...any) (K, error) {
 		return output, err
 	}
 	defer rows.Close()
+	outExists := false
 	if rows.Next() {
+		outExists = true
 		rows.Scan(&output)
+	}
+	if !outExists {
+		return output, errors.New("no values returned")
 	}
 	return output, nil
 }

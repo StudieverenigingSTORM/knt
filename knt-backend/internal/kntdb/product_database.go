@@ -30,27 +30,12 @@ func UpdateProduct(product Product) (int64, error) {
 	if product.Id == 0 {
 		return 0, errors.New("invalid user")
 	}
-
-	productOld, err := GetProduct(product.Id)
-	if err != nil {
-		return 0, err
-	}
-	finalProduct := ModifyProduct(product, productOld)
-
 	return commitTransaction(
-		"update product set price = ?, name = ?, visibility = ?, taxcategory = ? where id = ?",
-		finalProduct.Price, finalProduct.Name, finalProduct.Visibility, finalProduct.TaxCategory, finalProduct.Id,
+		"update product set name = ?, visibility = ?, taxcategory = ? where id = ?",
+		product.Name, product.Visibility, product.TaxCategory, product.Id,
 	)
 }
 
-// Returns a user object made from the old user and changes in the request
-func ModifyProduct(new Product, old Product) Product {
-	if new.Name != "" {
-		old.Name = new.Name
-	}
-
-	old.TaxCategory = new.TaxCategory
-	old.Visibility = new.Visibility
-
-	return old
+func GetTaxCategories() ([]TaxCategory, error) {
+	return genericQuery[TaxCategory]("select * from tax_categories")
 }

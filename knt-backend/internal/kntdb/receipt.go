@@ -28,15 +28,15 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 
 	//pin validation
 	if !ValidatePin(purchase.Password, user) {
-		return 0, errors.New("Unauthorized")
+		return 0, errors.New("incorrect pin")
 	}
 	//calculate cost
 	cost, err := calculateCost(purchase.Data)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("could not find all products")
 	}
 	//validate users balance
-	if cost*-1 > user.Balance {
+	if cost > user.Balance {
 		return 0, errors.New("insufficient balance on user")
 	}
 	//generate receipt
@@ -45,18 +45,18 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 		return 0, err
 	}
 	//make a transaction
-	err = generateTransaction(transaction, userId, user.Balance, cost, user.Balance+cost, receiptId, "")
+	err = generateTransaction(transaction, userId, user.Balance, cost, user-cost, receiptId, "")
 	if err != nil {
 		return 0, err
 	}
 	//subtract balance
-	err = setBalance(transaction, userId, user.Balance+cost)
+	err = setBalance(transaction, userId, user.Balance-cost)
 	if err != nil {
 		return 0, err
 	}
 
 	//Add tax
-	err = addTaxTotals(purchase.Data, transaction, cost)
+	err = addTaxTotals(purchase.Data, transaction, cost*-1)
 	if err != nil {
 		transaction.Rollback()
 		return 0, err
@@ -82,7 +82,7 @@ func calculateCost(entries []PurchaseEntry) (int, error) {
 		cost += value
 	}
 
-	cost *= -1
+	// cost *= -1
 
 	return cost, nil
 }
@@ -132,11 +132,6 @@ func setBalance(transaction *sql.Tx, userId int, balance int) error {
 func addTaxTotals(entries []PurchaseEntry, transaction *sql.Tx, cost int) error {
 	year := time.Now().Year()
 
-	//Ensure yearly tables existance
-	err := ensureTaxTableExists(transaction, year)
-	if err != nil {
-		return err
-	}
 	//Go through all the entries and apply the operation on all of them
 	for _, entry := range entries {
 		//check if entry exists
@@ -163,11 +158,6 @@ func addTaxTotals(entries []PurchaseEntry, transaction *sql.Tx, cost int) error 
 	}
 
 	return nil
-}
-
-func ensureTaxTableExists(transaction *sql.Tx, year int) error {
-	_, err := addToTransaction(transaction, "CREATE TABLE IF NOT EXISTS tax (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INT, amount INT, totalCost INT, year INT)")
-	return err
 }
 
 func UpdateUserBalance(user User, balance int, body string, ref string) error {
@@ -197,12 +187,4 @@ func UpdateUserBalance(user User, balance int, body string, ref string) error {
 	}
 
 	return nil
-}
-
-func getBasicTransactions(pp int, p int) ([]Transaction, error) {
-	return genericQuery[Transaction]("select * from transactions order by id desc limit ? offset ?", pp, p*pp)
-}
-
-func getReceipt(id int) (Receipt, error) {
-	return getFirstEntry[Receipt]("select * from receipts where id = ?", id)
 }
