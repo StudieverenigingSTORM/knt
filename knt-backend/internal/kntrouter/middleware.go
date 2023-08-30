@@ -2,6 +2,7 @@ package kntrouter
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"knt/internal/kntdb"
 	"net/http"
@@ -68,8 +69,7 @@ func adminMiddleware(next http.Handler) http.Handler {
 		//Get the header and validate it
 		key := r.Header.Get("X-API-Key")
 		if key == "" {
-			logger.Error("API key missing")
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			checkAndSendError(w, errors.New("API key missing"), http.StatusUnauthorized)
 			return
 		}
 		privileges := kntdb.CheckUserPrivileges(key)
@@ -79,9 +79,7 @@ func adminMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		//Write appropriate headers
-		logger.Error("Unauthorized")
-		http.Error(w, http.StatusText(http.StatusProxyAuthRequired), http.StatusProxyAuthRequired)
+		checkAndSendError(w, errors.New("Unauthorized"), http.StatusProxyAuthRequired)
 	})
 }
 
@@ -90,8 +88,7 @@ func logAdminMiddleware(next http.Handler) http.Handler {
 		//Get the header and validate it
 		key := r.Header.Get("X-Admin-Id")
 		if key == "" {
-			logger.Error("No admin key provided")
-			http.Error(w, "No admin key provided", http.StatusUnauthorized)
+			checkAndSendError(w, errors.New("no admin key provided"), http.StatusUnauthorized)
 			return
 		}
 
@@ -102,8 +99,7 @@ func logAdminMiddleware(next http.Handler) http.Handler {
 
 		err := kntdb.AddAdminLogs(r.URL.Path, r.Method, string(data), key)
 		if err != nil {
-			logger.Error("Unable to write admin log: ", err.Error())
-			http.Error(w, err.Error(), http.StatusUnauthorized)
+			checkAndSendError(w, err, http.StatusUnauthorized)
 			return
 		}
 		//Write appropriate headers
@@ -117,8 +113,7 @@ func userMiddleware(next http.Handler) http.Handler {
 		//Get the header and validate it
 		key := r.Header.Get("X-API-Key")
 		if key == "" {
-			logger.Error("API key missing")
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			checkAndSendError(w, errors.New("API key missing"), http.StatusUnauthorized)
 			return
 		}
 		privileges := kntdb.CheckUserPrivileges(key)
@@ -128,7 +123,6 @@ func userMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		//Write appropriate headers
-		logger.Error("Unauthorized")
-		http.Error(w, http.StatusText(http.StatusProxyAuthRequired), http.StatusProxyAuthRequired)
+		checkAndSendError(w, errors.New("Unauthorized"), http.StatusProxyAuthRequired)
 	})
 }
