@@ -45,7 +45,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 		return 0, err
 	}
 	//make a transaction
-	err = generateTransaction(transaction, userId, user.Balance, cost, user-cost, receiptId, "")
+	err = generateTransaction(transaction, userId, user.Balance, cost, user.Balance-cost, receiptId, "")
 	if err != nil {
 		return 0, err
 	}
