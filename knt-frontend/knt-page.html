@@ -70,7 +70,9 @@
           </div>
           <div class="cart-footer row no-padding">
             <div class="cart-actions col s4">
-              <a class="waves-effect waves-light btn red" onclick="clearCart()">Clear Cart</a>
+              <a class="waves-effect waves-light btn red" onclick="clearCart()"
+                >Clear Cart</a
+              >
             </div>
             <div class="cart-total col s4">
               <h5>Total: €0</h5>
@@ -94,7 +96,7 @@
         >
         <h4>Login</h4>
         <div class="row">
-          <form class="col s12">
+          <form id="purchase-form" class="col s12">
             <div class="row">
               <div class="input-field col s12">
                 <input id="username" type="text" class="validate" />
@@ -111,7 +113,12 @@
         </div>
       </div>
       <div class="modal-footer">
-        <a href="#!" class="waves-effect waves-green btn-flat">Login</a>
+        <a
+          href="#!"
+          class="waves-effect waves-green btn-flat"
+          onclick="purchase()"
+          >Purchase</a
+        >
       </div>
     </div>
 
@@ -125,31 +132,33 @@
     ></script>
 
     <script>
-      // Preload all the products
       $(document).ready(function () {
         $(".modal").modal();
 
-        // Initialize cart as an empty array
         let cart = [];
+        let products = [];
 
-        // Function to handle product click
-        window.handleProductClick = function (productName, productPrice) {
-          // Check if the product is already in the cart
+        window.handleProductClick = function (
+          productName,
+          productPrice,
+          productId
+        ) {
           let existingItem = cart.find((item) => item.name === productName);
 
           if (existingItem) {
-            // Product already exists in the cart, update quantity
             existingItem.quantity++;
           } else {
-            // Product doesn't exist in the cart, add it
-            cart.push({ name: productName, price: productPrice, quantity: 1 });
+            cart.push({
+              productId: productId,
+              name: productName,
+              price: productPrice,
+              quantity: 1,
+            });
           }
 
-          // Render the updated cart
           renderCart();
         };
 
-        // Function to render the cart
         function renderCart() {
           let cartList = $("#cart-list");
           cartList.empty();
@@ -157,7 +166,6 @@
           cart.forEach((item) => {
             let totalPrice = item.price * item.quantity;
 
-            // Create list item for each product in the cart
             let listItem = `
               <li class="collection-item">
                 ${item.name}
@@ -172,51 +180,85 @@
             cartList.append(listItem);
           });
 
-          // Update cart total
           updateCartTotal();
         }
 
-        // Function to update the total price in the cart
         function updateCartTotal() {
           let total = cart.reduce((acc, item) => {
             return acc + item.price * item.quantity;
           }, 0);
 
-          // Display the total in the cart footer
           $(".cart-total h5").text(`Total: €${total}`);
         }
 
-        // Function to decrease quantity of an item in the cart
         window.decreaseQuantity = function (productName) {
           let item = cart.find((item) => item.name === productName);
           if (item) {
             item.quantity--;
             if (item.quantity <= 0) {
-              // Remove item from cart if quantity is zero
               cart = cart.filter((cartItem) => cartItem.name !== productName);
             }
-            // Render the updated cart
             renderCart();
           }
         };
 
-        // Function to increase quantity of an item in the cart
         window.increaseQuantity = function (productName) {
           let item = cart.find((item) => item.name === productName);
           if (item) {
             item.quantity++;
-            // Render the updated cart
             renderCart();
           }
         };
 
-        // Function to clear the cart
         window.clearCart = function () {
-          cart = []; // Clear the cart array
-          renderCart(); // Render an empty cart
+          cart = [];
+          renderCart();
         };
 
-        // AJAX request to fetch products from server
+        window.purchase = function () {
+          let username = $("#username").val().trim();
+          let password = $("#password").val().trim();
+
+          if (!username || !password) {
+            alert("Username and password are required.");
+            return;
+          }
+
+          let purchaseData = {
+            password: password,
+            data: cart.map((item) => ({
+              productId: item.productId,
+              amount: item.quantity,
+            })),
+          };
+
+          console.log("Purchase data:", JSON.stringify(purchaseData));
+          console.log("User ID:", username);
+
+          $.ajax({
+            url: `http://127.0.0.1:5000/users/${username}/purchase`,
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "X-API-Key":
+                "de7d235b14f6dec69f9795e0b6c9d5b8e775919ee6f338d26d623d6a77a94da8",
+            },
+            contentType: "application/json",
+            data: JSON.stringify(purchaseData),
+            success: function (response) {
+              console.log("Purchase successful:", response);
+
+              clearCart();
+
+              alert("Purchase successful!");
+            },
+            error: function (error) {
+              console.error("Error purchasing:", error);
+              alert("Error purchasing. Please try again later.");
+            },
+          });
+        };
+
         $.ajax({
           url: "http://127.0.0.1:5000/users/products",
           method: "GET",
@@ -233,7 +275,7 @@
             products.forEach((product) => {
               $("#product-list").append(`
                 <li class="collection-item clickable-product"
-                    onclick="handleProductClick('${product.name}', ${product.price})"
+                    onclick="handleProductClick('${product.name}', ${product.price}, ${product.id})"
                 >
                   ${product.name} <span class="secondary-content">€${product.price}</span>
                 </li>
@@ -245,7 +287,6 @@
           },
         });
       });
-
     </script>
   </body>
 </html>
