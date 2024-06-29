@@ -64,20 +64,8 @@
         <div class="col s6">
           <h4>Cart</h4>
           <div class="scrollable">
-            <ul class="collection">
-              <li class="collection-item">
-                <div>
-                  Product A
-                  <div class="secondary-content">
-                    <div class="quantity-controls">
-                      <a class="btn-flat waves-effect waves-light">-</a>
-                      <span class="qty">1</span>
-                      <a class="btn-flat waves-effect waves-light">+</a>
-                      <span>€1</span>
-                    </div>
-                  </div>
-                </div>
-              </li>
+            <ul id="cart-list" class="collection">
+              <!-- Cart items will be added here -->
             </ul>
           </div>
           <div class="cart-footer row no-padding">
@@ -85,7 +73,7 @@
               <a class="waves-effect waves-light btn red">Clear Cart</a>
             </div>
             <div class="cart-total col s4">
-              <h5>Total: €3</h5>
+              <h5>Total: €0</h5>
             </div>
             <div class="cart-purchase col s4">
               <a
@@ -137,10 +125,92 @@
     ></script>
 
     <script>
-      // Preload all the products 
+      // Preload all the products
       $(document).ready(function () {
         $(".modal").modal();
 
+        // Initialize cart as an empty array
+        let cart = [];
+
+        // Function to handle product click
+        window.handleProductClick = function (productName, productPrice) {
+          // Check if the product is already in the cart
+          let existingItem = cart.find((item) => item.name === productName);
+
+          if (existingItem) {
+            // Product already exists in the cart, update quantity
+            existingItem.quantity++;
+          } else {
+            // Product doesn't exist in the cart, add it
+            cart.push({ name: productName, price: productPrice, quantity: 1 });
+          }
+
+          // Render the updated cart
+          renderCart();
+        };
+
+        // Function to render the cart
+        function renderCart() {
+          let cartList = $("#cart-list");
+          cartList.empty();
+
+          cart.forEach((item) => {
+            let totalPrice = item.price * item.quantity;
+
+            // Create list item for each product in the cart
+            let listItem = `
+              <li class="collection-item">
+                ${item.name}
+                <div class="secondary-content quantity-controls">
+                  <a class="btn-flat waves-effect waves-light" onclick="decreaseQuantity('${item.name}')">-</a>
+                  <span class="qty">${item.quantity}</span>
+                  <a class="btn-flat waves-effect waves-light" onclick="increaseQuantity('${item.name}')">+</a>
+                  <span>€${totalPrice}</span>
+                </div>
+              </li>
+            `;
+            cartList.append(listItem);
+          });
+
+          // Update cart total
+          updateCartTotal();
+        }
+
+        // Function to update the total price in the cart
+        function updateCartTotal() {
+          let total = cart.reduce((acc, item) => {
+            return acc + item.price * item.quantity;
+          }, 0);
+
+          // Display the total in the cart footer
+          $(".cart-total h5").text(`Total: €${total}`);
+        }
+
+        // Function to decrease quantity of an item in the cart
+        window.decreaseQuantity = function (productName) {
+          let item = cart.find((item) => item.name === productName);
+          if (item) {
+            item.quantity--;
+            if (item.quantity <= 0) {
+              // Remove item from cart if quantity is zero
+              cart = cart.filter((cartItem) => cartItem.name !== productName);
+            }
+            // Render the updated cart
+            renderCart();
+          }
+        };
+
+        // Function to increase quantity of an item in the cart
+        window.increaseQuantity = function (productName) {
+          let item = cart.find((item) => item.name === productName);
+          if (item) {
+            item.quantity++;
+            // Render the updated cart
+            renderCart();
+          }
+        };
+
+        // AJAX request to fetch products from server
         $.ajax({
           url: "http://127.0.0.1:5000/users/products",
           method: "GET",
@@ -155,16 +225,14 @@
             $("#product-list").empty();
 
             products.forEach((product) => {
-              console.log(`Name: ${product.name}, Price: ${product.price}`);
               $("#product-list").append(`
-                  <li class="collection-item clickable-product"
-                      onclick="handleProductClick('${product.name}', ${product.price})"
-                  >
-                    ${product.name} <span class="secondary-content">€${product.price}</span>
-                  </li>
-                `);
+                <li class="collection-item clickable-product"
+                    onclick="handleProductClick('${product.name}', ${product.price})"
+                >
+                  ${product.name} <span class="secondary-content">€${product.price}</span>
+                </li>
+              `);
             });
-
           },
           error: function (error) {
             console.error("Error fetching products:", error);
@@ -172,9 +240,6 @@
         });
       });
 
-      function handleProductClick(productName, productPrice) {
-        console.log("Product clicked:", productName, productPrice);
-      }
     </script>
   </body>
 </html>
