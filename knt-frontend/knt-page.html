@@ -70,7 +70,7 @@
           </div>
           <div class="cart-footer row no-padding">
             <div class="cart-actions col s4">
-              <a class="waves-effect waves-light btn red">Clear Cart</a>
+              <a class="waves-effect waves-light btn red" onclick="clearCart()">Clear Cart</a>
             </div>
             <div class="cart-total col s4">
               <h5>Total: €0</h5>
@@ -208,6 +208,12 @@
             // Render the updated cart
             renderCart();
           }
+        };
+
+        // Function to clear the cart
+        window.clearCart = function () {
+          cart = []; // Clear the cart array
+          renderCart(); // Render an empty cart
         };
 
         // AJAX request to fetch products from server
