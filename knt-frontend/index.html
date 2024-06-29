@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Loading</h1>
+
+</body>
+</html> 
+
+<script>
+    fetch('')
+        .then(response => response.text())
+        .then(html => {
+            html = html.replaceAll("Increment", '+1');
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            console.error('Error loading HTML file:', error);
+        });
+</script>
