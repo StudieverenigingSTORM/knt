@@ -9,7 +9,7 @@ import (
 
 //This file handles everything having to do with purchases and receipts
 
-func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
+func MakeTransaction(userId string, purchase PurchaseRequest) (int, error) {
 	//Begins the transaction
 	//This is important because if ANY error were to occur we need to reset the database to its original state
 	transaction, err := DB.Begin()
@@ -21,7 +21,6 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	if user.Password == "" {
 		return 0, errors.New("User has no password, cannot complete the transaction")
 	}
@@ -45,7 +44,7 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 		return 0, err
 	}
 	//make a transaction
-	err = generateTransaction(transaction, userId, user.Balance, cost, user.Balance-cost, receiptId, "")
+	err = generateTransaction(transaction, userId, user.Balance, cost*-1, user.Balance-cost, receiptId, "")
 	if err != nil {
 		return 0, err
 	}
@@ -113,7 +112,7 @@ func addReceipt(transaction *sql.Tx, dataString string) (int64, error) {
 }
 
 // Generates the transaction and stores it in the database
-func generateTransaction(transaction *sql.Tx, userId int, startingBal int, deltaBal int, finalBal int, receiptId int64, ref string) error {
+func generateTransaction(transaction *sql.Tx, userId string, startingBal int, deltaBal int, finalBal int, receiptId int64, ref string) error {
 	_, err := addToTransaction(transaction,
 		"INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id, ref) VALUES (?, ?, ?, ?, ?, ?)",
 		userId, startingBal, deltaBal, finalBal, receiptId, ref)
@@ -121,8 +120,8 @@ func generateTransaction(transaction *sql.Tx, userId int, startingBal int, delta
 }
 
 // Sets the users balance to a specified ammount
-func setBalance(transaction *sql.Tx, userId int, balance int) error {
-	_, err := addToTransaction(transaction, "UPDATE user SET balance = ? WHERE id = ?",
+func setBalance(transaction *sql.Tx, userId string, balance int) error {
+	_, err := addToTransaction(transaction, "UPDATE user SET balance = ? WHERE vunetid = ?",
 		balance, userId)
 	return err
 }

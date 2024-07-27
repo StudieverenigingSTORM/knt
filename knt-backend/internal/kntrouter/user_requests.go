@@ -1,6 +1,7 @@
 package kntrouter
 
 import (
+	"errors"
 	"fmt"
 	"knt/internal/kntdb"
 	"net/http"
@@ -34,8 +35,16 @@ func createNewUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if body.Id == "" {
+		checkAndSendError(w, errors.New("id is required"), http.StatusUnprocessableEntity)
+		return
+	}
+
 	if body.Password != "" {
 		body.Password = kntdb.ShaHashing(body.Password)
+	} else {
+		checkAndSendError(w, errors.New("password is required"), http.StatusUnprocessableEntity)
+		return
 	}
 
 	id, err := kntdb.CreateNewUser(body)
@@ -51,11 +60,7 @@ func createNewUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
-	userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
-	if err != nil {
-		checkAndSendError(w, err, http.StatusUnprocessableEntity)
-		return
-	}
+	userId := chi.URLParam(r, "userId")
 
 	user, err := kntdb.GetMinimalUser(userId)
 	if err != nil {
@@ -67,11 +72,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAdminUser(w http.ResponseWriter, r *http.Request) {
-	userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
-	if err != nil {
-		checkAndSendError(w, err, http.StatusUnprocessableEntity)
-		return
-	}
+	userId := chi.URLParam(r, "userId")
 
 	user, err := kntdb.GetUser(userId)
 	if err != nil {
@@ -83,11 +84,7 @@ func getAdminUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func makePurchase(w http.ResponseWriter, r *http.Request) {
-	userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
-	if err != nil {
-		checkAndSendError(w, err, http.StatusUnprocessableEntity)
-		return
-	}
+	userId := chi.URLParam(r, "userId")
 
 	body, err := makeAndValidateStruct[kntdb.PurchaseRequest](r.Body)
 	if err != nil {
@@ -129,7 +126,7 @@ func updateUserBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := kntdb.GetUserByVunetId(format.VunetId)
+	user, err := kntdb.GetUser(format.VunetId)
 	if err != nil {
 		checkAndSendError(w, err, http.StatusUnprocessableEntity)
 		return

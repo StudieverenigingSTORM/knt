@@ -197,9 +197,9 @@ paths:
         - ApiKeyAuth: []
       parameters: 
         - in: path
-          name: userId
+          name: vunetId
           schema:
-            type: integer
+            type: string
           required: true
           description: Numeric ID of the user to target
       requestBody:
@@ -254,7 +254,7 @@ paths:
         - in: path
           name: userId
           schema:
-            type: integer
+            type: string
           required: true
           description: Numeric ID of the user to target
       security:
@@ -285,7 +285,7 @@ paths:
         - in: path
           name: userId
           schema:
-            type: integer
+            type: string
           required: true
           description: Numeric ID of the user to target
       responses:
@@ -373,9 +373,9 @@ paths:
               type: object
               properties:
                 id:
-                  type: integer
-                  description: The user ID.
-                  example: 1
+                  type: string
+                  description: vunetid
+                  example: pps999
                 firstName:
                   type: string
                   description: The users first name.
@@ -384,10 +384,6 @@ paths:
                   type: string
                   description: The users last name.
                   example: Personson
-                vunetId:
-                  type: string
-                  description: vunetId
-                  example: pps999
                 password:
                   type: string
                   description: new password (will be hashed in the Backend) (leave empty if not changed)
@@ -420,6 +416,10 @@ paths:
             schema:
               type: object
               properties:
+                id:
+                  type: string
+                  description: vunetId
+                  example: pps999
                 firstName:
                   type: string
                   description: The users first name.
@@ -428,10 +428,6 @@ paths:
                   type: string
                   description: The users last name.
                   example: Personson
-                vunetId:
-                  type: string
-                  description: vunetId
-                  example: pps999
                 password:
                   type: string
                   description: new password (will be hashed in the Backend) (leave empty if not changed)
@@ -444,8 +440,8 @@ paths:
         - ApiKeyAuth: []
         - AdminId: []
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
         '401':
           $ref: "#/components/responses/UnauthorizedError"
         '407':
@@ -557,10 +553,6 @@ paths:
                   type: object
                   properties:
                     id:
-                      type: integer
-                      description: user id
-                      example: 1
-                    vunetid:
                       type: string
                       example: skn999
                     starting_balance:
@@ -608,10 +600,10 @@ components:
     user:
       type: object
       properties:
-        id:
-          type: integer
-          description: The user ID.
-          example: 1
+        vunetid:
+          type: string
+          description: vunetid
+          example: lma123
         taxcategory:
           type: integer
           description: The category id of the product.
@@ -632,9 +624,9 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The user ID.
-          example: 1
+          type: string
+          description: vunetId
+          example: pps999
         firstName:
           type: string
           description: The users first name.
@@ -643,10 +635,6 @@ components:
           type: string
           description: The users last name.
           example: Personson
-        vunetId:
-          type: string
-          description: vunetId
-          example: pps999
         password:
           type: string
           description: new password (will be hashed in the Backend) (leave empty if not changed)

@@ -1,4 +1,4 @@
-package main
+package main 
 
 import (
 	"fmt"
@@ -17,6 +17,9 @@ import (
 func main() {
 	//Loading viper
 	//Viper is responsible for handling the config file
+
+	fmt.Println("Starting KnT Backend")
+
 	viper.SetConfigName("kntconfig")
 
 	viper.AddConfigPath("./config/")

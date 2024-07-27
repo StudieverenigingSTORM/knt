@@ -9,28 +9,20 @@ func GetAllUsers() ([]User, error) {
 }
 
 func GetAllMinimalUsers() ([]MinimalUser, error) {
-	return genericQuery[MinimalUser]("select id, first_name, last_name, balance from user where visibility = 1")
+	return genericQuery[MinimalUser]("select vunetid, first_name, last_name, balance from user where visibility = 1")
 }
 
-func GetMinimalUser(userId int) (MinimalUser, error) {
-	user, err := getFirstEntry[MinimalUser]("select id, first_name, last_name, balance from user where id = ? and visibility = 1", userId)
-	if user.Id == 0 && err == nil {
+func GetMinimalUser(userId string) (MinimalUser, error) {
+	user, err := getFirstEntry[MinimalUser]("select vunetid, first_name, last_name, balance from user where vunetid = ? and visibility = 1", userId)
+	if user.VunetId == "" && err == nil {
 		err = errors.New("User not found")
 	}
 	return user, err
 }
 
-func GetUser(userID int) (User, error) {
-	user, err := getFirstEntry[User]("select * from user where id = ?", userID)
-	if user.Id == 0 && err == nil {
-		err = errors.New("User not found")
-	}
-	return user, err
-}
-
-func GetUserByVunetId(VunetId string) (User, error) {
-	user, err := getFirstEntry[User]("select * from user where vunetid = ?", VunetId)
-	if user.Id == 0 && err == nil {
+func GetUser(userID string) (User, error) {
+	user, err := getFirstEntry[User]("select * from user where vunetid = ?", userID)
+	if user.Id == "" && err == nil {
 		err = errors.New("User not found")
 	}
 	return user, err
@@ -38,12 +30,12 @@ func GetUserByVunetId(VunetId string) (User, error) {
 
 func CreateNewUser(user User) (int64, error) {
 	return commitTransaction(
-		"insert into user (first_name, last_name, vunetid, password, visibility) VALUES (?, ?, ?, ?, ?)",
-		user.FirstName, user.LastName, user.VunetId, user.Password, user.Visibility)
+		"insert into user (vunetid, first_name, last_name, password, visibility) VALUES (?, ?, ?, ?, ?)",
+		user.Id, user.FirstName, user.LastName, user.Password, user.Visibility)
 }
 
 func UpdateUser(user User) (int64, error) {
-	if user.Id == 0 {
+	if user.Id == "" {
 		return 0, errors.New("invalid user")
 	}
 
@@ -58,8 +50,8 @@ func UpdateUser(user User) (int64, error) {
 		user.Password = oldUser.Password
 	}
 	return commitTransaction(
-		"update user set first_name = ?, last_name = ?, vunetid = ?, password = ?, visibility = ? where id = ?",
-		user.FirstName, user.LastName, user.VunetId, user.Password, user.Visibility, user.Id)
+		"update user set first_name = ?, last_name = ?, password = ?, visibility = ? where vunetid = ?",
+		user.FirstName, user.LastName, user.Password, user.Visibility, user.Id)
 }
 
 func GetPopulatedTransactions(perPage int, page int) ([]TransactionDetails, error) {
@@ -68,7 +60,7 @@ func GetPopulatedTransactions(perPage int, page int) ([]TransactionDetails, erro
 			"T.final_balance, T.ref, R.timestamp, R.data "+
 			"from transactions T "+
 			"left join user U "+
-			"on U.id = T.user_id "+
+			"on U.vunetid = T.user_id "+
 			"left join receipts R "+
 			"on T.receipt_id = R.id "+
 			"order by T.id asc limit ? offset ?",

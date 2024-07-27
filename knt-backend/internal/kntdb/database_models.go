@@ -15,17 +15,16 @@ type Product struct {
 }
 
 type User struct {
-	Id         int    `json:"id"`
+	Id         string `json:"id"`
 	FirstName  string `json:"firstName" validate:"required,min=1,max=32"`
 	LastName   string `json:"lastName" validate:"required,min=1,max=32"`
-	VunetId    string `json:"vunetId" validate:"required"`
 	Password   string `json:"password"`
 	Balance    int    `json:"balance"`
 	Visibility int    `json:"visibility" validate:"max=1"`
 }
 
 type MinimalUser struct {
-	Id        int    `json:"id"`
+	VunetId   string `json:"vunetid"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Balance   int    `json:"balance"`
@@ -43,7 +42,7 @@ type PurchaseEntry struct {
 
 type Transaction struct {
 	Id              int    `json:"id"`
-	UserId          int    `json:"userId"`
+	UserId          string `json:"userId"`
 	StartingBalance int    `json:"startingBalance"`
 	DeltaBalance    int    `json:"deltaBalance"`
 	FinalBalance    int    `json:"finalBalance"`
@@ -68,7 +67,7 @@ type TaxEntry struct {
 // This struct is specifically designed to be returned by the paginated transaction
 type TransactionDetails struct {
 	Id              int    `json:"id"`
-	VunetId         string `json:"vunetid"`
+	Vunetid         string `json:"vunetid"`
 	StartingBalance int    `json:"startingBalance"`
 	DeltaBalance    int    `json:"deltaBalance"`
 	FinalBalance    int    `json:"finalBalance"`
