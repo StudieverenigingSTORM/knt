@@ -41,6 +41,11 @@
       .clickable-product {
         cursor: pointer;
       }
+      .purchase-message {
+        margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -111,6 +116,8 @@
             </div>
           </form>
         </div>
+        <!-- Purchase message container -->
+        <div id="purchase-message" class="purchase-message"></div>
       </div>
       <div class="modal-footer">
         <a
@@ -133,7 +140,13 @@
 
     <script>
       $(document).ready(function () {
-        $(".modal").modal();
+        $(".modal").modal({
+          onCloseEnd: function () {
+            $("#username").val("");
+            $("#password").val("");
+            $("#purchase-message").text("");
+          },
+        });
 
         let cart = [];
         let products = [];
@@ -220,7 +233,9 @@
           let password = $("#password").val().trim();
 
           if (!username || !password) {
-            alert("Username and password are required.");
+            $("#purchase-message")
+              .text("Username and password are required.")
+              .css("color", "red");
             return;
           }
 
@@ -250,11 +265,18 @@
 
               clearCart();
 
-              alert("Purchase successful!");
+              $("#purchase-message")
+                .text("Purchase successful!")
+                .css("color", "green");
+
+              $("#username").val("");
+              $("#password").val("");
             },
             error: function (error) {
               console.error("Error purchasing:", error);
-              alert("Error purchasing. Please try again later.");
+              $("#purchase-message")
+                .text("Error purchasing. Please try again later.")
+                .css("color", "red");
             },
           });
         };
