@@ -9,34 +9,6 @@ corsAllowMethods: "*"
 corsAllowHeaders: "*"
 
 
-#These routes with their explanations are available within the documentation provided in docs
-routes:
-  ping: "/ping"
-  #Basic routes
-  basicEndpoint: "/users"
-
-  getUsers: "/"
-  getUser: "/{userId}" 
-  makePurchase: "/{userId}/purchase"
-
-  getProducts: "/products"
-
-  #Admin routes
-  adminEndpoint: "/admin"
-
-  getUserAdmin: "/users/{userId}"
-  createNewUser: "/users"
-  updateUser: "/users"
-  updateUserMoney: "/users/balance"
-  getUsersAdmin: "/users"
-
-  createNewProduct: "/products"
-  updateProduct: "/products"
-  getFullProduct: "/products/{productId}"
-  getFullProducts: "/products"
-
-  taxcategories: "/tax"
-  transactions: "/transactions"
 
 
 

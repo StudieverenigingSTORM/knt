@@ -9,7 +9,7 @@ import (
 
 //This file handles everything having to do with purchases and receipts
 
-func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
+func MakeTransaction(userId string, purchase PurchaseRequest) (int, error) {
 	//Begins the transaction
 	//This is important because if ANY error were to occur we need to reset the database to its original state
 	transaction, err := DB.Begin()
@@ -21,22 +21,21 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	if user.Password == "" {
 		return 0, errors.New("User has no password, cannot complete the transaction")
 	}
 
 	//pin validation
 	if !ValidatePin(purchase.Password, user) {
-		return 0, errors.New("Unauthorized")
+		return 0, errors.New("incorrect pin")
 	}
 	//calculate cost
 	cost, err := calculateCost(purchase.Data)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("could not find all products")
 	}
 	//validate users balance
-	if cost*-1 > user.Balance {
+	if cost > user.Balance {
 		return 0, errors.New("insufficient balance on user")
 	}
 	//generate receipt
@@ -45,18 +44,18 @@ func MakeTransaction(userId int, purchase PurchaseRequest) (int, error) {
 		return 0, err
 	}
 	//make a transaction
-	err = generateTransaction(transaction, userId, user.Balance, cost, user.Balance+cost, receiptId, "")
+	err = generateTransaction(transaction, userId, user.Balance, cost*-1, user.Balance-cost, receiptId, "")
 	if err != nil {
 		return 0, err
 	}
 	//subtract balance
-	err = setBalance(transaction, userId, user.Balance+cost)
+	err = setBalance(transaction, userId, user.Balance-cost)
 	if err != nil {
 		return 0, err
 	}
 
 	//Add tax
-	err = addTaxTotals(purchase.Data, transaction, cost)
+	err = addTaxTotals(purchase.Data, transaction, cost*-1)
 	if err != nil {
 		transaction.Rollback()
 		return 0, err
@@ -82,7 +81,7 @@ func calculateCost(entries []PurchaseEntry) (int, error) {
 		cost += value
 	}
 
-	cost *= -1
+	// cost *= -1
 
 	return cost, nil
 }
@@ -113,7 +112,7 @@ func addReceipt(transaction *sql.Tx, dataString string) (int64, error) {
 }
 
 // Generates the transaction and stores it in the database
-func generateTransaction(transaction *sql.Tx, userId int, startingBal int, deltaBal int, finalBal int, receiptId int64, ref string) error {
+func generateTransaction(transaction *sql.Tx, userId string, startingBal int, deltaBal int, finalBal int, receiptId int64, ref string) error {
 	_, err := addToTransaction(transaction,
 		"INSERT INTO transactions (user_id, starting_balance, delta_balance, final_balance, receipt_id, ref) VALUES (?, ?, ?, ?, ?, ?)",
 		userId, startingBal, deltaBal, finalBal, receiptId, ref)
@@ -121,8 +120,8 @@ func generateTransaction(transaction *sql.Tx, userId int, startingBal int, delta
 }
 
 // Sets the users balance to a specified ammount
-func setBalance(transaction *sql.Tx, userId int, balance int) error {
-	_, err := addToTransaction(transaction, "UPDATE user SET balance = ? WHERE id = ?",
+func setBalance(transaction *sql.Tx, userId string, balance int) error {
+	_, err := addToTransaction(transaction, "UPDATE user SET balance = ? WHERE vunetid = ?",
 		balance, userId)
 	return err
 }
@@ -132,11 +131,6 @@ func setBalance(transaction *sql.Tx, userId int, balance int) error {
 func addTaxTotals(entries []PurchaseEntry, transaction *sql.Tx, cost int) error {
 	year := time.Now().Year()
 
-	//Ensure yearly tables existance
-	err := ensureTaxTableExists(transaction, year)
-	if err != nil {
-		return err
-	}
 	//Go through all the entries and apply the operation on all of them
 	for _, entry := range entries {
 		//check if entry exists
@@ -163,11 +157,6 @@ func addTaxTotals(entries []PurchaseEntry, transaction *sql.Tx, cost int) error 
 	}
 
 	return nil
-}
-
-func ensureTaxTableExists(transaction *sql.Tx, year int) error {
-	_, err := addToTransaction(transaction, "CREATE TABLE IF NOT EXISTS tax (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INT, amount INT, totalCost INT, year INT)")
-	return err
 }
 
 func UpdateUserBalance(user User, balance int, body string, ref string) error {
@@ -197,12 +186,4 @@ func UpdateUserBalance(user User, balance int, body string, ref string) error {
 	}
 
 	return nil
-}
-
-func getBasicTransactions(pp int, p int) ([]Transaction, error) {
-	return genericQuery[Transaction]("select * from transactions order by id desc limit ? offset ?", pp, p*pp)
-}
-
-func getReceipt(id int) (Receipt, error) {
-	return getFirstEntry[Receipt]("select * from receipts where id = ?", id)
 }
