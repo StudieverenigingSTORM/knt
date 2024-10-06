@@ -188,7 +188,7 @@ paths:
           $ref: "#/components/responses/ForbidenError"
         '422':
           $ref: "#/components/responses/UnprocessableError"
-  /users/{userId}/purchase:
+  /users/{vunetId}/purchase:
     post:
       tags:
         - "User Basic"
