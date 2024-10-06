@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
-<body>
-
-<h1>Loading</h1>
-
-</body>
-</html> 
+  <body>
+    <h1>Loading</h1>
+  </body>
+</html>
 
 <script>
-    fetch('https://raw.githubusercontent.com/StudieverenigingSTORM/knt/backend/knt-frontend/knt-page.html')
-        .then(response => response.text())
-        .then(html => {
-            html = html.replaceAll("Increment", '+1');
-            document.open();
-            document.write(html);
-            document.close();
-        })
-        .catch(error => {
-            console.error('Error loading HTML file:', error);
-        });
+  fetch(
+    "https://raw.githubusercontent.com/StudieverenigingSTORM/knt/refs/heads/main/knt-frontend/knt-page.html"
+  )
+    .then((response) => response.text())
+    .then((html) => {
+      html = html.replaceAll("Increment", "+1");
+      document.open();
+      document.write(html);
+      document.close();
+    })
+    .catch((error) => {
+      console.error("Error loading HTML file:", error);
+    });
 </script>
