@@ -177,7 +177,7 @@
           cartList.empty();
 
           cart.forEach((item) => {
-            let totalPrice = item.price * item.quantity;
+            let totalPrice = (item.price * item.quantity).toFixed(2);
 
             let listItem = `
               <li class="collection-item">
@@ -200,6 +200,8 @@
           let total = cart.reduce((acc, item) => {
             return acc + item.price * item.quantity;
           }, 0);
+
+          total = total.toFixed(2);
 
           $(".cart-total h5").text(`Total: €${total}`);
         }
@@ -297,9 +299,13 @@
             products.forEach((product) => {
               $("#product-list").append(`
                 <li class="collection-item clickable-product"
-                    onclick="handleProductClick('${product.name}', ${product.price}, ${product.id})"
+                    onclick="handleProductClick('${product.name}', ${(
+                product.price / 100
+              ).toFixed(2)}, ${product.id})"
                 >
-                  ${product.name} <span class="secondary-content">€${product.price}</span>
+                  ${product.name} <span class="secondary-content">€${(
+                product.price / 100
+              ).toFixed(2)}</span>
                 </li>
               `);
             });
