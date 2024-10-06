@@ -251,7 +251,7 @@
           console.log("User ID:", username);
 
           $.ajax({
-            url: `knt.svstorm.nl/users/${username}/purchase`,
+            url: `https://knt.svstorm.nl/users/${username}/purchase`,
             method: "POST",
             headers: {
               accept: "application/json",
@@ -282,7 +282,7 @@
         };
 
         $.ajax({
-          url: "knt.svstorm.nl/users/products",
+          url: "https://knt.svstorm.nl/users/products",
           method: "GET",
           headers: {
             accept: "application/json",
