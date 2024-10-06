@@ -267,18 +267,75 @@
 
               clearCart();
 
-              $("#purchase-message")
-                .text("Purchase successful!")
-                .css("color", "green");
+              $.ajax({
+                url: `https://knt.svstorm.nl/users/${username}`,
+                method: "GET",
+                headers: {
+                  accept: "application/json",
+                  "X-API-Key":
+                    "de7d235b14f6dec69f9795e0b6c9d5b8e775919ee6f338d26d623d6a77a94da8",
+                },
+                success: function (userData) {
+                  let savedUserData = JSON.parse(userData);
+                  const newBalance = (savedUserData.balance / 100).toFixed(2);
+                  console.log("New balance (converted):", newBalance);
+
+                  $("#purchase-message")
+                    .text(`Purchase successful, new balance is €${newBalance}`)
+                    .css("color", "green");
+                },
+                error: function (error) {
+                  console.error("Error fetching user balance:", error);
+                  $("#purchase-message")
+                    .text("Error retrieving balance. Please try again later.")
+                    .css("color", "red");
+                },
+              });
 
               $("#username").val("");
               $("#password").val("");
             },
             error: function (error) {
-              console.error("Error purchasing:", error);
-              $("#purchase-message")
-                .text("Error purchasing. Please try again later.")
-                .css("color", "red");
+              const responseText = error.responseText;
+
+              if (responseText.includes("incorrect pin")) {
+                $("#purchase-message")
+                  .text("Incorrect password. Please try again.")
+                  .css("color", "red");
+              } else if (
+                responseText.includes("insufficient balance on user")
+              ) {
+                $.ajax({
+                  url: `https://knt.svstorm.nl/users/${username}`,
+                  method: "GET",
+                  headers: {
+                    accept: "application/json",
+                    "X-API-Key":
+                      "de7d235b14f6dec69f9795e0b6c9d5b8e775919ee6f338d26d623d6a77a94da8",
+                  },
+                  success: function (userData) {
+                    let savedUserData = JSON.parse(userData);
+                    const balance = (savedUserData.balance / 100).toFixed(2);
+                    const total = $(".cart-total h5").text().split("€")[1];
+
+                    $("#purchase-message")
+                      .text(
+                        `Purchase of €${total} failed. Your balance of €${balance} is too low.`
+                      )
+                      .css("color", "red");
+                  },
+                  error: function (error) {
+                    console.error("Error fetching user balance:", error);
+                    $("#purchase-message")
+                      .text("Error retrieving balance. Please try again later.")
+                      .css("color", "red");
+                  },
+                });
+              } else {
+                $("#purchase-message")
+                  .text("Error purchasing. Please try again later.")
+                  .css("color", "red");
+              }
             },
           });
         };
